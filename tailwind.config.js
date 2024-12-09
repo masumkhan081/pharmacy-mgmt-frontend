@@ -1,6 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       spacing: {
@@ -122,7 +125,7 @@ export default {
         "su/600": "#16A34A",
         "su/300": "#86EFAC",
         "pp/neutral": "#E4E5E7",
-        "pp/border": "#0003160D",
+        "pp/borderr": "#0003160D",
         "dot/warn": "#B91C1C",
         "dot/pending": "#8C651A",
         bkash: "#FFE9F3",
@@ -131,4 +134,4 @@ export default {
     },
   },
   plugins: [],
-};
+}
