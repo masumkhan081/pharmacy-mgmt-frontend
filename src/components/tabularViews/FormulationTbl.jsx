@@ -1,24 +1,28 @@
-import React, { useEffect } from "react";
-import { tblHeadergroups } from "../../static-data/table";
+import { useEffect } from "react";
+import { tblHeaderFormulations } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
-import { AiFillEdit, AiFillDelete } from "react-icons/ai";
-import { checkSingle, checkAll, setCurrentView } from "../../redux/slices/DrugsView";
+import { /* checkSingle, checkAll, */ setCurrentView } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../util/handler";
+import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import {
+  initModal,
+  setModaldata
+} from "../../redux/slices/DrugsView";
 
-export default function GroupTbl() {
-  // 
+export default function FormulationTbl() {
   const dispatch = useDispatch();
-  const groups = useSelector((state) => state.drugsView.groups);
-  const allChecked = useSelector((state) => state.drugsView.allChecked);
-  // 
+  const formulations = useSelector((state) => state.drugsView.formulations);
+  // const allChecked = useSelector((state) => state.drugsView.allChecked);
+
+
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/groups");
-      dispatch(setCurrentView({ view: "groups", data: data.data.groups }));
+      const data = await getHandler("/formulations");
+      dispatch(setCurrentView({ view: "formulations", data: data.data.formulations }));
     };
     fetch();
   }, []);
-  // 
+
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
       <table className="w-full ">
@@ -31,7 +35,7 @@ export default function GroupTbl() {
                 onChange={(e) => dispatch(checkAll())}
               />
             </th> */}
-            {tblHeadergroups.map((itm, ind) => {
+            {tblHeaderFormulations.map((itm, ind) => {
               return (
                 <th key={ind} className="th">
                   {itm}
@@ -43,7 +47,7 @@ export default function GroupTbl() {
         </thead>
 
         <tbody>
-          {groups && groups.map((item, ind) => {
+          {formulations && formulations.map((item, ind) => {
             return (
               <tr key={item._id} className="tr_tbody">
                 {/* <td className="td">
@@ -53,8 +57,10 @@ export default function GroupTbl() {
                     onChange={(e) => dispatch(checkSingle())}
                   />
                 </td> */}
+                {/* below padding may apply to all */}
                 <td className="py-1.125">{ind + 1}</td>
-                <td className="py-1.125">{item.name}</td>
+                <td className="py-1.125">{item.fullName}</td>
+                <td className="py-1.125">{item.shortName}</td>
                 <td className="py-1.0 flex justify-center gap-2">
                   <button
                     onClick={() => {

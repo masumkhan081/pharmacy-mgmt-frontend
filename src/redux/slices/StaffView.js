@@ -1,13 +1,18 @@
-import { createSlice } from "@reduxjs/toolkit"; 
+import { createSlice } from "@reduxjs/toolkit";
 
 export const staffViewSlice = createSlice({
   name: "staffView",
   initialState: {
     currentView: "",
-    expanded:"hidden",
+    expanded: "hidden",
     allChecked: false,
     salaries: [],
     members: [],
+    attendances: [],
+    //
+    isModalVisible: false,
+    isModalForEdit: false,
+    modalData: {},
   },
   reducers: {
     setCurrentView: (state, action) => {

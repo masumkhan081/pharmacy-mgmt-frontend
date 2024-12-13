@@ -5,8 +5,7 @@ import ViewFilterDrugs from "../components/tabularViews/ViewFilterDrugs";
 import SearchFilter from "../components/SearchFilter";
 import { AiOutlinePlus } from "react-icons/ai";
 //
-import { Outlet } from "react-router-dom";
-import { useState } from "react";
+import { Outlet } from "react-router-dom"; 
 import DrugForm from "../components/drugs/DrugForm";
 import MFRForm from "../components/drugs/MFRForm";
 import UnitForm from "../components/drugs/UnitForm";
@@ -23,7 +22,7 @@ export default function Drugs() {
   // const [isModalVisible, setDropDown] = useState(false);
   // const [menuFolded, setMenuFolded] = useState(true);
 
-  const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
+  // const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
   const isModalVisible = useSelector((state) => state.drugsView.isModalVisible);
   const currentView = useSelector((state) => state.drugsView.currentView);
 

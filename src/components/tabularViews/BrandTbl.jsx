@@ -8,6 +8,10 @@ import {
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../util/handler";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
+import {
+  initModal,
+  setModaldata
+} from "../../redux/slices/DrugsView";
 
 export default function BrandTbl({ }) {
   //

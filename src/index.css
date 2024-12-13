@@ -1,68 +1,75 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Rubik+Iso&family=Titan+One&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+.nav_drop_down {
+  @apply block absolute z-10 sm:w-1/2 w-full sm:mx-auto mx-2 left-auto right-auto  top-[40px] h-auto border rounded-md bg-green-200 border-yellow-600;
 }
-a:hover {
-  color: #535bf2;
+.btn_nav {
+  @apply flex items-center flex-wrap overflow-hidden gap-1   text-green-700 text-center px-1 py-1 rounded-md bg-gradient-to-b from-green-200 text-sm font-averia;
 }
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
+.nav_icn {
+  @apply w-1.25 h-1.25 text-green-900;
 }
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+.brand {
+  @apply text-1.25/1.5 text-green-900 flex items-center gap-1;
 }
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
+.orange_title {
+  @apply flex justify-between btn_auth_toggler  w-2/3 mx-auto pt-1 pb-0 shadow-md;
 }
-button:hover {
-  border-color: #646cff;
+.neutral_title {
+  @apply flex justify-center text-lg text-orange-800 font-titan w-2/3 mx-auto pt-1 pb-0 drop-shadow-md font-semibold;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+.txt_inp_form {
+  @apply flex justify-between border border-br/300 font-averia outline-none rounded-md px-4 py-1;
 }
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+.lbl_form {
+  @apply font-medium font-averia;
+}
+.title_auth_form {
+  @apply text-sm font-averia font-normal tracking-02 text-center;
+}
+.btn_auth_toggler {
+  @apply bg-orange-600 text-orange-200 text-center px-3 rounded-md bg-gradient-to-b from-orange-900 text-sm font-averia tracking-02;
+}
+.btn_auth_option {
+  @apply border border-teal-600 md:w-3/5 w-full rounded-md shadow-sm py-1 text-center;
+}
+.btn_auth_submit {
+  @apply border border-br/600 text-teal-950 rounded-md px-3  py-0.125 text-lg w-1/2 font-rubik font-normal;
+}
+.btn_test_data {
+  @apply border border-br/300 drop-shadow-sm text-teal-950 rounded-md px-2 py-0.125 capitalize text-sm w-fit font-averia font-normal tracking-tight;
+}
+.trans_eio {
+  @apply transition duration-700 ease-in-out;
+}
+.icn_sm {
+  @apply w-1.5 h-1.5 inline mr-1;
+}
+.icn_xm {
+  @apply w-1.125 h-1.125 inline mr-1;
+}
+.tr_tbody {
+  @apply text-black py-1.125 font-normal text-0.9/1.25 text-center  capitalize border;
+}
+.tr_thead {
+  @apply text-sl/600 font-medium text-0.75/1 capitalize;
+}
+.th {
+  @apply px-0.25 py-0.62;
+}
+.td {
+  @apply px-0.25 py-1.125;
 }
