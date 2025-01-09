@@ -38,7 +38,7 @@ export default function NavTop() {
   return (
     <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-3 bg-green-100 teal-950 font-averia font-semibold text-1/1.25 shadow-sm shadow-orange-200 rounded-b-md">
       <div className="">
-        <CustomLink to="/" txt="Complete Auth System" style="brand">
+        <CustomLink to="/" txt="Pharmacy Mgmt Syst" style="brand">
           <AiFillHome className="w-1.5 h-1.5 text-green-900" />
         </CustomLink>
       </div>
