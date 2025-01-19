@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_BASE_URL;
-// const BASE_URL = import.meta.env.VITE_BASE_LIVE_URL;
+// const BASE_URL = import.meta.env.VITE_BASE_URL;
+const BASE_URL = "https://pharmacy-mgmt-backend.onrender.com/api";
 
 // axios.defaults.baseURL = BASE_URL;
 //  axios.defaults.withCredentials = true

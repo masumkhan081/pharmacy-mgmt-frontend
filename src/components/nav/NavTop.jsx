@@ -11,6 +11,7 @@ import { BiSolidUserPlus, BiUserPlus, BiLogInCircle } from "react-icons/bi";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { AiFillHome, AiOutlineClose } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
+import {getHandler} from "../../util/handler"
 
 export default function NavTop() {
 
@@ -35,9 +36,17 @@ export default function NavTop() {
       ? "sm:flex hidden  sm:grow  gap-4 justify-end items-center text-green-800 "
       : "sm:hidden block absolute top-[52px] left-[10px] right-[10px] rounded-md  h-auto flex flex-col gap-4 bg-green-200 border border-br/600 px-4 py-4";
 
+  async function fetchData() {
+    alert("hi hello !")
+    // https://pharmacy-mgmt-backend.onrender.com
+    const data = await getHandler("/units");
+    alert(`--log-- ` + JSON.stringify(data.data.data))
+  }
+
   return (
     <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-3 bg-green-100 teal-950 font-averia font-semibold text-1/1.25 shadow-sm shadow-orange-200 rounded-b-md">
-      <div className="">
+      <div className="flex gap-2 items-center">
+        <button onClick={() => fetchData()}>Fetch</button>
         <CustomLink to="/" txt="Pharmacy Mgmt Syst" style="brand">
           <AiFillHome className="w-1.5 h-1.5 text-green-900" />
         </CustomLink>
