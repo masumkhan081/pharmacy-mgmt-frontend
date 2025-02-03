@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "git":"git add . && git commit -m `commited` && git push",
+    "2":"git add . && git commit -m `commited`",
+    "3":"git add . && git commit -m `commited` && git push",
     "lint": "eslint .",
     "preview": "vite preview"
   },

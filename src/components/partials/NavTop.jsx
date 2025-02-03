@@ -3,15 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import menu from "../../assets/icons/menu.svg";
 import close from "../../assets/icons/close.svg";
-import CustomLink from "../../common-ui/CustomLink";
-import Button from "../../common-ui/Button";
+import CustomLink from "../common-ui/CustomLink";
+import Button from "../common-ui/Button";
 import ProjectList from "../ProjectList";
-import { BsInfoCircle, BsList, BsListNested, BsInfoLg } from "react-icons/bs";
+import { MdLocalPharmacy } from "react-icons/md";
 import { BiSolidUserPlus, BiUserPlus, BiLogInCircle } from "react-icons/bi";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { AiFillHome, AiOutlineClose } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
-import {getHandler} from "../../util/handler"
+import { getHandler } from "../../utils/handler"
 
 export default function NavTop() {
 
@@ -23,13 +23,16 @@ export default function NavTop() {
   function handleLogout() {
     toAuthForm(false);
     setMenuFolded(true);
-    Cookies.remove(tokenHeader);
+    dispatch(setUser(null));  // Clear Redux store
+    localStorage.removeItem("user"); // Remove from localStorage
+    navigate("/login");  // Redirect to login page
     getHandler("/auth/logout").then((data) => {
 
     }).catch((err) => {
 
     });
   }
+
 
   const styLogic = () =>
     menuFolded
@@ -44,20 +47,20 @@ export default function NavTop() {
   }
 
   return (
-    <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-3 bg-green-100 teal-950 font-averia font-semibold text-1/1.25 shadow-sm shadow-orange-200 rounded-b-md">
+    <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-2 teal-950 font-semibold text-1/1.25 rounded-b-md">
       <div className="flex gap-2 items-center">
-        <button onClick={() => fetchData()}>Fetch</button>
+        {/* <button onClick={() => fetchData()}>Fetch</button> */}
         <CustomLink to="/" txt="Pharmacy Mgmt Syst" style="brand">
-          <AiFillHome className="w-1.5 h-1.5 text-green-900" />
+          <MdLocalPharmacy className="w-5 h-5 text-blue-700" />
         </CustomLink>
       </div>
       <div className={styLogic()}>
-        <Button
+        {/* <Button
           onClick={() => setDropDown(!dropDown)}
           txt="Other Projects"
           icon={<BsListNested className="nav_icn" />}
           style={"btn_nav"}
-        />
+        /> */}
         {!isAuthenticated && (
           <Button
             onClick={() => {

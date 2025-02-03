@@ -6,7 +6,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import {
   initModal,

@@ -1,7 +1,7 @@
  
-import PageTitle from "../common-ui/PageTitle";
+import PageTitle from "../components/common-ui/PageTitle";
 import ViewFilterStaff from "../components/tabularViews/ViewFilterStaff";
-import Button from "../common-ui/Button";
+import Button from "../components/common-ui/Button";
 import SearchFilter from "../components/SearchFilter";
 import { Outlet } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";

@@ -5,7 +5,7 @@ import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
   /* checkSingle, checkAll, */ setCurrentView,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 import { initModal, setModaldata } from "../../redux/slices/DrugsView";
 
 export default function GroupTbl() {

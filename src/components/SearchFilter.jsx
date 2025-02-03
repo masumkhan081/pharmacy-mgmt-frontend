@@ -1,6 +1,6 @@
 import React from 'react'
-import Input from '../common-ui/Input'
-import Button from '../common-ui/Button'
+import Input from './common-ui/Input'
+import Button from './common-ui/Button'
 
 export default function SearchFilter({ searchContent, setSearchContent }) {
   return (

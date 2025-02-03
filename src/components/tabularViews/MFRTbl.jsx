@@ -10,7 +10,7 @@ import {
   closeModal,
   setModaldata
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
 

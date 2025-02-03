@@ -1,24 +1,27 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-export const saleSlice = createSlice({
+export const userSlice = createSlice({
    name: "user",
    initialState: {
       username: "",
       email: "",
       id: "",
-      role: "salesman",
+      role: "",
       authenticated: false,
    },
    reducers: {
       setUser: (state, action) => {
-         const { data } = action.payload;
-         // state.currentView = view;
+         alert(JSON.stringify(action.payload))
+         state.username = action.payload.username;
+         state.authenticated = true;
+         state.email = action.payload.email;
+         state.role = action.payload.role;
       },
    },
 });
 
 // Action creators are generated for each case reducer function
 export const { setUser } =
-   saleSlice.actions;
+   userSlice.actions;
 
-export default saleSlice.reducer;
+export default userSlice.reducer;

@@ -1,5 +1,5 @@
 import React from "react";
-import Label from "../../common-ui/Label";
+import Label from "../common-ui/Label";
 //  icons
 import eye from "../../assets/icons/eye.svg";
 

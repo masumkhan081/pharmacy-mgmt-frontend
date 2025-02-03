@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import Button from "../../common-ui/Button";
+import Button from "../common-ui/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { setCurrentView } from "../../redux/slices/DrugsView";
 import { tblOptionsDrugsPage } from "../../static-data/table";

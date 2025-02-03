@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Label from "../../common-ui/Label";
+import Label from "../common-ui/Label";
 
 export default function Recovery() {
 

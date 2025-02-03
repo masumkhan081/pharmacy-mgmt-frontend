@@ -7,7 +7,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 
 export default function UnitTbl({ }) {
   //

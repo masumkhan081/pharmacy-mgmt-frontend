@@ -1,9 +1,9 @@
 import React from "react";
-import Title from "../common-ui/Title";
+import Title from "../components/common-ui/Title";
 import { HiMiniQueueList } from "react-icons/hi2";
 import { FaBookReader, FaHandPointRight } from "react-icons/fa";
 import { FaRightLong } from "react-icons/fa6";
-import List from "../common-ui/List";
+import List from "../components/common-ui/List";
 import {
   usedTechAndTools,
   projectFeatures,

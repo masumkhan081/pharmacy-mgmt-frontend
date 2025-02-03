@@ -1,12 +1,11 @@
 import { Outlet } from "react-router-dom";
-import NavLeft from "../components/nav/NavLeft";
+import NavLeft from "../components/partials/NavLeft";
 import { } from "../redux/slices/User";
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 //
 export default function Landing() {
-
 
   const navigate = useNavigate();
   const userRole = useSelector((state) => state.user.role);
@@ -20,7 +19,8 @@ export default function Landing() {
       navigate("/drugs/brands")
     }
     else {
-      navigate("/auth");
+      navigate("/auth/login");
+      // navigate("/drugs/brands")
     }
   }, [])
 

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { setFormulations } from '../../redux/slices/DrugsView'
-import { getHandler } from '../../util/handler'
+import { getHandler } from '../../utils/handler'
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
 

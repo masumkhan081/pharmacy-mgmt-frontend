@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { tblHeaderFormulations } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import { /* checkSingle, checkAll, */ setCurrentView } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import {
   initModal,

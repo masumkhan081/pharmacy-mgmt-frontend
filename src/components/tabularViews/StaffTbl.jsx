@@ -6,7 +6,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/StaffView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handler";
 
 export default function StaffTbl() {
   //

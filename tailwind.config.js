@@ -66,6 +66,9 @@ export default {
         titan: ["Titan One"],
         averia: ["Averia Serif Libre"],
         inter: ["Inter"],
+        agud: ["Agu Display", "serif"],
+        anton: ['Anton', 'sans-serif'], // Add the Anton font family
+        jersey: ['Jersey 15', 'serif'], // Add the Jersey 15 font family
       },
       letterSpacing: {
         "02": "0.2rem",
