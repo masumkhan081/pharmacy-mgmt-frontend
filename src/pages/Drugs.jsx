@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Button from "../components/common-ui/Button";
 import PageTitle from "../components/common-ui/PageTitle";
 import ViewFilterDrugs from "../components/tabularViews/ViewFilterDrugs";
-import SearchFilter from "../components/SearchFilter";
+import SearchFilter from "../components/common-ui/SearchFilter";
 import { AiOutlinePlus } from "react-icons/ai";
 //
 import { Outlet } from "react-router-dom"; 

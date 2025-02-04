@@ -2,7 +2,7 @@
 import PageTitle from "../components/common-ui/PageTitle";
 import ViewFilterStaff from "../components/tabularViews/ViewFilterStaff";
 import Button from "../components/common-ui/Button";
-import SearchFilter from "../components/SearchFilter";
+import SearchFilter from "../components/common-ui/SearchFilter";
 import { Outlet } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
 import SalaryForm from "../components/staff/SalaryForm";

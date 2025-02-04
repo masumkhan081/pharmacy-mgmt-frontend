@@ -1,38 +1,39 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import menu from "../../assets/icons/menu.svg";
-import close from "../../assets/icons/close.svg";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import CustomLink from "../common-ui/CustomLink";
 import Button from "../common-ui/Button";
-import ProjectList from "../ProjectList";
+import ProjectList from "../common-ui/ProjectList";
 import { MdLocalPharmacy } from "react-icons/md";
-import { BiSolidUserPlus, BiUserPlus, BiLogInCircle } from "react-icons/bi";
+import { BiLogInCircle } from "react-icons/bi";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { AiFillHome, AiOutlineClose } from "react-icons/ai";
+import { AiOutlineClose } from "react-icons/ai";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { getHandler } from "../../utils/handler"
-
+import { reset } from "../../redux/slices/User";
+// 
 export default function NavTop() {
 
   const [dropDown, setDropDown] = useState(false);
   const [menuFolded, setMenuFolded] = useState(true);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.user.authenticated);
 
   function handleLogout() {
-    toAuthForm(false);
+
+    alert("to logout ...")
     setMenuFolded(true);
-    dispatch(setUser(null));  // Clear Redux store
-    localStorage.removeItem("user"); // Remove from localStorage
-    navigate("/login");  // Redirect to login page
-    getHandler("/auth/logout").then((data) => {
+    dispatch(reset());
+    localStorage.removeItem("user");
+    navigate("/auth/login");
 
-    }).catch((err) => {
+    // getHandler("/auth/logout").then((data) => {
 
-    });
+    // }).catch((err) => {
+
+    // });
   }
-
 
   const styLogic = () =>
     menuFolded
@@ -40,7 +41,7 @@ export default function NavTop() {
       : "sm:hidden block absolute top-[52px] left-[10px] right-[10px] rounded-md  h-auto flex flex-col gap-4 bg-green-200 border border-br/600 px-4 py-4";
 
   async function fetchData() {
-    alert("hi hello !")
+
     // https://pharmacy-mgmt-backend.onrender.com
     const data = await getHandler("/units");
     alert(`--log-- ` + JSON.stringify(data.data.data))

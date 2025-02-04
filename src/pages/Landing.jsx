@@ -1,7 +1,6 @@
 import { Outlet } from "react-router-dom";
 import NavLeft from "../components/partials/NavLeft";
-import { } from "../redux/slices/User";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 //
@@ -11,18 +10,16 @@ export default function Landing() {
   const userRole = useSelector((state) => state.user.role);
 
   useEffect(() => {
-    console.log(userRole);
-    if (userRole == "admin" || userRole == "super-admin" || userRole == "manager") {
-      navigate("/dashboard");
+    if (userRole) {
+      if (["admin", "super-admin", "manager"].includes(userRole)) {
+        navigate("/dashboard");
+      } else if (userRole === "salesman") {
+        navigate("/drugs/brands");
+      } else {
+        navigate("/auth/login");
+      }
     }
-    else if (userRole == "salesman") {
-      navigate("/drugs/brands")
-    }
-    else {
-      navigate("/auth/login");
-      // navigate("/drugs/brands")
-    }
-  }, [])
+  }, [userRole, navigate]);
 
   return (
     <div className="w-full h-full  grid grid-cols-5 ">

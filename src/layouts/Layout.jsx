@@ -13,7 +13,6 @@ export default function Layout() {
 
   const loadUserFromStorage = () => {
     const storedUser = localStorage.getItem("user");
-    
     if (storedUser) {
       dispatch(setUser(JSON.parse(storedUser))); // Restore user in Redux store
     }
