@@ -19,17 +19,17 @@ export const drugsViewSlice = createSlice({
          state.expanded = state.expanded === "hidden" ? "block" : "block";
       },
 
-      initModal: (state, action) => {
+      toggleModal: (state, action) => {
          state.isModalVisible = action.payload.isModalVisible;
          state.isModalForEdit = action.payload.isModalForEdit;
       },
-      closeModal: (state, action) => {
+      toggleModal: (state, action) => {
          state.isModalVisible = action.payload.isModalVisible;
       },
    },
 });
 
 // Action creators are generated for each case reducer function
-export const { setCurrentView, initModal, closeModal } = drugsViewSlice.actions;
+export const { setCurrentView, toggleModal, toggleModal } = drugsViewSlice.actions;
 
 export default drugsViewSlice.reducer;

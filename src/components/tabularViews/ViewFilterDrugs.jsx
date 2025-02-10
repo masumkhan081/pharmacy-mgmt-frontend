@@ -12,8 +12,8 @@ export default function ViewFilterDrugs() {
   const navigate = useNavigate();
   const currentView = useSelector((state) => state.drugsView.currentView);
   const activeStyle = (button) => (button == currentView ? "bg-green-300" : "");
-  console.log("currentView::   ", currentView);
-  // 
+
+  //
   return (
     <div className="flex gap-2 flex-wrap">
       {tblOptionsDrugsPage.map((option, ind) => {

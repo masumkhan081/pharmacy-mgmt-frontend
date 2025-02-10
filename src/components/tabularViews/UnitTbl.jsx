@@ -63,7 +63,7 @@ export default function UnitTbl({ }) {
                 <td className="py-1.0 flex justify-center gap-2">
                     <button
                       onClick={() => {
-                        dispatch(initModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
+                        dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
                         dispatch(setModaldata({ id: item._id, name: item.name }))
                       }}
                     >

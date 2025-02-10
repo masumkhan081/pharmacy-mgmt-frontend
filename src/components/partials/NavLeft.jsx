@@ -1,4 +1,4 @@
-import React, { useState } from "react"; import { useDispatch, useSelector } from "react-redux";
+import React, { useState } from "react";
 import {
   Outlet,
   Link,
@@ -6,31 +6,25 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import navMap from '../../static-data/left-nav'
-import { AiFillCaretRight } from 'react-icons/ai'
-
+import navMap from "../../static-data/left-nav";
+import { AiFillCaretRight } from "react-icons/ai";
+import { useSelector } from "react-redux";
+//
 export default function NavLeft() {
-
   const [expansion, setExpansion] = useState({
     Drugs: "hidden",
-    Staff: "hidden"
-  })
+    Staff: "hidden",
+  });
   function setView(ofWhat) {
-    expansion[ofWhat] == "block" ? setExpansion({ ...expansion, [ofWhat]: "hidden" }) :
-      setExpansion({ ...expansion, [ofWhat]: "block" })
+    expansion[ofWhat] == "block"
+      ? setExpansion({ ...expansion, [ofWhat]: "hidden" })
+      : setExpansion({ ...expansion, [ofWhat]: "block" });
   }
-  const isExtpanded = (what) => expansion[what] == "block" ? true : false
-  // 
-  const user = {
-    name: "some khan",
-    email: "blabla@gmail.com",
-    role2: "admin",
-    role: "pharmacist",
-    role3: "manager",
-    role4: "salesman",
-  };
-  const location = useLocation();
+  const isExtpanded = (what) => (expansion[what] == "block" ? true : false);
+  //
 
+  const location = useLocation();
+  const userRole = useSelector((state) => state.user.role);
 
   // active navlink has a horizontal piece of shit at it's left of yellow color
   const sty_log_hr = (str) =>
@@ -52,30 +46,55 @@ export default function NavLeft() {
   const cmn_sty =
     "rounded-md font-inter text-1/1.5 py-0.5 px-0.75 h-full w-full ml-1";
   return (
-    <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border ">
-
+    <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border">
       {navMap
-        .filter((Pok) => Pok.access.includes(user.role))
+        .filter(
+          (navItem) =>
+            // Check the main item access control
+            !navItem.isAccessControlled ||
+            navItem.noAccessControl ||
+            navItem?.access?.includes(userRole)
+        )
         .map((navItem, ind) => {
           return (
-            <li className="flex flex-col w-full  " key={ind}>
-              <NavLink to={navItem.to} onClick={() => setView(navItem.text)}
-                className="bg-green-100 w-full flex justify-between items-center rounded-md border border-slate-500 px-2 py-0.25">
-                <span >{navItem.text}</span>
-                {navItem.sub && <AiFillCaretRight className={isExtpanded(navItem.text) ? "rotate-90" : "rotate-0"} />}
+            <li className="flex flex-col w-full" key={ind}>
+              <NavLink
+                to={navItem.to}
+                onClick={() => setView(navItem.text)}
+                className=" w-full flex justify-between items-center rounded-md border border-slate-500 px-2 py-0.25 font-semibold"
+              >
+                <span>{navItem.text}</span>
+                {navItem.existSubOptions && (
+                  <AiFillCaretRight
+                    className={
+                      isExtpanded(navItem.text) ? "rotate-90" : "rotate-0"
+                    }
+                  />
+                )}
               </NavLink>
 
-              {navItem.sub && (
-                <ul className={` py-1 space-y-1 w-full  ${expansion[navItem.text]}`}>
-                  {navItem.options.map((item, index) => {
-                    return (
-                      <li key={index} className="text-center text-sm rounded-md border border-slate-200 py-0.125">
-                        <NavLink to={item.to}>
-                          <span>{item.text}</span>
-                        </NavLink>
-                      </li>
-                    );
-                  })}
+              {navItem.existSubOptions && (
+                <ul
+                  className={`py-1 space-y-1 w-full ${expansion[navItem.text]}`}
+                >
+                  {navItem.options
+                    .filter(
+                      (item) =>
+                        item.isAccessControlled === false ||
+                        item?.access?.includes(userRole)
+                    )
+                    .map((item, index) => {
+                      return (
+                        <li
+                          key={index}
+                          className="  text-center text-sm rounded-md border border-slate-400 py-0.125"
+                        >
+                          <NavLink to={item.to}>
+                            <span>{item.text}</span>
+                          </NavLink>
+                        </li>
+                      );
+                    })}
                 </ul>
               )}
             </li>

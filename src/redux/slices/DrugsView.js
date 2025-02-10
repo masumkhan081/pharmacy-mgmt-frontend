@@ -18,10 +18,8 @@ export const drugsViewSlice = createSlice({
     manufacturers: [],
   },
   reducers: {
-
     setCurrentView: (state, action) => {
       const { view, data } = action.payload;
-      console.log("view:   ?  ?      " + view);
       state.currentView = view;
       state[`${view}`] = data;
       state.expanded = state.expanded === "hidden" ? "block" : "block";
@@ -34,13 +32,11 @@ export const drugsViewSlice = createSlice({
       console.log(action.payload);
       state = { ...state, currentView: action.payload };
     },
-    initModal: (state, action) => {
+    toggleModal: (state, action) => {
       state.isModalVisible = action.payload.isModalVisible;
-      state.isModalForEdit = action.payload.isModalForEdit;
-    },
-    closeModal: (state, action) => {
-      console.log("action.payload.isModalVisible: ",action.payload.isModalVisible);
-      state.isModalVisible = action.payload.isModalVisible;
+      if (action.payload.isModalForEdit !== undefined) {
+        state.isModalForEdit = action.payload.isModalForEdit;
+      }
     },
     setModaldata: (state, action) => {
       console.log("setModaldata . .payload:   ", action.payload);
@@ -48,29 +44,35 @@ export const drugsViewSlice = createSlice({
     },
     setManufacturers: (state, action) => {
       console.log("mfrs: acation-payload:  " + JSON.stringify(action.payload));
-      state.manufacturers = action.payload.data
+      state.manufacturers = action.payload.data;
     },
     setStock: (state, action) => {
-      console.log("stock: ---- acation-payload:  " + JSON.stringify(action.payload));
-      state.stock = action.payload.data
+      console.log(
+        "stock: ---- acation-payload:  " + JSON.stringify(action.payload)
+      );
+      state.stock = action.payload.data;
     },
     setFormulations: (state, action) => {
       console.log("mfrs: acation-payload:  " + JSON.stringify(action.payload));
-      state.manufacturers = action.payload.data
+      state.manufacturers = action.payload.data;
     },
     setBrands: (state, action) => {
-      console.log("brands: acation-payload:  " + JSON.stringify(action.payload));
-      state.brands = action.payload.data
+      console.log(
+        "brands: acation-payload:  " + JSON.stringify(action.payload)
+      );
+      state.brands = action.payload.data;
     },
     setUnits: (state, action) => {
-      console.log("units: - : acation-payload:  " + JSON.stringify(action.payload));
-      state.units = action.payload.data
+      console.log(
+        "units: - : acation-payload:  " + JSON.stringify(action.payload)
+      );
+      state.units = action.payload.data;
     },
     setGroups: (state, action) => {
-      state.groups = action.payload.data
+      state.groups = action.payload.data;
     },
     setGenerics: (state, action) => {
-      state.generics = action.payload
+      state.generics = action.payload;
     },
     deletHandler: (state, action) => {
       console.log(action.payload);
@@ -82,6 +84,19 @@ export const drugsViewSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setCurrentView, checkSingle, checkAll, initModal, setModaldata, closeModal, setBrands, setStock, setFormulations, setUnits, setManufacturers, setGroups, setGenerics } = drugsViewSlice.actions;
+export const {
+  setCurrentView,
+  checkSingle,
+  checkAll,
+  toggleModal, 
+  setModaldata,
+  setBrands,
+  setStock,
+  setFormulations,
+  setUnits,
+  setManufacturers,
+  setGroups,
+  setGenerics,
+} = drugsViewSlice.actions;
 
 export default drugsViewSlice.reducer;

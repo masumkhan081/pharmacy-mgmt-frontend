@@ -14,7 +14,7 @@ export default function Landing() {
       if (["admin", "super-admin", "manager"].includes(userRole)) {
         navigate("/dashboard");
       } else if (userRole === "salesman") {
-        navigate("/drugs/brands");
+        navigate("/drugs/stock");
       } else {
         navigate("/auth/login");
       }

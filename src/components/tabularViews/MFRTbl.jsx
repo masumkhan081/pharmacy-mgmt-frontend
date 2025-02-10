@@ -6,15 +6,14 @@ import {
   checkSingle,
   checkAll,
   setCurrentView,
-  initModal,
-  closeModal,
-  setModaldata
+  toggleModal,
+  setModaldata,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
 import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
 
-export default function MFRTbl({ }) {
+export default function MFRTbl({}) {
   //
   const dispatch = useDispatch();
   const mfrs = useSelector((state) => state.drugsView.manufacturers);
@@ -75,8 +74,15 @@ export default function MFRTbl({ }) {
                   <td className="py-1.0 flex justify-center gap-2">
                     <button
                       onClick={() => {
-                        dispatch(initModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
-                        dispatch(setModaldata({ id: item._id, name: item.name }))
+                        dispatch(
+                          toggleModal({
+                            isModalForEdit: true,
+                            isModalVisible: true,
+                          })
+                        );
+                        dispatch(
+                          setModaldata({ id: item._id, name: item.name })
+                        );
                       }}
                     >
                       <AiFillEdit className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />

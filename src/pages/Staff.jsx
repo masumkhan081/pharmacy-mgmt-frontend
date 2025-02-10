@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 export default function Staff() {
   //
   const dispatch = useDispatch();
-  // const closeModal = useSelector((state) => state.drugsView.closeModal)
+  // const toggleModal = useSelector((state) => state.drugsView.toggleModal)
   // const modalData = useSelector((state) => state.drugsView.modalData)
   const currentView = useSelector((state) => state.staffView.currentView);
   const isModalVisible = useSelector((state) => state.drugsView.isModalVisible);
@@ -30,7 +30,7 @@ export default function Staff() {
           txt={` ${currentView}`}
           onClick={() => {
             dispatch(
-              initModal({ isModalForEdit: false, isModalVisible: true })
+              toggleModal({ isModalForEdit: false, isModalVisible: true })
             );
           }}
           style={`btn_test_data`}

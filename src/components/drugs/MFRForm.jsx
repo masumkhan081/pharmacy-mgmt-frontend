@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { closeModal, setManufacturers } from '../../redux/slices/DrugsView'
+import { toggleModal, setManufacturers } from '../../redux/slices/DrugsView'
 import { getHandler, postHandler, patchHandler } from '../../utils/handler'
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react';
@@ -29,12 +29,9 @@ export default function MFRForm() {
   }, []);
 
   return (
-    <div className="flex flex-col ">
-
-      <div className='flex justify-end'>
-        <button onClick={() => dispatch(closeModal({ isModalVisible: false }))}>Close</button>
-      </div>
-      <span>{JSON.stringify(isModalForEdit)}</span>
+    <form className="flex flex-col ">
+ 
+     
       <div className=' flex flex-col'>
         <label>Existing Manufacturers</label>
         <select  >
@@ -53,6 +50,6 @@ export default function MFRForm() {
         <button onClick={() => handleSave()}>Save</button>
       </div>
 
-    </div>
+    </form>
   )
 }

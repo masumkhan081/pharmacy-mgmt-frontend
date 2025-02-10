@@ -1,7 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  setUnits
-} from "../../redux/slices/DrugsView";
+import { setUnits } from "../../redux/slices/DrugsView";
 import { getHandler, postHandler } from "../../utils/handler";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
@@ -9,16 +7,18 @@ import { useState } from "react";
 export default function UnitForm({ visible, setDropDown }) {
   //
   const dispatch = useDispatch();
-  const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit)
-  const modalData = useSelector((state) => state.drugsView.modalData)
+  const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
+  const modalData = useSelector((state) => state.drugsView.modalData);
   const units = useSelector((state) => state.drugsView.units);
-  const [name, setName] = useState(isModalForEdit == true ? modalData.name : "")
-  //   
+  const [name, setName] = useState(
+    isModalForEdit == true ? modalData.name : ""
+  );
+  //
   async function handleSave() {
-    const response = postHandler("/units", { name })
+    const response = postHandler("/units", { name });
     console.log("resp: - units-- ", JSON.stringify(response));
   }
-  // 
+  //
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/units/all");
@@ -26,20 +26,17 @@ export default function UnitForm({ visible, setDropDown }) {
     };
     fetch();
   }, []);
-  // 
+  //
 
   return (
-    <div className="flex flex-col ">
-      <div className="flex justify-end">
-        <button onClick={() => setDropDown(!visible)}>Close</button>
-      </div>
-
-      <div className=' flex flex-col'>
+    <form className="flex flex-col ">
+      <div className=" flex flex-col">
         <label>Existing Units</label>
         <select>
-          {units && units?.map((unit, ind) => {
-            return <option key={ind}  >{unit.name}</option>
-          })}
+          {units &&
+            units?.map((unit, ind) => {
+              return <option key={ind}>{unit.name}</option>;
+            })}
         </select>
       </div>
 
@@ -59,6 +56,6 @@ export default function UnitForm({ visible, setDropDown }) {
       >
         Save
       </button>
-    </div>
+    </form>
   );
 }

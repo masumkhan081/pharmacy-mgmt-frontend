@@ -1,51 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import CustomLink from "../common-ui/CustomLink";
 import Button from "../common-ui/Button";
-import ProjectList from "../common-ui/ProjectList";
 import { MdLocalPharmacy } from "react-icons/md";
-import { BiLogInCircle } from "react-icons/bi";
-import { RiLogoutCircleRLine } from "react-icons/ri";
 import { AiOutlineClose } from "react-icons/ai";
-import { GiHamburgerMenu } from "react-icons/gi";
-import { getHandler } from "../../utils/handler"
+import { CgProfile } from "react-icons/cg";
+import { HiLogout, HiLogin } from "react-icons/hi";
+import { getHandler } from "../../utils/handler";
 import { reset } from "../../redux/slices/User";
-// 
+//
 export default function NavTop() {
-
   const [dropDown, setDropDown] = useState(false);
-  const [menuFolded, setMenuFolded] = useState(true);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector((state) => state.user.authenticated);
 
   function handleLogout() {
-
-    alert("to logout ...")
-    setMenuFolded(true);
+    setDropDown(false);
     dispatch(reset());
     localStorage.removeItem("user");
     navigate("/auth/login");
 
     // getHandler("/auth/logout").then((data) => {
-
     // }).catch((err) => {
-
     // });
   }
 
-  const styLogic = () =>
-    menuFolded
-      ? "sm:flex hidden  sm:grow  gap-4 justify-end items-center text-green-800 "
-      : "sm:hidden block absolute top-[52px] left-[10px] right-[10px] rounded-md  h-auto flex flex-col gap-4 bg-green-200 border border-br/600 px-4 py-4";
+  // function toggleProfileMenu() {}
 
-  async function fetchData() {
+  // async function fetchData() {
+  //   // https://pharmacy-mgmt-backend.onrender.com
+  //   const data = await getHandler("/units");
+  //   alert(`--log-- ` + JSON.stringify(data.data.data));
+  // }
 
-    // https://pharmacy-mgmt-backend.onrender.com
-    const data = await getHandler("/units");
-    alert(`--log-- ` + JSON.stringify(data.data.data))
-  }
+  // useEffect(() => {
+  //   alert("isAuthenticated has changed:", isAuthenticated);
+  // }, [isAuthenticated]);
 
   return (
     <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-2 teal-950 font-semibold text-1/1.25 rounded-b-md">
@@ -55,57 +47,51 @@ export default function NavTop() {
           <MdLocalPharmacy className="w-5 h-5 text-blue-700" />
         </CustomLink>
       </div>
-      <div className={styLogic()}>
-        {/* <Button
-          onClick={() => setDropDown(!dropDown)}
-          txt="Other Projects"
-          icon={<BsListNested className="nav_icn" />}
-          style={"btn_nav"}
-        /> */}
-        {!isAuthenticated && (
-          <Button
-            onClick={() => {
-              setMenuFolded(true);
-              navigate("/auth/login")
-            }}
-            txt="Log In"
-            icon={<BiLogInCircle className="nav_icn" />}
-            style={"btn_nav"}
-          />
-        )}
 
-        {isAuthenticated && (
-          <Button
-            onClick={
-              handleLogout
-            }
-            txt="Log Out"
-            icon={<RiLogoutCircleRLine className="nav_icn" />}
-            style={"btn_nav"}
-          />
-        )}
-
-        <div className={dropDown ? "nav_drop_down" : `hidden`}>
-          <ProjectList
-            onClose={() => {
-              setDropDown(false);
-              setMenuFolded(true);
-            }}
-          />
-        </div>
-      </div>
-      <div className="sm:hidden block">
+      {!isAuthenticated && (
         <Button
+          onClick={() => {
+            navigate("/auth/login");
+          }}
+          txt="Log In"
+          // endIcon={<HiLogin className="nav_icn text-blue-700" />}
+          style={"btn_nav"}
+        />
+      )}
+      {isAuthenticated && (
+        <Button
+          onClick={() => setDropDown(!dropDown)}
           icon={
-            menuFolded ? (
-              <GiHamburgerMenu className="nav_icn" />
+            dropDown ? (
+              <AiOutlineClose className="nav_icn text-orange-800" />
             ) : (
-              <AiOutlineClose className="nav_icn" />
+              <CgProfile className="nav_icn text-blue-700" />
             )
           }
-          onClick={() => setMenuFolded(!menuFolded)}
+          style={"btn_nav"}
         />
-      </div>
+      )}
+
+      {isAuthenticated && dropDown && (
+        <div className="flex flex-col gap-4 sm:px-4 px-2 py-4 absolute z-10 sm:w-[300px] w-1/2  left-auto right-0 top-[40px] h-auto border rounded-md bg-slate-200">
+          <Button
+            txt={"Profile"}
+            onClick={() => {
+              navigate("/auth/profile");
+            }}
+            icon={<CgProfile className="nav_icn text-blue-700" />}
+            style={"btn_nav"}
+          />
+          <Button
+            txt={"Logout"}
+            onClick={() => handleLogout()}
+            icon={<HiLogout className="nav_icn text-red-900" />}
+            style={
+              "flex items-center flex-wrap overflow-hidden gap-1 text-center px-2 py-1 rounded-md text-sm flex gap-2 text-red-800 border border-red-950"
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }

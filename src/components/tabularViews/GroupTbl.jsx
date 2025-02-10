@@ -6,7 +6,7 @@ import {
   /* checkSingle, checkAll, */ setCurrentView,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
-import { initModal, setModaldata } from "../../redux/slices/DrugsView";
+import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
 
 export default function GroupTbl() {
   //
@@ -63,7 +63,7 @@ export default function GroupTbl() {
                     <button
                       onClick={() => {
                         dispatch(
-                          initModal({
+                          toggleModal({
                             isModalForEdit: true,
                             isModalVisible: true,
                             data: { id: item._id, name: item.name },

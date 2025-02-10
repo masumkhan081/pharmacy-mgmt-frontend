@@ -7,7 +7,7 @@ import {
   setCurrentView,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
-import { initModal, setModaldata } from "../../redux/slices/DrugsView";
+import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
 
 export default function GenericTbl({}) {
   //
@@ -65,7 +65,7 @@ export default function GenericTbl({}) {
                     <button
                       onClick={() => {
                         dispatch(
-                          initModal({
+                          toggleModal({
                             isModalForEdit: true,
                             isModalVisible: true,
                             data: { id: item._id, name: item.name },

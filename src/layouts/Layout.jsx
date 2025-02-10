@@ -2,12 +2,11 @@ import React, { useEffect } from "react";
 import { Outlet } from "react-router-dom";
 import NavTop from "../components/partials/NavTop";
 import Footer from "../components/partials/Footer";
-import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slices/User";
 
 export default function Layout() {
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -15,8 +14,7 @@ export default function Layout() {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
       dispatch(setUser(JSON.parse(storedUser))); // Restore user in Redux store
-    }
-    else {
+    } else {
       navigate("/auth/login");
     }
   };

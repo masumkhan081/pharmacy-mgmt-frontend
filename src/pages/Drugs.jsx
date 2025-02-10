@@ -5,7 +5,7 @@ import ViewFilterDrugs from "../components/tabularViews/ViewFilterDrugs";
 import SearchFilter from "../components/common-ui/SearchFilter";
 import { AiOutlinePlus } from "react-icons/ai";
 //
-import { Outlet } from "react-router-dom"; 
+import { Outlet } from "react-router-dom";
 import DrugForm from "../components/drugs/DrugForm";
 import MFRForm from "../components/drugs/MFRForm";
 import UnitForm from "../components/drugs/UnitForm";
@@ -13,8 +13,7 @@ import GroupForm from "../components/drugs/GroupForm";
 import GenericForm from "../components/drugs/GenericForm";
 import BrandForm from "../components/drugs/BrandForm";
 import FormulationForm from "../components/drugs/FormulationForm";
-import { initModal } from "../redux/slices/DrugsView";
-
+import { toggleModal } from "../redux/slices/DrugsView";
 
 export default function Drugs() {
   //
@@ -30,19 +29,34 @@ export default function Drugs() {
     <div className="w-full flex flex-col gap-1.25 md:px-0.38 pt-1.5">
       <PageTitle title={currentView} />
       <div className="flex justify-between md:flex-row flex-col gap-2">
-
         <ViewFilterDrugs />
 
         <Button
           icon={<AiOutlinePlus className="inline text-red-700" />}
           txt={` ${currentView}`}
-          onClick={() => { dispatch(initModal({ isModalForEdit: false, isModalVisible: true })) }}
+          onClick={() => {
+            dispatch(
+              toggleModal({ isModalForEdit: false, isModalVisible: true })
+            );
+          }}
           style={`btn_test_data`}
         />
 
-        <div className={isModalVisible ? "nav_drop_down" : `hidden`}>
+        <div
+          className={
+            isModalVisible
+              ? "flex flex-col gap-4 sm:px-4 px-2 py-4 absolute z-10 sm:w-[500px] w-full sm:mx-auto mx-2 right-0 left-0 border border-yellow-800 rounded-md bg-slate-200"
+              : `hidden`
+          }
+        >
+          <div className=" flex justify-end">
+            <Button
+              txt="Close"
+              onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
+            />
+          </div>
           {currentView == "brands" && <BrandForm />}
-          {currentView == "drugs" && <DrugForm />}
+          {currentView == "stock" && <DrugForm />}
           {currentView == "formulations" && <FormulationForm />}
           {currentView == "generics" && <GenericForm />}
           {currentView == "groups" && <GroupForm />}

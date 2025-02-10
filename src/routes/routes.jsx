@@ -27,6 +27,7 @@ import StaffTbl from "../components/tabularViews/StaffTbl.jsx";
 import AttendanceTbl from "../components/tabularViews/AttendanceTbl.jsx";
 import SalaryTbl from "../components/tabularViews/SalaryTbl.jsx";
 import About from "../pages/About.jsx";
+import Profile from "../pages/Profile.jsx";
 //
 
 export const routes = createBrowserRouter([
@@ -80,6 +81,7 @@ export const routes = createBrowserRouter([
         element: <Auth />,
         children: [
           { path: "login", element: <Login /> },
+          { path: "profile", element: <Profile /> },
           { path: "register", element: <SignUp /> },
           { path: "account-recovery", element: <Recovery /> },
           { path: "reset-password", element: <Reset /> },

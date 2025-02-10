@@ -16,8 +16,8 @@ export default function DrugTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/drugs");
-      dispatch(setCurrentView({ view: "drugs", data: data.data.stock }));
+      const data = await getHandler("/stock");
+      dispatch(setCurrentView({ view: "stock", data: data?.data?.stock }));
     };
     fetch();
   }, []);
@@ -46,7 +46,7 @@ export default function DrugTbl() {
 
         <tbody>
           {stock &&
-            stock.map((item, ind) => {
+            stock?.map((item, ind) => {
               return (
                 <tr key={ind} className="tr_tbody">
                   <td className="td">
@@ -56,7 +56,7 @@ export default function DrugTbl() {
                       onChange={(e) => dispatch(checkSingle())}
                     />
                   </td>
-                  {/* below padding may apply to all */}
+
                   <td className="py-1.125">{ind}</td>
                   <td className="py-1.125">{item.brandId}</td>
                   <td className="py-1.125">{"item.generic.name"}</td>
@@ -66,12 +66,13 @@ export default function DrugTbl() {
                   </td>
                   <td className="py-1.125">{"item.formulation.name"}</td>
                   <td className="py-1.125">{"item.manufacturer"}</td>
-                  {/* <TD2 txt={item.status} /> */}
+                  <TD2 txt={item.status} />
                 </tr>
               );
             })}
         </tbody>
       </table>
+      {JSON.stringify(stock)}
     </div>
   );
 }

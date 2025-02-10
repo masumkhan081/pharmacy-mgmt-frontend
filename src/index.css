@@ -6,7 +6,8 @@
 
 @layer utilities {
   .font-agud {
-    font-family: "Agu Display", "Anton", "Jersey 15", "Rubik Iso", "Titan One", "Inter";
+    font-family: "Agu Display", "Anton", "Jersey 15", "Rubik Iso", "Titan One",
+      "Inter";
   }
 
   .font-anton {
@@ -57,7 +58,7 @@ body {
 }
 
 .nav_icn {
-  @apply w-5 h-5 text-blue-700;
+  @apply w-5 h-5;
 }
 
 .brand {
@@ -129,9 +130,9 @@ body {
 }
 
 .brdr {
-  @apply border-2 border-red-600
+  @apply border-2 border-red-600;
 }
 
 .brdrr {
-  @apply border-2 border-teal-600
+  @apply border-2 border-teal-600;
 }

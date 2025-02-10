@@ -9,7 +9,7 @@ import {
 import { getHandler } from "../../utils/handler";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import {
-  initModal,
+  toggleModal,
   setModaldata
 } from "../../redux/slices/DrugsView";
 
@@ -70,7 +70,7 @@ export default function BrandTbl({ }) {
                 <td className="py-1.0 flex justify-center gap-2">
                   <button
                     onClick={() => {
-                      dispatch(initModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
                       dispatch(setModaldata({ id: item._id, name: item.name }))
                     }}
                   >
