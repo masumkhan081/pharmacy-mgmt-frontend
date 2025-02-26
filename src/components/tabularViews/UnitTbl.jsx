@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderUnits } from "../../static-data/table";
+import { tblHeaderUnits, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -8,9 +8,11 @@ import {
   setCurrentView,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
+import { useLocation } from "react-router-dom";
 
 export default function UnitTbl({ }) {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const units = useSelector((state) => state.drugsView.units);
   const allChecked = useSelector((state) => state.drugsView.allChecked);
@@ -18,14 +20,17 @@ export default function UnitTbl({ }) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/units");
-      dispatch(setCurrentView({ view: "units", data: data.data.units }));
+      dispatch(setCurrentView({ view: tblOptionsDrugsPage.units, data: data.data.units }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsDrugsPage.units);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
-    <table className="w-full ">
+      <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             {/* <th className="th">
@@ -42,7 +47,7 @@ export default function UnitTbl({ }) {
                 </th>
               );
             })}
-             <th className="th">Action</th>
+            <th className="th">Action</th>
           </tr>
         </thead>
 
@@ -58,21 +63,21 @@ export default function UnitTbl({ }) {
                   />
                 </td> */}
                 {/* below padding may apply to all */}
-                <td className="py-1.125">{ind+1}</td>
+                <td className="py-1.125">{ind + 1}</td>
                 <td className="py-1.125">{item.name}</td>
                 <td className="py-1.0 flex justify-center gap-2">
-                    <button
-                      onClick={() => {
-                        dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
-                        dispatch(setModaldata({ id: item._id, name: item.name }))
-                      }}
-                    >
-                      <AiFillEdit className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
-                    </button>
-                    <button>
-                      <AiFillDelete className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
-                    </button>
-                  </td>
+                  <button
+                    onClick={() => {
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
+                      dispatch(setModaldata({ id: item._id, name: item.name }))
+                    }}
+                  >
+                    <AiFillEdit className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
+                  </button>
+                  <button>
+                    <AiFillDelete className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
+                  </button>
+                </td>
               </tr>
             );
           })}

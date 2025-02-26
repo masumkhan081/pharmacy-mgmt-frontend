@@ -1,16 +1,21 @@
-const tblOptionsDrugsPage = [
-  "stock",
-  "brands",
-  "groups",
-  "generics",
-  "formulations",
-  "units",
-  "manufacturers",
-];
+import { ROLES } from "./user.roles";
 
-const tblOptionsStaffPage = [
-  "members", "salaries", "attendance"
-]
+const tblOptionsDrugsPage = {
+  stock: "stock",
+  brands: "brands",
+  groups: "groups",
+  generics: "generics",
+  formulations: "formulations",
+  units: "units",
+  manufacturers: "manufacturers",
+};
+
+const tblOptionsStaffPage = {
+  members:
+   [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST],
+  salaries: [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST],
+  attendances: [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST]
+};
 
 const tblHeaderDrugs = [
   "Serial",
@@ -22,7 +27,7 @@ const tblHeaderDrugs = [
   "Manufacturer",
 ];
 
-const tblHeaderBrands = ["#","Name", "Generic", "Group", "Manufacturer"];
+const tblHeaderBrands = ["#", "Name", "Generic", "Group", "Manufacturer"];
 const tblHeaderGenerics = ["Serial", "Generic Name", "Group"];
 const tblHeadergroups = ["Serial", "Group Name"];
 const tblHeaderFormulations = ["#", "Full Name", "Short Name"];

@@ -1,5 +1,5 @@
-import   { useEffect } from "react";
-import { tblHeadergroups } from "../../static-data/table";
+import { useEffect } from "react";
+import { tblHeadergroups, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -7,9 +7,11 @@ import {
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
 import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
+import { useLocation } from "react-router-dom";
 
 export default function GroupTbl() {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const groups = useSelector((state) => state.drugsView.groups);
   // const allChecked = useSelector((state) => state.drugsView.allChecked);
@@ -17,9 +19,12 @@ export default function GroupTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/groups");
-      dispatch(setCurrentView({ view: "groups", data: data.data.groups }));
+      dispatch(setCurrentView({ view: tblOptionsDrugsPage.groups, data: data.data.groups }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsDrugsPage.groups);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (

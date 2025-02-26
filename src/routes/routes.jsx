@@ -71,7 +71,7 @@ export const routes = createBrowserRouter([
             children: [
               { path: "members", element: <StaffTbl /> },
               { path: "salaries", element: <SalaryTbl /> },
-              { path: "attendance", element: <AttendanceTbl /> },
+              { path: "attendances", element: <AttendanceTbl /> },
             ],
           },
         ],

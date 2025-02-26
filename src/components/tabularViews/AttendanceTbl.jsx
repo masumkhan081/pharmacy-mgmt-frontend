@@ -1,18 +1,35 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands } from "../../static-data/table";
+import { tblHeaderBrands, tblOptionsStaffPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
   checkAll,
   setCurrentView,
 } from "../../redux/slices/StaffView";
+import { getHandler } from "../../utils/handler";
+import { useLocation } from "react-router-dom";
 
 export default function AttendanceTbl({ }) {
   //
-
+  const location = useLocation();
+  const dispatch = useDispatch();
+  const attendances = useSelector((state) => state.staffView.attendances);
+  const allChecked = useSelector((state) => state.staffView.allChecked);
+  //
+  useEffect(() => {
+    const fetch = async () => {
+      const data = await getHandler("/attendances");
+      dispatch(setCurrentView({ view: tblOptionsStaffPage.attendances, data: data.data.attendances }));
+      // 
+      localStorage.setItem('activeTab', tblOptionsStaffPage.attendances);
+      localStorage.setItem('lastRoute', location.pathname);
+    };
+    fetch();
+  }, []);
+  //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
-    <table className="w-full ">
+      <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">

@@ -45,6 +45,7 @@ export default function NavLeft() {
   // common classes for all active & non-active navlink
   const cmn_sty =
     "rounded-md font-inter text-1/1.5 py-0.5 px-0.75 h-full w-full ml-1";
+  // 
   return (
     <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border">
       {navMap
@@ -64,7 +65,7 @@ export default function NavLeft() {
                 className=" w-full flex justify-between items-center rounded-md border border-slate-500 px-2 py-0.25 font-semibold"
               >
                 <span>{navItem.text}</span>
-                {navItem.existSubOptions && (
+                {navItem.options && (
                   <AiFillCaretRight
                     className={
                       isExtpanded(navItem.text) ? "rotate-90" : "rotate-0"
@@ -73,7 +74,7 @@ export default function NavLeft() {
                 )}
               </NavLink>
 
-              {navItem.existSubOptions && (
+              {navItem.options && (
                 <ul
                   className={`py-1 space-y-1 w-full ${expansion[navItem.text]}`}
                 >

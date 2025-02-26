@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { tblHeaderFormulations } from "../../static-data/table";
+import { tblHeaderFormulations, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import { /* checkSingle, checkAll, */ setCurrentView } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
@@ -8,19 +8,24 @@ import {
   toggleModal,
   setModaldata
 } from "../../redux/slices/DrugsView";
+import { useLocation } from "react-router-dom";
 
 export default function FormulationTbl() {
+  // 
+  const location = useLocation();
   const dispatch = useDispatch();
   const formulations = useSelector((state) => state.drugsView.formulations);
   // const allChecked = useSelector((state) => state.drugsView.allChecked);
 
-
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/formulations");
-      dispatch(setCurrentView({ view: "formulations", data: data.data.formulations }));
+      dispatch(setCurrentView({ view: tblOptionsDrugsPage.formulations, data: data.data.formulations }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsDrugsPage.formulations);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
 
   return (

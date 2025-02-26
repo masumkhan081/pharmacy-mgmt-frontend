@@ -16,7 +16,7 @@ export default function ViewFilterDrugs() {
   //
   return (
     <div className="flex gap-2 flex-wrap">
-      {tblOptionsDrugsPage.map((option, ind) => {
+      {Object.values(tblOptionsDrugsPage).map((option, ind) => {
         return (
           <Button
             txt={option}

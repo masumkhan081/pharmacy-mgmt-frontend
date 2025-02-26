@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderGenerics } from "../../static-data/table";
+import { tblHeaderGenerics, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -8,9 +8,11 @@ import {
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
 import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
+import { useLocation } from "react-router-dom";
 
-export default function GenericTbl({}) {
+export default function GenericTbl({ }) {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const generics = useSelector((state) => state.drugsView.generics);
   const allChecked = useSelector((state) => state.drugsView.allChecked);
@@ -18,9 +20,12 @@ export default function GenericTbl({}) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/generics");
-      dispatch(setCurrentView({ view: "generics", data: data.data.generics }));
+      dispatch(setCurrentView({ view: tblOptionsDrugsPage.generics, data: data.data.generics }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsDrugsPage.generics);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (

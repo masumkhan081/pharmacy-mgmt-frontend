@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { tblHeaderDrugs } from "../../static-data/table";
+import { tblHeaderDrugs, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -7,9 +7,11 @@ import {
   setCurrentView,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
+import { useLocation } from "react-router-dom";
 
 export default function DrugTbl() {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const stock = useSelector((state) => state.drugsView.stock);
   const allChecked = useSelector((state) => state.drugsView.allChecked);
@@ -17,9 +19,12 @@ export default function DrugTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/stock");
-      dispatch(setCurrentView({ view: "stock", data: data?.data?.stock }));
+      dispatch(setCurrentView({ view: tblOptionsDrugsPage.stock, data: data?.data?.stock }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsDrugsPage.stock);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (

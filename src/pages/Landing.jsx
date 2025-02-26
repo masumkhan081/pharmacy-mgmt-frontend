@@ -9,17 +9,17 @@ export default function Landing() {
   const navigate = useNavigate();
   const userRole = useSelector((state) => state.user.role);
 
-  useEffect(() => {
-    if (userRole) {
-      if (["admin", "super-admin", "manager"].includes(userRole)) {
-        navigate("/dashboard");
-      } else if (userRole === "salesman") {
-        navigate("/drugs/stock");
-      } else {
-        navigate("/auth/login");
-      }
-    }
-  }, [userRole, navigate]);
+  // useEffect(() => {
+
+  //   if (["admin", "super-admin", "manager"].includes(userRole)) {
+  //     navigate("/dashboard");
+  //   } else if (userRole === "salesman") {
+  //     navigate("/drugs/stock");
+  //   } else {
+  //     navigate("/auth/login");
+  //   }
+
+  // }, [userRole, navigate]);
 
   return (
     <div className="w-full h-full  grid grid-cols-5 ">

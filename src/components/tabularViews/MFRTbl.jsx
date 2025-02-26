@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderMfrs } from "../../static-data/table";
+import { tblHeaderMfrs, tblOptionsDrugsPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -12,9 +12,11 @@ import {
 import { getHandler } from "../../utils/handler";
 import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 
-export default function MFRTbl({}) {
+export default function MFRTbl({ }) {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const mfrs = useSelector((state) => state.drugsView.manufacturers);
   const allChecked = useSelector((state) => state.drugsView.allChecked);
@@ -28,10 +30,16 @@ export default function MFRTbl({}) {
       const data = await getHandler("/manufacturers");
       console.log(JSON.stringify(data));
       dispatch(
-        setCurrentView({ view: "manufacturers", data: data.data.manufacturers })
+        setCurrentView({
+          view: tblOptionsDrugsPage.manufacturers,
+          data: data.data.manufacturers,
+        })
       );
     };
     fetch();
+    //
+    localStorage.setItem("activeTab", tblOptionsDrugsPage.manufacturers);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (

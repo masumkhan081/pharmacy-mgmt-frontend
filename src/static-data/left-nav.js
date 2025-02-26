@@ -1,21 +1,22 @@
+import { ROLES } from "./user.roles";
+
 const navMap = [
   {
     to: "/sale-panel",
     text: "Sale Panel",
     isAccessControlled: true,
-    access: ["pharmacist", "salesman", "admin", "accountant", "manager"],
+    access: [ROLES.PHARMACIST, ROLES.SALESMAN, ROLES.ADMIN, ROLES.ACCOUNTANT, ROLES.MANAGER],
   },
   {
     to: "/dashboard",
     text: "Dashboard",
     isAccessControlled: true,
-    access: ["pharmacist", "manager", "admin", "accountant"],
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT],
   },
   {
     to: "/drugs/stock",
     text: "Drugs",
     isAccessControlled: false,
-    existSubOptions: true,
     options: [
       {
         to: "/drugs/stock",
@@ -58,20 +59,19 @@ const navMap = [
     to: "/purchases",
     text: "Purchases",
     isAccessControlled: true,
-    access: ["pharmacist", "manager", "admin", "accountant"],
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT],
   },
   {
     to: "sales",
     text: "Sales",
     isAccessControlled: true,
-    access: ["pharmacist", "manager", "admin", "accountant", "salesman"],
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT, ROLES.SALESMAN],
   },
   {
     to: "/staff/members",
     text: "Staff",
     isAccessControlled: true,
-    access: ["admin", "manager", "salesman"],
-    existSubOptions: true,
+    access: [ROLES.ADMIN, ROLES.MANAGER, ROLES.SALESMAN],
     options: [
       {
         to: "/staff/members",
@@ -82,13 +82,13 @@ const navMap = [
         to: "/staff/salaries",
         text: "Salaries",
         isAccessControlled: true,
-        access: ["admin", "manager"],
+        access: [ROLES.ADMIN, ROLES.MANAGER],
       },
       {
         to: "/staff/attendances",
         text: "Attendances",
         isAccessControlled: true,
-        access: ["admin", "manager"],
+        access: [ROLES.ADMIN, ROLES.MANAGER],
       },
     ],
   },

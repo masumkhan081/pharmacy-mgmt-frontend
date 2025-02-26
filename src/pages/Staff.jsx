@@ -1,4 +1,4 @@
- 
+
 import PageTitle from "../components/common-ui/PageTitle";
 import ViewFilterStaff from "../components/tabularViews/ViewFilterStaff";
 import Button from "../components/common-ui/Button";
@@ -9,6 +9,8 @@ import SalaryForm from "../components/staff/SalaryForm";
 import AttendanceForm from "../components/staff/AttendanceForm";
 import MemberForm from "../components/staff/MemberForm";
 import { useDispatch, useSelector } from "react-redux";
+import { tblOptionsStaffPage } from "../static-data/table";
+import { toggleModal } from "../redux/slices/StaffView";
 
 export default function Staff() {
   //
@@ -16,7 +18,7 @@ export default function Staff() {
   // const toggleModal = useSelector((state) => state.drugsView.toggleModal)
   // const modalData = useSelector((state) => state.drugsView.modalData)
   const currentView = useSelector((state) => state.staffView.currentView);
-  const isModalVisible = useSelector((state) => state.drugsView.isModalVisible);
+  const isModalVisible = useSelector((state) => state.staffView.isModalVisible);
 
   //
   return (
@@ -35,13 +37,25 @@ export default function Staff() {
           }}
           style={`btn_test_data`}
         />
-
-        <div className={isModalVisible ? "nav_drop_down" : `hidden`}>
-          {currentView == "salaries" && <SalaryForm />}
-          {currentView == "attendances" && <AttendanceForm />}
-          {currentView == "members" && <MemberForm />}
+        <div
+          className={
+            isModalVisible
+              ? "flex flex-col gap-4 sm:px-4 px-2 py-4 absolute z-10 sm:w-[500px] w-full sm:mx-auto mx-2 right-0 left-0 border border-yellow-800 rounded-md bg-slate-200"
+              : `hidden`
+          }
+        >
+          <div className=" flex justify-end">
+            <Button
+              txt="Close"
+              onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
+            />
+          </div>
+          {currentView === tblOptionsStaffPage.salaries && <SalaryForm />}
+          {currentView === tblOptionsStaffPage.attendances && <AttendanceForm />}
+          {currentView === tblOptionsStaffPage.members && <MemberForm />}
         </div>
       </div>
+
       <SearchFilter />
       <div>
         <Outlet />

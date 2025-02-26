@@ -9,12 +9,11 @@ export default function ViewFilterStaff() {
   //
   const navigate = useNavigate();
   const currentView = useSelector((state) => state.staffView.currentView);
-
   const activeStyle = (button) => (button == currentView ? "bg-green-300" : "");
 
   return (
     <div className="flex gap-2 flex-wrap">
-      {tblOptionsStaffPage.map((option, ind) => {
+      {Object.values(tblOptionsStaffPage).map((option, ind) => {
         return (
           <Button
             txt={option}

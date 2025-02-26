@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands } from "../../static-data/table";
+import { tblHeaderBrands, tblOptionsStaffPage } from "../../static-data/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
   checkAll,
   setCurrentView,
 } from "../../redux/slices/StaffView";
-import { getHandler } from "../../utils/handler"; 
+import { getHandler } from "../../utils/handler";
+import { useLocation } from "react-router-dom";
 
 export default function SalariesTbl() {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const salaries = useSelector((state) => state.staffView.salaries);
   const allChecked = useSelector((state) => state.staffView.allChecked);
@@ -17,14 +19,17 @@ export default function SalariesTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/salaries");
-      dispatch(setCurrentView({ view: "salaries", data: data.data.salaries }));
+      dispatch(setCurrentView({ view: tblOptionsStaffPage.salaries, data: data.data.salaries }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', tblOptionsStaffPage.salaries);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
-    <table className="w-full ">
+      <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">
