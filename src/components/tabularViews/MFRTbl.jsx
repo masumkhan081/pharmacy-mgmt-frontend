@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderMfrs, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderMfrs, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -13,6 +13,7 @@ import { getHandler } from "../../utils/handler";
 import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function MFRTbl({ }) {
   //
@@ -31,14 +32,14 @@ export default function MFRTbl({ }) {
       console.log(JSON.stringify(data));
       dispatch(
         setCurrentView({
-          view: tblOptionsDrugsPage.manufacturers,
+          view: ENTITIES.manufacturer,
           data: data.data.manufacturers,
         })
       );
     };
     fetch();
     //
-    localStorage.setItem("activeTab", tblOptionsDrugsPage.manufacturers);
+    localStorage.setItem("activeTab", ENTITIES.manufacturer);
     localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //

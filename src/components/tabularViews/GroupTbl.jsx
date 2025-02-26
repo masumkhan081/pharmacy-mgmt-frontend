@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { tblHeadergroups, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeadergroups, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -8,6 +8,7 @@ import {
 import { getHandler } from "../../utils/handler";
 import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function GroupTbl() {
   //
@@ -19,11 +20,11 @@ export default function GroupTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/groups");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.groups, data: data.data.groups }));
+      dispatch(setCurrentView({ view: ENTITIES.group, data: data.data.groups }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.groups);
+    localStorage.setItem('activeTab', ENTITIES.group);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

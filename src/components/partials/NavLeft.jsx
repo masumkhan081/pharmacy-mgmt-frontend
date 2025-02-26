@@ -6,7 +6,7 @@ import {
   useNavigate,
   useLocation,
 } from "react-router-dom";
-import navMap from "../../static-data/left-nav";
+import navMap from "../../ui-config/left-nav";
 import { AiFillCaretRight } from "react-icons/ai";
 import { useSelector } from "react-redux";
 //
@@ -45,10 +45,10 @@ export default function NavLeft() {
   // common classes for all active & non-active navlink
   const cmn_sty =
     "rounded-md font-inter text-1/1.5 py-0.5 px-0.75 h-full w-full ml-1";
-  // 
+  //
   return (
     <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border">
-      {navMap
+      {Object.values(navMap)
         .filter(
           (navItem) =>
             // Check the main item access control
@@ -78,7 +78,7 @@ export default function NavLeft() {
                 <ul
                   className={`py-1 space-y-1 w-full ${expansion[navItem.text]}`}
                 >
-                  {navItem.options
+                  {Object.values(navItem.options)
                     .filter(
                       (item) =>
                         item.isAccessControlled === false ||

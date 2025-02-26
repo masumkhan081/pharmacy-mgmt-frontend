@@ -85,7 +85,7 @@ export default function NavTop() {
           <Button
             txt={"Logout"}
             onClick={() => handleLogout()}
-            icon={<HiLogout className="nav_icn text-red-900" />}
+            icon={<HiLogout className="nav_icn text-red-950" />}
             style={
               "flex items-center flex-wrap overflow-hidden gap-1 text-center px-2 py-1 rounded-md text-sm flex gap-2 text-red-800 border border-red-950"
             }

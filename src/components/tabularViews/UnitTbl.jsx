@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderUnits, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderUnits, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit, AiFillDelete } from "react-icons/ai";
 import {
@@ -9,6 +9,7 @@ import {
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function UnitTbl({ }) {
   //
@@ -20,11 +21,11 @@ export default function UnitTbl({ }) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/units");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.units, data: data.data.units }));
+      dispatch(setCurrentView({ view: ENTITIES.unit, data: data.data.units }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.units);
+    localStorage.setItem('activeTab', ENTITIES.unit);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

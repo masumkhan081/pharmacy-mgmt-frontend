@@ -10,7 +10,6 @@ export default function Layout() {
   //
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
   const loadUserFromStorage = () => {
     //
     const storedUser = localStorage.getItem("user");

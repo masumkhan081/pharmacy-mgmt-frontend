@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {purchases} from '../../static-data/table'
+import {purchases} from '../../ui-config/table'
 
 export const purchSlice = createSlice({
   name: "purchases",

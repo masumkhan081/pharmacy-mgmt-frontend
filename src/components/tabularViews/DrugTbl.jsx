@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { tblHeaderDrugs, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderDrugs, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -8,6 +8,7 @@ import {
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function DrugTbl() {
   //
@@ -19,11 +20,11 @@ export default function DrugTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/stock");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.stock, data: data?.data?.stock }));
+      dispatch(setCurrentView({ view: ENTITIES.stock, data: data?.data?.stock }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.stock);
+    localStorage.setItem('activeTab', ENTITIES.stock);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

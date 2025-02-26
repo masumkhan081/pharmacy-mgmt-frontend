@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { tblHeaderFormulations, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderFormulations, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { /* checkSingle, checkAll, */ setCurrentView } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handler";
@@ -9,6 +9,7 @@ import {
   setModaldata
 } from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function FormulationTbl() {
   // 
@@ -20,11 +21,11 @@ export default function FormulationTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/formulations");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.formulations, data: data.data.formulations }));
+      dispatch(setCurrentView({ view: ENTITIES.formulation, data: data.data.formulations }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.formulations);
+    localStorage.setItem('activeTab', ENTITIES.formulation);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
 

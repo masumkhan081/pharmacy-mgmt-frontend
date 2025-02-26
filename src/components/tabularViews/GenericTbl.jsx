@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderGenerics, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderGenerics, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -9,6 +9,7 @@ import {
 import { getHandler } from "../../utils/handler";
 import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function GenericTbl({ }) {
   //
@@ -20,11 +21,11 @@ export default function GenericTbl({ }) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/generics");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.generics, data: data.data.generics }));
+      dispatch(setCurrentView({ view: ENTITIES.generic, data: data.data.generics }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.generics);
+    localStorage.setItem('activeTab', ENTITIES.generic);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

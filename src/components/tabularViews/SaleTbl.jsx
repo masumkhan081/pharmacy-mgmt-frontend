@@ -1,11 +1,14 @@
 import React, { useEffect } from "react";
-import { tblHeaderSales} from "../../static-data/table";
+import { tblHeaderSales } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { checkSingle, checkAll, setCurrentView } from "../../redux/slices/saleView";
 import { getHandler } from "../../util/handler";
+import { ENTITIES } from "../../ui-config/entities";
+import { useLocation } from "react-router-dom";
 
-export default function SaleRecTbl({}) {
+export default function SaleRecTbl({ }) {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const sales = useSelector((state) => state.saleView.sales);
   const allChecked = useSelector((state) => state.saleView.allChecked);
@@ -13,14 +16,17 @@ export default function SaleRecTbl({}) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/sales");
-      dispatch(setCurrentView({ view: "sales", data: data.data.sales }));
+      dispatch(setCurrentView({ view: ENTITIES.sale, data: data.data.sales }));
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', ENTITIES.sale);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
-    <table className="w-full ">
+      <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">
@@ -41,7 +47,7 @@ export default function SaleRecTbl({}) {
         </thead>
 
         <tbody>
-          {sales && sales.map((item,ind) => {
+          {sales && sales.map((item, ind) => {
             return (
               <tr key={item._id} className="tr_tbody">
                 <td className="td">

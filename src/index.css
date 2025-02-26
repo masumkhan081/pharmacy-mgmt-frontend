@@ -54,11 +54,11 @@ body {
 }
 
 .btn_nav {
-  @apply flex items-center flex-wrap overflow-hidden gap-1 text-blue-700 text-center px-2 py-1 rounded-md text-sm border border-blue-300;
+  @apply flex items-center flex-wrap overflow-hidden gap-1 text-blue-700 text-center px-2 py-1 rounded-md text-sm ;
 }
 
 .nav_icn {
-  @apply w-5 h-5;
+  @apply w-6 h-6;
 }
 
 .brand {

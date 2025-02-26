@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsStaffPage } from "../../static-data/table";
+import { tblHeaderBrands, tblOptionsStaffPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -8,6 +8,7 @@ import {
 } from "../../redux/slices/StaffView";
 import { getHandler } from "../../utils/handler";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function SalariesTbl() {
   //
@@ -19,11 +20,11 @@ export default function SalariesTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/salaries");
-      dispatch(setCurrentView({ view: tblOptionsStaffPage.salaries, data: data.data.salaries }));
+      dispatch(setCurrentView({ view: ENTITIES.salary, data: data.data.salaries }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsStaffPage.salaries);
+    localStorage.setItem('activeTab', ENTITIES.salary);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

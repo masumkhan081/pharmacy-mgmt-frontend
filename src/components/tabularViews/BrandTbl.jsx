@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsDrugsPage } from "../../static-data/table";
+import { tblHeaderBrands, tblOptionsDrugsPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -13,6 +13,7 @@ import {
   setModaldata
 } from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function BrandTbl({ }) {
   //
@@ -24,11 +25,11 @@ export default function BrandTbl({ }) {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/brands");
-      dispatch(setCurrentView({ view: tblOptionsDrugsPage.brands, data: data?.data?.brands }));
+      dispatch(setCurrentView({ view: ENTITIES.brand, data: data?.data?.brands }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsDrugsPage.brands);
+    localStorage.setItem('activeTab', ENTITIES.brand);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

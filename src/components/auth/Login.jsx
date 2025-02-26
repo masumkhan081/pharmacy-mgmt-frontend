@@ -7,7 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import Input from "../common-ui/Input";
 import Button from "../common-ui/Button";
-import { users } from "../../static-data/test.users"
+import { users } from "../../ui-config/test.users"
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from "../../redux/slices/User";
 import { useNavigate } from 'react-router-dom'

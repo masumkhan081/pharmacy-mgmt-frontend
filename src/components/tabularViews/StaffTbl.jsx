@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsStaffPage } from "../../static-data/table";
+import { tblHeaderBrands, tblOptionsStaffPage } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -8,6 +8,7 @@ import {
 } from "../../redux/slices/StaffView";
 import { getHandler } from "../../utils/handler";
 import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function StaffTbl() {
   //
@@ -19,11 +20,11 @@ export default function StaffTbl() {
   useEffect(() => {
     const fetch = async () => {
       const data = await getHandler("/staff");
-      dispatch(setCurrentView({ view: tblOptionsStaffPage.members, data: data.data.staff }));
+      dispatch(setCurrentView({ view: ENTITIES.member, data: data.data.staff }));
     };
     fetch();
     // 
-    localStorage.setItem('activeTab', tblOptionsStaffPage.members);
+    localStorage.setItem('activeTab', ENTITIES.member);
     localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //

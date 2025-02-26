@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderPurch } from "../../static-data/table";
+import { tblHeaderPurch } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -7,9 +7,12 @@ import {
   setCurrentView,
 } from "../../redux/slices/purchView";
 import { getHandler } from "../../util/handler";
+import { useLocation } from "react-router-dom";
+import { ENTITIES } from "../../ui-config/entities";
 
 export default function PurchTbl() {
   //
+  const location = useLocation();
   const dispatch = useDispatch();
   const purchases = useSelector((state) => state.purchView.purchases);
   const allChecked = useSelector((state) => state.purchView.allChecked);
@@ -18,15 +21,18 @@ export default function PurchTbl() {
     const fetch = async () => {
       const data = await getHandler("/purchases");
       dispatch(
-        setCurrentView({ view: "purchases", data: data.data.purchases })
+        setCurrentView({ view: ENTITIES.purchase, data: data.data.purchases })
       );
     };
     fetch();
+    // 
+    localStorage.setItem('activeTab', ENTITIES.purchase);
+    localStorage.setItem('lastRoute', location.pathname);
   }, []);
   //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
-    <table className="w-full ">
+      <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">

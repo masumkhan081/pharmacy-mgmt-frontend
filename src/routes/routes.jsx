@@ -1,6 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
-//
 import ProtectedRoute from "./ProtectedRoute.jsx";
 import Layout from "../layouts/Layout.jsx";
 import Landing from "../pages/Landing.jsx";
@@ -28,13 +27,54 @@ import AttendanceTbl from "../components/tabularViews/AttendanceTbl.jsx";
 import SalaryTbl from "../components/tabularViews/SalaryTbl.jsx";
 import About from "../pages/About.jsx";
 import Profile from "../pages/Profile.jsx";
-//
+import { ENTITIES } from "../ui-config/entities.js";
+import leftNav from "../ui-config/left-nav.js"
+import Unauthorized from "../pages/Unauthorized.jsx";
+
+// 
+const drugsRoutes = [
+  { path: "stock", component: <DrugTbl /> },
+  { path: "brands", component: <BrandTbl /> },
+  { path: "formulations", component: <FormulationTbl /> },
+  { path: "groups", component: <GroupTbl /> },
+  { path: "generics", component: <GenericTbl /> },
+  { path: "units", component: <UnitTbl /> },
+  { path: "manufacturers", component: <MFRTbl /> },
+];
+
+const staffRoutes = [
+  { path: "members", component: <StaffTbl /> },
+  { path: "salaries", component: <SalaryTbl /> },
+  { path: "attendances", component: <AttendanceTbl /> },
+];
+
+const generateProtectedRoutes = (routes, entityType) => {
+  return routes.map(({ path, component }) => {
+
+    const { access, isAccessControlled } = leftNav[entityType].options[path];
+    // alert("access:" + access, isAccessControlled)
+    return {
+      path,
+      element: (
+        <ProtectedRoute access={access} isAccessControlled={isAccessControlled}>
+          {component}
+        </ProtectedRoute>
+      ),
+    };
+  });
+};
 
 export const routes = createBrowserRouter([
   {
     path: "/",
     element: <Layout />,
     children: [
+
+      {
+        path: "unauthorized",
+        element: <Unauthorized />,
+
+      },
       {
         path: "",
         element: <Landing />,
@@ -43,7 +83,7 @@ export const routes = createBrowserRouter([
             path: "dashboard",
             element: (
               <Suspense fallback={<div>Loading...</div>}>
-                <ProtectedRoute pass={true}>
+                <ProtectedRoute  >
                   <Dashboard />
                 </ProtectedRoute>
               </Suspense>
@@ -53,26 +93,14 @@ export const routes = createBrowserRouter([
           {
             path: "drugs",
             element: <Drugs />,
-            children: [
-              { path: "stock", element: <DrugTbl /> },
-              { path: "brands", element: <BrandTbl /> },
-              { path: "formulations", element: <FormulationTbl /> },
-              { path: "groups", element: <GroupTbl /> },
-              { path: "generics", element: <GenericTbl /> },
-              { path: "units", element: <UnitTbl /> },
-              { path: "manufacturers", element: <MFRTbl /> },
-            ],
+            children: generateProtectedRoutes(drugsRoutes, ENTITIES.drug),
           },
           { path: "sales", element: <SaleRecords /> },
           { path: "purchases", element: <Purchases /> },
           {
             path: "staff",
             element: <Staff />,
-            children: [
-              { path: "members", element: <StaffTbl /> },
-              { path: "salaries", element: <SalaryTbl /> },
-              { path: "attendances", element: <AttendanceTbl /> },
-            ],
+            children: generateProtectedRoutes(staffRoutes, ENTITIES.staff),
           },
         ],
       },

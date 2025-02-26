@@ -9,8 +9,9 @@ import SalaryForm from "../components/staff/SalaryForm";
 import AttendanceForm from "../components/staff/AttendanceForm";
 import MemberForm from "../components/staff/MemberForm";
 import { useDispatch, useSelector } from "react-redux";
-import { tblOptionsStaffPage } from "../static-data/table";
+import { tblOptionsStaffPage } from "../ui-config/table";
 import { toggleModal } from "../redux/slices/StaffView";
+import { ENTITIES } from "../ui-config/entities";
 
 export default function Staff() {
   //
@@ -50,9 +51,9 @@ export default function Staff() {
               onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
             />
           </div>
-          {currentView === tblOptionsStaffPage.salaries && <SalaryForm />}
-          {currentView === tblOptionsStaffPage.attendances && <AttendanceForm />}
-          {currentView === tblOptionsStaffPage.members && <MemberForm />}
+          {currentView === ENTITIES.salary && <SalaryForm />}
+          {currentView === ENTITIES.attendance && <AttendanceForm />}
+          {currentView === ENTITIES.member && <MemberForm />}
         </div>
       </div>
 

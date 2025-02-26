@@ -1,21 +1,21 @@
 import { ROLES } from "./user.roles";
+import { ENTITIES } from "./entities"
 
-const tblOptionsDrugsPage = {
-  stock: "stock",
-  brands: "brands",
-  groups: "groups",
-  generics: "generics",
-  formulations: "formulations",
-  units: "units",
-  manufacturers: "manufacturers",
-};
+const tblOptionsDrugsPage = [
+  ENTITIES.stock,
+  ENTITIES.brand,
+  ENTITIES.group,
+  ENTITIES.generic,
+  ENTITIES.formulation,
+  ENTITIES.unit,
+  ENTITIES.manufacturer
+];
 
-const tblOptionsStaffPage = {
-  members:
-   [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST],
-  salaries: [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST],
-  attendances: [ROLES.ADMIN, ROLES.MANAGER, ROLES.PHARMACIST]
-};
+const tblOptionsStaffPage = [
+  ENTITIES.member,
+  ENTITIES.salary,
+  ENTITIES.attendance
+];
 
 const tblHeaderDrugs = [
   "Serial",

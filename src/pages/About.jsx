@@ -8,7 +8,7 @@ import {
   usedTechAndTools,
   projectFeatures,
   projectObjectives,
-} from "../static-data/about";
+} from "../ui-config/about";
 
 export default function About() {
   return (
