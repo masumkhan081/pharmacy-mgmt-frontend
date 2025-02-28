@@ -11,12 +11,17 @@ export default function RootLayout() {
   //
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const loadUserFromStorage = () => {
     //
     const storedUser = localStorage.getItem("user");
     const lastRoute = localStorage.getItem("lastRoute");
     if (storedUser) {
-      dispatch(setUser(JSON.parse(storedUser))); // store user in Redux store
+
+      const parsedUser = JSON.parse(storedUser); // Parse stored user
+      const userRole = parsedUser.userRole || ""; // Extract userRole safely
+      dispatch(setUser(parsedUser)); // Store user in Redux
+
       if (lastRoute) {
         navigate(lastRoute);
       } else if ([ROLES.ACCOUNTANT, ROLES.ADMIN, ROLES.PHARMACIST, ROLES.MANAGER].includes(userRole)) {

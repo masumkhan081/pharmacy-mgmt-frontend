@@ -11,6 +11,7 @@ import { users } from "../../ui-config/test.users"
 import { useDispatch, useSelector } from 'react-redux';
 import { setUser } from "../../redux/slices/User";
 import { useNavigate } from 'react-router-dom'
+import { ROLES } from "../../ui-config/user.roles";
 //
 export default function Login() {
   //  
@@ -31,15 +32,15 @@ export default function Login() {
     );
     if (foundUser) {
       const { userRole } = foundUser
+
       dispatch(setUser(foundUser));
       // Persist to localStorage
       localStorage.setItem("user", JSON.stringify(foundUser));
 
-      if (userRole == "admin" || userRole == "manager" || userRole == "accountant") {
+      if ([ROLES.ACCOUNTANT, ROLES.ADMIN, ROLES.PHARMACIST, ROLES.MANAGER].includes(userRole)) {
         navigate("/dashboard");
-      }
-      else if (userRole == "salesman") {
-        navigate("/drugs/brands")
+      } else if (userRole === ROLES.SALESMAN) {
+        navigate("/drugs/stock");
       }
     } else {
       setError("Invalid username or password");
