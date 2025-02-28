@@ -4,13 +4,15 @@ import { useNavigate } from 'react-router-dom';
 
 const ProtectedRoute = ({ children, access, isAccessControlled }) => {
     const navigate = useNavigate();
-    const userRole = useSelector((state) => state.user.role);
+    const { userRole, isAuthenticated } = useSelector((state) => state.user);
 
     useEffect(() => {
-        if (isAccessControlled && !access.includes(userRole)) {
+        if (!isAuthenticated) {
+            navigate("/auth/login");
+        } else if (isAccessControlled && !access.includes(userRole)) {
             navigate("/unauthorized");
         }
-    }, [access, isAccessControlled, userRole, navigate]);
+    }, [isAuthenticated, access, isAccessControlled, userRole, navigate]);
 
     return <>
 

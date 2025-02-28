@@ -1,8 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./ProtectedRoute.jsx";
-import Layout from "../layouts/Layout.jsx";
-import Landing from "../pages/Landing.jsx";
+import Layout from "../layouts/RootLayout.jsx";
+import Landing from "../layouts/SideBarLayout.jsx";
 const Dashboard = lazy(() => import("../pages/Dashboard.jsx"));
 import SalePanel from "../pages/SalePanel.jsx";
 import Drugs from "../pages/Drugs.jsx";
@@ -30,6 +30,8 @@ import Profile from "../pages/Profile.jsx";
 import { ENTITIES } from "../ui-config/entities.js";
 import leftNav from "../ui-config/left-nav.js"
 import Unauthorized from "../pages/Unauthorized.jsx";
+import NotFound from "../pages/NotFound.jsx";
+
 
 // 
 const drugsRoutes = [
@@ -73,11 +75,11 @@ export const routes = createBrowserRouter([
       {
         path: "unauthorized",
         element: <Unauthorized />,
-
       },
+
       {
         path: "",
-        element: <Landing />,
+        element: <ProtectedRoute><Landing /></ProtectedRoute>,
         children: [
           {
             path: "dashboard",
@@ -117,6 +119,12 @@ export const routes = createBrowserRouter([
         ],
       },
       { path: "about", element: <About /> },
+      {
+        path: "*",
+        element: <NotFound />,
+      },
     ],
   },
+  // Catch-all route for "No such route"
+
 ]);

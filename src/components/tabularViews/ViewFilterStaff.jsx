@@ -12,7 +12,7 @@ export default function ViewFilterStaff() {
   const navigate = useNavigate();
   const currentView = useSelector((state) => state.staffView.currentView);
   const activeStyle = (button) => (button == currentView ? "bg-green-300" : "");
-  const userRole = useSelector((state) => state.user.role);
+  const userRole = useSelector((state) => state.user.userRole);
 
   return (
     <div className="flex gap-2 flex-wrap">

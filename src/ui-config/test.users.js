@@ -1,20 +1,20 @@
 export const users = [
     {
-        role: "admin",
-        email: "test.admin@gmail.com",
-        username: "adminUser",
+        userRole: "admin",
+        userEmail: "test.admin@gmail.com",
+        userName: "adminUser",
         password: "pass.admin"
     },
     {
-        role: "manager",
-        email: "test.manager@gmail.com",
-        username: "managerUser",
+        userRole: "manager",
+        userEmail: "test.manager@gmail.com",
+        userName: "managerUser",
         password: "pass.manager"
     },
     {
-        role: "salesman",
-        email: "test.salesman@gmail.com",
-        username: "salesmanUser",
+        userRole: "salesman",
+        userEmail: "test.salesman@gmail.com",
+        userName: "salesmanUser",
         password: "pass.salesman"
     }
 ];

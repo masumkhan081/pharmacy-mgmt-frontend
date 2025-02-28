@@ -4,7 +4,7 @@ import {
   setGenerics,
   setManufacturers,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 
@@ -26,13 +26,11 @@ export default function BrandForm({ visible, setDropDown }) {
   const [selectedMFR, setSelectedMFR] = useState(
     isModalForEdit == true ? modalData.mfrId : ""
   );
-
   //
   const groups = useSelector((state) => state.drugsView.groups);
   const generics = useSelector((state) => state.drugsView.generics);
   const manufacturers = useSelector((state) => state.drugsView.manufacturers);
   //
-
   async function handleSave(e) {
     e.preventDefault();
     console.log("reached to handle submit ... ");

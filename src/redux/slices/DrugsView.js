@@ -22,6 +22,7 @@ export const drugsViewSlice = createSlice({
       const { view, data } = action.payload;
       state.currentView = view;
       state[`${view}`] = data;
+      console.log(data)
       state.expanded = state.expanded === "hidden" ? "block" : "block";
     },
     checkSingle: (state, action) => {
@@ -88,7 +89,7 @@ export const {
   setCurrentView,
   checkSingle,
   checkAll,
-  toggleModal, 
+  toggleModal,
   setModaldata,
   setBrands,
   setStock,

@@ -6,7 +6,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import {
   toggleModal,
@@ -24,8 +24,8 @@ export default function BrandTbl({ }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/brands");
-      dispatch(setCurrentView({ view: ENTITIES.brand, data: data?.data?.brands }));
+      const response = await getHandler("/brands");
+      dispatch(setCurrentView({ view: ENTITIES.brand, data: response?.data?.data?.data }));
     };
     fetch();
     // 
@@ -57,6 +57,7 @@ export default function BrandTbl({ }) {
         </thead>
 
         <tbody>
+
           {brands && brands?.map((item, ind) => {
             return (
               <tr key={ind} className="tr_tbody">
@@ -70,9 +71,9 @@ export default function BrandTbl({ }) {
 
                 <td className="py-1.125">{ind + 1}</td>
                 <td className="py-1.125">{item.name}</td>
-                <td className="py-1.125">{item.genericId.name}</td>
+                {/* <td className="py-1.125">{item.genericId.name}</td>
                 <td className="py-1.125">{item.genericId.groupId.name}</td>
-                <td className="py-1.125">{item.mfrId.name}</td>
+                <td className="py-1.125">{item.mfrId.name}</td> */}
                 <td className="py-1.0 flex justify-center gap-2">
                   <button
                     onClick={() => {
@@ -91,6 +92,7 @@ export default function BrandTbl({ }) {
           })}
         </tbody>
       </table>
+      {/* {JSON.stringify(brands)} */}
     </div>
   );
 }

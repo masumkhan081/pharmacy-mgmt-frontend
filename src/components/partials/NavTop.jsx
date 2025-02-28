@@ -7,19 +7,21 @@ import { MdLocalPharmacy } from "react-icons/md";
 import { AiOutlineClose } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { HiLogout, HiLogin } from "react-icons/hi";
-import { getHandler } from "../../utils/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { reset } from "../../redux/slices/User";
 //
 export default function NavTop() {
   const [dropDown, setDropDown] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.user.authenticated);
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
 
   function handleLogout() {
     setDropDown(false);
     dispatch(reset());
     localStorage.removeItem("user");
+    localStorage.removeItem("expansion");
+    localStorage.removeItem("lastRoute");
     navigate("/auth/login");
 
     // getHandler("/auth/logout").then((data) => {

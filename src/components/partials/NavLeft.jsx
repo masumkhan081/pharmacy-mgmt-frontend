@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Outlet,
   Link,
@@ -11,20 +11,27 @@ import { AiFillCaretRight } from "react-icons/ai";
 import { useSelector } from "react-redux";
 //
 export default function NavLeft() {
-  const [expansion, setExpansion] = useState({
+
+  const location = useLocation();
+  const userRole = useSelector((state) => state.user.userRole);
+
+  const initialState = JSON.parse(localStorage.getItem("expansion")) || {
     Drugs: "hidden",
     Staff: "hidden",
-  });
+  };
+
+  const [expansion, setExpansion] = useState(initialState);
+
   function setView(ofWhat) {
     expansion[ofWhat] == "block"
       ? setExpansion({ ...expansion, [ofWhat]: "hidden" })
       : setExpansion({ ...expansion, [ofWhat]: "block" });
   }
   const isExtpanded = (what) => (expansion[what] == "block" ? true : false);
-  //
 
-  const location = useLocation();
-  const userRole = useSelector((state) => state.user.role);
+  useEffect(() => {
+    localStorage.setItem("expansion", JSON.stringify(expansion));
+  }, [expansion]);
 
   // active navlink has a horizontal piece of shit at it's left of yellow color
   const sty_log_hr = (str) =>

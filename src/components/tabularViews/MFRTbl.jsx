@@ -9,7 +9,7 @@ import {
   toggleModal,
   setModaldata,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";

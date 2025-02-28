@@ -1,6 +1,6 @@
 import React from "react";
 import Label from "../common-ui/Label";
-import { postHandler } from "../../utils/handler";
+import { postHandler } from "../../utils/handlerReqRes";
 //  icons
 import eye from "../../assets/icons/eye.svg";
 import { Link, useLocation } from "react-router-dom";
@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 //
 export default function Login() {
   //  
-  const [username, setUsername] = useState("");
+  const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const location = useLocation();
@@ -27,18 +27,18 @@ export default function Login() {
     setError("");
 
     const foundUser = users.find(user =>
-      (user.username === username || user.email === username) && user.password === password
+      (user.userName === userName || user.userEmail === userName) && user.password === password
     );
     if (foundUser) {
-      const { role } = foundUser
+      const { userRole } = foundUser
       dispatch(setUser(foundUser));
       // Persist to localStorage
       localStorage.setItem("user", JSON.stringify(foundUser));
 
-      if (role == "admin" || role == "manager" || role == "accountant") {
+      if (userRole == "admin" || userRole == "manager" || userRole == "accountant") {
         navigate("/dashboard");
       }
-      else if (role == "salesman") {
+      else if (userRole == "salesman") {
         navigate("/drugs/brands")
       }
     } else {
@@ -76,7 +76,7 @@ export default function Login() {
       email = ``;
       password = ``;
     }
-    setUsername(email);
+    setUserName(email);
     setPassword(password);
   }
 
@@ -118,8 +118,8 @@ export default function Login() {
           <Label txt="Email / User Name" />
           <Input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={userName}
+            onChange={(e) => setUserName(e.target.value)}
             required={true}
             pc="Enter Your email / username"
           />

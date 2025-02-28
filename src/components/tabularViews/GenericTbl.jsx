@@ -6,7 +6,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { toggleModal, setModaldata } from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
 import { ENTITIES } from "../../ui-config/entities";

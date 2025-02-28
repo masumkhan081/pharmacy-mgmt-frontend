@@ -2,9 +2,9 @@ import React from 'react'
 import { useSelector } from 'react-redux';
 
 export default function Footer() {
-  const currentUser = useSelector((state) => state.user);
+  const { userRole } = useSelector((state) => state.user);
 
-  const footerText = () => currentUser.userName ? currentUser.userName + (currentUser.role) :
+  const footerText = () => userRole ? userRole :
     'developedBy: "github.com/masumkhan081",  isCustomCoded: true'
 
   return (

@@ -5,8 +5,9 @@ import Footer from "../components/partials/Footer";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser } from "../redux/slices/User";
+import { ROLES } from "../ui-config/user.roles"
 
-export default function Layout() {
+export default function RootLayout() {
   //
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -15,13 +16,12 @@ export default function Layout() {
     const storedUser = localStorage.getItem("user");
     const lastRoute = localStorage.getItem("lastRoute");
     if (storedUser) {
-
       dispatch(setUser(JSON.parse(storedUser))); // store user in Redux store
       if (lastRoute) {
         navigate(lastRoute);
-      } else if (["admin", "super-admin", "manager"].includes(userRole)) {
+      } else if ([ROLES.ACCOUNTANT, ROLES.ADMIN, ROLES.PHARMACIST, ROLES.MANAGER].includes(userRole)) {
         navigate("/dashboard");
-      } else if (userRole === "salesman") {
+      } else if (userRole === ROLES.SALESMAN) {
         navigate("/drugs/stock");
       }
     } else {
@@ -31,6 +31,7 @@ export default function Layout() {
   };
 
   useEffect(() => {
+    console.log("lout-effect...")
     loadUserFromStorage();
   }, []);
 

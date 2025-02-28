@@ -4,10 +4,10 @@ import { useSelector } from "react-redux";
 import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom'
 //
-export default function Landing() {
+export default function SideBarLayout() {
 
   const navigate = useNavigate();
-  const userRole = useSelector((state) => state.user.role);
+  const userRole = useSelector((state) => state.user.userRole);
 
   // useEffect(() => {
 
