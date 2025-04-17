@@ -25,23 +25,28 @@ export default function MFRTbl({ }) {
   const isModalVisible = useSelector((state) => state.drugsView.isModalVisible);
   //
   const [dropDown, setDropDown] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
   //
   useEffect(() => {
     const fetch = async () => {
+      setIsLoading(true);
       const data = await getHandler("/manufacturers");
-      console.log(JSON.stringify(data));
+      // alert(JSON.stringify(data));
       dispatch(
         setCurrentView({
           view: ENTITIES.manufacturer,
-          data: data.data.manufacturers,
+          data: data.data.data.data,
         })
       );
+      setIsLoading(false);
     };
-    fetch();
+    if (!isLoading) {
+      fetch();
+    }
     //
     localStorage.setItem("activeTab", ENTITIES.manufacturer);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
+  }, [dispatch]);
   //
   return (
     <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">

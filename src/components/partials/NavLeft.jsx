@@ -54,7 +54,7 @@ export default function NavLeft() {
     "rounded-md font-inter text-1/1.5 py-0.5 px-0.75 h-full w-full ml-1";
   //
   return (
-    <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border">
+    <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border shadow-md">
       {Object.values(navMap)
         .filter(
           (navItem) =>

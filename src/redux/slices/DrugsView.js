@@ -22,7 +22,6 @@ export const drugsViewSlice = createSlice({
       const { view, data } = action.payload;
       state.currentView = view;
       state[`${view}`] = data;
-      console.log(data)
       state.expanded = state.expanded === "hidden" ? "block" : "block";
     },
     checkSingle: (state, action) => {

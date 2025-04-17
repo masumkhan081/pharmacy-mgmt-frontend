@@ -42,7 +42,7 @@ export default function NavTop() {
   // }, [isAuthenticated]);
 
   return (
-    <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-2 teal-950 font-semibold text-1/1.25 rounded-b-md">
+    <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-2 teal-950 font-semibold text-1/1.25 rounded-b-md bg-slate-200 shadow-md">
       <div className="flex gap-2 items-center">
         {/* <button onClick={() => fetchData()}>Fetch</button> */}
         <CustomLink to="/" txt="Pharmacy Mgmt Syst" style="brand">

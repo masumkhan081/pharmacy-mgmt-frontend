@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 export default function MFRForm() {
   //
+  const [isLoading, setIsLoading] = useState(false)
   const dispatch = useDispatch();
   const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit)
   const modalData = useSelector((state) => state.drugsView.modalData)
@@ -20,18 +21,23 @@ export default function MFRForm() {
     console.log("resp: - manufacturers-- ", JSON.stringify(response));
   }
   // 
-  useEffect(() => {
-    const fetch = async () => {
-      const data = await getHandler("/manufacturers/all");
-      dispatch(setManufacturers({ data: data?.data?.manufacturers }));
-    };
-    fetch();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     alert("why i am running ..")
+  //     setIsLoading(true);
+  //     const data = await getHandler("/manufacturers");
+  //     dispatch(setManufacturers({ data: data?.data?.manufacturers }));
+  //     setIsLoading(false);
+  //   };
+  //   if (!isLoading) {
+  //     fetchData();
+  //   }
+  // }, []);
 
   return (
     <form className="flex flex-col ">
- 
-     
+
+
       <div className=' flex flex-col'>
         <label>Existing Manufacturers</label>
         <select  >
