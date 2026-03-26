@@ -1,5 +1,7 @@
 import React from "react";
 import Label from "../common-ui/Label";
+import Button from "../common-ui/Button";
+import Input from "../common-ui/Input";
 //  icons
 import eye from "../../assets/icons/eye.svg";
 
@@ -25,7 +27,7 @@ export default function Reset() {
         <div className="flex flex-col gap-2">
           <Label txt="Email" />
 
-          <input
+          <Input
             type="email"
             required
             className="txt_inp_form"
@@ -36,7 +38,7 @@ export default function Reset() {
           <Label txt="Password" />
           <div className="flex gap-2 justify-between">
             {/* <Input type="text" pc="" style="flex-grow" /> */}
-            <input
+            <Input
               id="password"
               name="password"
               type="password"
@@ -45,15 +47,15 @@ export default function Reset() {
               placeholder="Set a password"
               className="txt_inp_form flex-grow"
             />
-            <button onClick={(e) => passVisibility(e, "password")}>
+            <Button onClick={(e) => passVisibility(e, "password")}>
               <img src={eye} className="icn_sm" />
-            </button>
+            </Button>
           </div>
         </div>
         <div className="flex flex-col gap-2">
           <Label txt="Confirm Password" />
           <div className="flex gap-2 justify-between">
-            <input
+            <Input
               id="confirmpassword"
               name="confirmpassword"
               type="password"
@@ -62,15 +64,15 @@ export default function Reset() {
               placeholder="Password again"
               className="txt_inp_form flex-grow"
             />
-            <button onClick={(e) => passVisibility(e, "confirmpassword")}>
+            <Button onClick={(e) => passVisibility(e, "confirmpassword")}>
               <img src={eye} className="icn_sm" />
-            </button>
+            </Button>
           </div>
         </div>
 
-        <button type="submit" className="btn_auth_submit trans_eio">
+        <Button type="submit" className="btn_auth_submit trans_eio">
           Submit
-        </button>
+        </Button>
       </form>
     </>
   );

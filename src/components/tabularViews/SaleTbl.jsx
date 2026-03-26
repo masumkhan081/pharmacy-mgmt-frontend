@@ -5,6 +5,7 @@ import { checkSingle, checkAll, setCurrentView } from "../../redux/slices/saleVi
 import { getHandler } from "../../util/handler";
 import { ENTITIES } from "../../ui-config/entities";
 import { useLocation } from "react-router-dom";
+import Input from "../common-ui/Input";
 
 export default function SaleRecTbl({ }) {
   //
@@ -25,12 +26,12 @@ export default function SaleRecTbl({ }) {
   }, []);
   //
   return (
-    <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
+    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
       <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">
-              <input
+              <Input
                 type="checkbox"
                 checked={allChecked}
                 onChange={(e) => dispatch(checkAll())}
@@ -51,7 +52,7 @@ export default function SaleRecTbl({ }) {
             return (
               <tr key={item._id} className="tr_tbody">
                 <td className="td">
-                  <input
+                  <Input
                     type="checkbox"
                     checked={item.checked}
                     onChange={(e) => dispatch(checkSingle())}

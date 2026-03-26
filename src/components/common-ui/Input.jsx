@@ -1,15 +1,41 @@
 import React from "react";
 
-export default function Input({ id, type, pc, style, value, onChange }) {
-  const styLogic = () => (type === "text" ? "txt_inp_form" : "txt_inp_form");
+export default function Input({ 
+  id, 
+  type = "text", 
+  pc, 
+  placeholder,
+  style, 
+  className,
+  value, 
+  onChange,
+  name,
+  required,
+  disabled,
+  title,
+  onBlur,
+  onFocus,
+  checked,
+  ...props 
+}) {
+  const inputClass = className || (style ? `txt_inp_form ${style}` : "txt_inp_form");
+  
   return (
     <input
       id={id}
-      type={type || "text"}
-      className={`${styLogic()} ${style}`}
-      placeholder={pc}
+      name={name}
+      type={type}
+      className={inputClass}
+      placeholder={placeholder || pc}
       value={value}
       onChange={onChange}
-    ></input>
+      onBlur={onBlur}
+      onFocus={onFocus}
+      required={required}
+      disabled={disabled}
+      title={title}
+      checked={checked}
+      {...props}
+    />
   );
 }

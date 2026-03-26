@@ -35,10 +35,10 @@ export default function NavLeft() {
 
   // active navlink has a horizontal piece of shit at it's left of yellow color
   const sty_log_hr = (str) =>
-    location.pathname.endsWith(str) ? "bg-yellow-400" : "";
+    location.pathname.endsWith(str) ? "bg-primary-500" : "";
   // active navlink has a horizontal piece of shit at it's left of yellow color
   const sty_log_hr2 = (str) =>
-    location.pathname.includes(str) ? "bg-yellow-400" : "";
+    location.pathname.includes(str) ? "bg-primary-500" : "";
   // icon color changes based on navlink status
   const sty_log_icn = (str) =>
     location.pathname.endsWith(str) ? "active" : "idle";
@@ -54,7 +54,7 @@ export default function NavLeft() {
     "rounded-md font-inter text-1/1.5 py-0.5 px-0.75 h-full w-full ml-1";
   //
   return (
-    <ul className="col-span-1 h-full flex flex-col gap-3 pt-6 px-2 border shadow-md">
+    <ul className="nav-left-container">
       {Object.values(navMap)
         .filter(
           (navItem) =>
@@ -64,26 +64,27 @@ export default function NavLeft() {
             navItem?.access?.includes(userRole)
         )
         .map((navItem, ind) => {
+          const isActive = location.pathname.includes(navItem.to) || 
+                          (navItem.options && Object.values(navItem.options).some(opt => location.pathname.includes(opt.to)));
+          
           return (
             <li className="flex flex-col w-full" key={ind}>
               <NavLink
                 to={navItem.to}
                 onClick={() => setView(navItem.text)}
-                className=" w-full flex justify-between items-center rounded-md border border-slate-500 px-2 py-0.25 font-semibold"
+                className={`nav-main-item ${isActive ? 'nav-main-item-active' : ''}`}
               >
                 <span>{navItem.text}</span>
                 {navItem.options && (
                   <AiFillCaretRight
-                    className={
-                      isExtpanded(navItem.text) ? "rotate-90" : "rotate-0"
-                    }
+                    className={`nav-caret ${isExtpanded(navItem.text) ? 'nav-caret-expanded' : ''}`}
                   />
                 )}
               </NavLink>
 
               {navItem.options && (
                 <ul
-                  className={`py-1 space-y-1 w-full ${expansion[navItem.text]}`}
+                  className={`nav-submenu ${expansion[navItem.text] === 'block' ? 'nav-submenu-visible' : 'nav-submenu-hidden'}`}
                 >
                   {Object.values(navItem.options)
                     .filter(
@@ -92,12 +93,14 @@ export default function NavLeft() {
                         item?.access?.includes(userRole)
                     )
                     .map((item, index) => {
+                      const isSubActive = location.pathname === item.to;
+                      
                       return (
-                        <li
-                          key={index}
-                          className="  text-center text-sm rounded-md border border-slate-400 py-0.125"
-                        >
-                          <NavLink to={item.to}>
+                        <li key={index}>
+                          <NavLink 
+                            to={item.to}
+                            className={`nav-sub-item ${isSubActive ? 'nav-sub-item-active' : ''}`}
+                          >
                             <span>{item.text}</span>
                           </NavLink>
                         </li>

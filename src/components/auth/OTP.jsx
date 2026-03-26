@@ -1,5 +1,7 @@
 import React from "react";
 import Label from "../common-ui/Label";
+import Button from "../common-ui/Button";
+import Input from "../common-ui/Input";
 import { postHandler } from "../../utils/handlerReqRes";
 
 export default function OTP() {
@@ -45,7 +47,7 @@ export default function OTP() {
           <div className="w-full mb-2.5 flex justify-between flex-wrap gap-0.62   ">
             {otp_state.map((item, ind) => {
               return (
-                <input
+                <Input
                   type="text"
                   className=" py-1.125 px-1.25 rounded-full w-5.0 text-1.5/2 h-3.0 text-center "
                   value={otp_state[ind]}
@@ -59,9 +61,9 @@ export default function OTP() {
           </div>
         </div>
 
-        <button type="submit" className="btn_auth_submit  ">
+        <Button type="submit" className="btn_auth_submit  ">
           Verify Account
-        </button>
+        </Button>
       </form>
     </>
   );

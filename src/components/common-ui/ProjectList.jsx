@@ -14,7 +14,7 @@ export default function ({ onClose }) {
         <Button
           style={"ml-auto"}
           icon={
-            <AiOutlineClose className="w-1.25 h-1.25 text-orange-800 mb-0.125" />
+            <AiOutlineClose className="w-5 h-5 text-neutral-500 hover:text-neutral-700 transition-colors" />
           }
           onClick={() => onClose()}
         />

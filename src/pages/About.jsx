@@ -19,7 +19,7 @@ export default function About() {
           style="neutral_title "
           icon={<HiMiniQueueList className="mr-2" />}
         />
-        <ul className="w-full bg-green-50 border-y-8 border-emerald-100 text-green-800 px-2">
+        <ul className="w-full bg-secondary-50 border-l-4 border-secondary-500 text-neutral-700 px-6 py-4 rounded-lg shadow-sm">
           <li className="font-semibold mt-2">Data-Tier:</li>
           <List listArray={usedTechAndTools.dataTier} />
           <li className="font-semibold mt-2">Back-End:</li>

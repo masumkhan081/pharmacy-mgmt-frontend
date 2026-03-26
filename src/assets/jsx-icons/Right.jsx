@@ -8,8 +8,8 @@ export default function DB_right({ status }) {
     idle: "w-1.0 h-1.0 inline my-auto ml-auto ",
   };
   const fill = {
-    active: "#0D3D4B", // FFFFFF
-    idle: "#0D3D4B", //#0D3D4B
+    active: "var(--color-primary)",
+    idle: "var(--color-primary)",
   };
   return (
     <svg

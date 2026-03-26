@@ -29,7 +29,7 @@ export default function AttendanceTbl({ }) {
   }, []);
   //
   return (
-    <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
+    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
       <table className="w-full ">
         <thead>
           <tr className="tr_thead">

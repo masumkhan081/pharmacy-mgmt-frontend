@@ -41,7 +41,7 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <div className="bg-blue-100 max-w-[1600px] mx-auto rounded-md h-screen flex flex-col">
+    <div className="bg-neutral-100 max-w-[1600px] mx-auto h-screen flex flex-col">
       <NavTop />
       <Outlet />
       <Footer />

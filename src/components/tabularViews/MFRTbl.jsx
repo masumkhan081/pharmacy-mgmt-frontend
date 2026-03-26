@@ -14,6 +14,8 @@ import MFRForm from "../drugs/MFRForm";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ENTITIES } from "../../ui-config/entities";
+import Button from "../common-ui/Button";
+import Input from "../common-ui/Input";
 
 export default function MFRTbl({ }) {
   //
@@ -49,7 +51,7 @@ export default function MFRTbl({ }) {
   }, [dispatch]);
   //
   return (
-    <div className="w-full border rounded-md border-slate-200 overflow-x-scroll">
+    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
       <table className="w-full ">
         <thead>
           <tr className="tr_thead">
@@ -86,7 +88,7 @@ export default function MFRTbl({ }) {
                   <td className="py-1.125">{ind + 1}</td>
                   <td className="py-1.125">{item.name}</td>
                   <td className="py-1.0 flex justify-center gap-2">
-                    <button
+                    <Button
                       onClick={() => {
                         dispatch(
                           toggleModal({
@@ -99,11 +101,11 @@ export default function MFRTbl({ }) {
                         );
                       }}
                     >
-                      <AiFillEdit className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
-                    </button>
-                    <button>
-                      <AiFillDelete className="p-0.125 w-6 h-6 shadow-sm border bg-slate-200 border-teal-600 rounded-full" />
-                    </button>
+                      <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
+                    </Button>
+                    <Button>
+                      <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
+                    </Button>
                   </td>
                 </tr>
               );

@@ -5,8 +5,8 @@ export default function Db_dashboard({ status, visibility }) {
   const cmn = "w-1.5 h-1.5 inline  my-auto";
 
   const sty = {
-    active: "#FFFFFF",
-    idle: "#0D3D4B",
+    active: "var(--color-white)",
+    idle: "var(--color-primary)",
   };
 
   return (

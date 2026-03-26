@@ -94,7 +94,7 @@ export default function Login() {
 
     <div className="h-full w-full flex flex-col gap-4 justify-center items-center sm:px-2 px-4">
       <div className=" md:w-2/5 sm:w-1/2 w-full  flex justify-start gap-4">
-        <span className="  font-titan font-normal text-slate-500 rounded-md px-1">Test Accounts:</span>
+        <span className="font-body font-medium text-neutral-600 rounded-lg px-2 py-1 bg-neutral-100">Test Accounts:</span>
 
         <Button
           onClick={() => setTestData("admin")}
@@ -130,12 +130,12 @@ export default function Login() {
           <div className="flex items-center justify-between">
             <div className="flex gap-2">
               <Label txt="Password" />
-              <button onClick={(e) => passVisibility(e, "password")}>
+              <Button onClick={(e) => passVisibility(e, "password")}>
                 <img src={eye} className="icn_sm" />
-              </button>
+              </Button>
             </div>
 
-            <Link to="/auth/account-recovery" className="text-blue-400">
+            <Link to="/auth/account-recovery" className="text-primary-600 hover:text-primary-700 font-medium transition-colors">
               Forgot Password ?
             </Link>
           </div>
@@ -153,7 +153,7 @@ export default function Login() {
         <div className="flex justify-start">
           <Button txt="Log In" type="submit" style=" btn_auth_submit "></Button>
         </div>
-        <p className="text-sm text-red-900">{error}</p>
+        <p className="text-sm text-error-600 bg-error-50 px-4 py-2 rounded-lg">{error}</p>
       </form>
 
     </div>

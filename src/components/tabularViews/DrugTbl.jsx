@@ -9,6 +9,7 @@ import {
 import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
 import { ENTITIES } from "../../ui-config/entities";
+import Input from "../common-ui/Input";
 
 export default function DrugTbl() {
   //
@@ -29,12 +30,12 @@ export default function DrugTbl() {
   }, []);
   //
   return (
-    <div className="w-full border rounded-md border-teal-600 overflow-x-scroll">
+    <div className="w-full border border-primary-200 rounded-xl overflow-hidden shadow-sm bg-white">
       <table className="w-full ">
         <thead>
           <tr className="tr_thead">
             <th className="th">
-              <input
+              <Input
                 type="checkbox"
                 checked={allChecked}
                 onChange={(e) => dispatch(checkAll())}
@@ -56,7 +57,7 @@ export default function DrugTbl() {
               return (
                 <tr key={ind} className="tr_tbody">
                   <td className="td">
-                    <input
+                    <Input
                       type="checkbox"
                       checked={item.checked}
                       onChange={(e) => dispatch(checkSingle())}

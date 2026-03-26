@@ -42,11 +42,11 @@ export default function NavTop() {
   // }, [isAuthenticated]);
 
   return (
-    <div className=" sm:px-3.0 px-1.0 flex justify-between items-center py-2 teal-950 font-semibold text-1/1.25 rounded-b-md bg-slate-200 shadow-md">
+    <div className="sm:px-6 px-4 flex justify-between items-center py-3 bg-white border-b border-neutral-200 shadow-sm">
       <div className="flex gap-2 items-center">
         {/* <button onClick={() => fetchData()}>Fetch</button> */}
         <CustomLink to="/" txt="Pharmacy Mgmt Syst" style="brand">
-          <MdLocalPharmacy className="w-5 h-5 text-blue-700" />
+          <MdLocalPharmacy className="w-6 h-6 text-primary-600" />
         </CustomLink>
       </div>
 
@@ -65,9 +65,9 @@ export default function NavTop() {
           onClick={() => setDropDown(!dropDown)}
           icon={
             dropDown ? (
-              <AiOutlineClose className="nav_icn text-orange-800" />
+              <AiOutlineClose className="nav_icn text-warning" />
             ) : (
-              <CgProfile className="nav_icn text-blue-700" />
+              <CgProfile className="nav_icn text-info" />
             )
           }
           style={"btn_nav"}
@@ -75,21 +75,21 @@ export default function NavTop() {
       )}
 
       {isAuthenticated && dropDown && (
-        <div className="flex flex-col gap-4 sm:px-4 px-2 py-4 absolute z-10 sm:w-[300px] w-1/2  left-auto right-0 top-[40px] h-auto border rounded-md bg-slate-200">
+        <div className="flex flex-col gap-2 px-4 py-3 absolute z-10 sm:w-[300px] w-1/2 left-auto right-0 top-[52px] h-auto border border-neutral-200 rounded-lg bg-white shadow-lg">
           <Button
             txt={"Profile"}
             onClick={() => {
               navigate("/auth/profile");
             }}
-            icon={<CgProfile className="nav_icn text-blue-700" />}
+            icon={<CgProfile className="nav_icn text-primary-600" />}
             style={"btn_nav"}
           />
           <Button
             txt={"Logout"}
             onClick={() => handleLogout()}
-            icon={<HiLogout className="nav_icn text-red-950" />}
+            icon={<HiLogout className="nav_icn text-error-600" />}
             style={
-              "flex items-center flex-wrap overflow-hidden gap-1 text-center px-2 py-1 rounded-md text-sm flex gap-2 text-red-800 border border-red-950"
+              "flex items-center gap-2 text-error-600 hover:bg-error-50 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
             }
           />
         </div>

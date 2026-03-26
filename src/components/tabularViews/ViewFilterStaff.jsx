@@ -11,7 +11,7 @@ export default function ViewFilterStaff() {
   //
   const navigate = useNavigate();
   const currentView = useSelector((state) => state.staffView.currentView);
-  const activeStyle = (button) => (button == currentView ? "bg-green-300" : "");
+  const activeStyle = (button) => (button == currentView ? "bg-primary-100 text-primary-700 border-primary-300" : "");
   const userRole = useSelector((state) => state.user.userRole);
 
   return (

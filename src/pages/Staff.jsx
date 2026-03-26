@@ -5,9 +5,10 @@ import Button from "../components/common-ui/Button";
 import SearchFilter from "../components/common-ui/SearchFilter";
 import { Outlet } from "react-router-dom";
 import { AiOutlinePlus } from "react-icons/ai";
-import SalaryForm from "../components/staff/SalaryForm";
-import AttendanceForm from "../components/staff/AttendanceForm";
-import MemberForm from "../components/staff/MemberForm";
+import SalaryForm from "../components/modals/SalaryForm";
+import AttendanceForm from "../components/modals/AttendanceForm";
+import MemberForm from "../components/modals/MemberForm";
+import ModalWrapper from "../components/modals/ModalWrapper";
 import { useDispatch, useSelector } from "react-redux";
 import { tblOptionsStaffPage } from "../ui-config/table";
 import { toggleModal } from "../redux/slices/StaffView";
@@ -16,10 +17,15 @@ import { ENTITIES } from "../ui-config/entities";
 export default function Staff() {
   //
   const dispatch = useDispatch();
-  // const toggleModal = useSelector((state) => state.drugsView.toggleModal)
-  // const modalData = useSelector((state) => state.drugsView.modalData)
   const currentView = useSelector((state) => state.staffView.currentView);
   const isModalVisible = useSelector((state) => state.staffView.isModalVisible);
+  const isModalForEdit = useSelector((state) => state.staffView.isModalForEdit);
+
+  const getModalTitle = () => {
+    if (!currentView) return "";
+    const action = isModalForEdit ? "Edit" : "Add";
+    return `${action} ${currentView.charAt(0).toUpperCase() + currentView.slice(1)}`;
+  };
 
   //
   return (
@@ -29,32 +35,25 @@ export default function Staff() {
         <ViewFilterStaff />
 
         <Button
-          icon={<AiOutlinePlus className="inline text-red-700" />}
+          icon={<AiOutlinePlus className="inline text-white" />}
           txt={` ${currentView}`}
           onClick={() => {
             dispatch(
               toggleModal({ isModalForEdit: false, isModalVisible: true })
             );
           }}
-          style={`btn_test_data`}
+          style={`btn_primary`}
         />
-        <div
-          className={
-            isModalVisible
-              ? "flex flex-col gap-4 sm:px-4 px-2 py-4 absolute z-10 sm:w-[500px] w-full sm:mx-auto mx-2 right-0 left-0 border border-yellow-800 rounded-md bg-slate-200"
-              : `hidden`
-          }
+        
+        <ModalWrapper
+          isVisible={isModalVisible}
+          onClose={() => dispatch(toggleModal({ isModalVisible: false }))}
+          title={getModalTitle()}
         >
-          <div className=" flex justify-end">
-            <Button
-              txt="Close"
-              onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
-            />
-          </div>
           {currentView === ENTITIES.salary && <SalaryForm />}
           {currentView === ENTITIES.attendance && <AttendanceForm />}
           {currentView === ENTITIES.member && <MemberForm />}
-        </div>
+        </ModalWrapper>
       </div>
 
       <SearchFilter />
