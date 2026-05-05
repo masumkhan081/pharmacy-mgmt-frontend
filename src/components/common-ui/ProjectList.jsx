@@ -9,7 +9,7 @@ export default function ({ onClose }) {
     <div className="w-full flex flex-col gap-4 sm:px-4 px-1 ">
       <Title
         txt="Live Projects"
-        style="neutral_title mt-4 rounded-md drop-shadow px-4 shadow-md"
+        style="section-title mt-4 rounded-md drop-shadow px-4 shadow-md"
       >
         <Button
           style={"ml-auto"}

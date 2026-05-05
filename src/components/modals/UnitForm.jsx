@@ -24,38 +24,40 @@ export default function UnitForm({ visible, setDropDown }) {
   //
   async function handleSave(e) {
     e.preventDefault();
-    
-    // Validate form data
+
     const formData = { shortName, longName };
     const validation = validateData(createUnitSchema, formData);
-    
+
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
-    
-    // Clear errors if validation passed
+
     setErrors({});
-    
-    // Submit data
-    const response = await postHandler("/units", validation.data);
-    console.log("resp: - units-- ", JSON.stringify(response));
-    
-    if (response.status === 200 || response.status === 201) {
-      // Refresh units list
-      const data = await getHandler("/units/all");
-      dispatch(setUnits({ data: data?.data?.units }));
-      
-      // Clear form
+
+    try {
+      await postHandler("/units", validation.data);
+      const { data } = await getHandler("/units");
+      dispatch(setUnits({ data }));
       setShortName("");
       setLongName("");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/units/all");
-      dispatch(setUnits({ data: data?.data?.units }));
+      try {
+        const { data } = await getHandler("/units");
+        dispatch(setUnits({ data }));
+      } catch (err) {
+        console.error("Failed to fetch units:", err.message);
+      }
     };
     fetch();
   }, []);
@@ -64,8 +66,8 @@ export default function UnitForm({ visible, setDropDown }) {
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-4">
       <div className="flex flex-col">
-        <label className="lbl_form">Existing Units</label>
-        <select className="txt_inp_form">
+        <label className="form-label">Existing Units</label>
+        <select className="txt-input">
           <option value="">Select a unit</option>
           {units &&
             units?.map((unit, ind) => {
@@ -75,7 +77,7 @@ export default function UnitForm({ visible, setDropDown }) {
       </div>
 
       <div className="flex flex-col">
-        <label className="lbl_form">Short Name *</label>
+        <label className="form-label">Short Name *</label>
         <Input
           type="text"
           name="shortName"
@@ -87,7 +89,7 @@ export default function UnitForm({ visible, setDropDown }) {
               setErrors({ ...errors, shortName: null });
             }
           }}
-          className={`txt_inp_form ${errors.shortName ? 'border-error-500' : ''}`}
+          className={`txt-input ${errors.shortName ? 'border-error-500' : ''}`}
           placeholder="e.g., mg, ml, tab"
         />
         {errors.shortName && (
@@ -96,7 +98,7 @@ export default function UnitForm({ visible, setDropDown }) {
       </div>
 
       <div className="flex flex-col">
-        <label className="lbl_form">Long Name *</label>
+        <label className="form-label">Long Name *</label>
         <Input
           type="text"
           name="longName"
@@ -108,7 +110,7 @@ export default function UnitForm({ visible, setDropDown }) {
               setErrors({ ...errors, longName: null });
             }
           }}
-          className={`txt_inp_form ${errors.longName ? 'border-error-500' : ''}`}
+          className={`txt-input ${errors.longName ? 'border-error-500' : ''}`}
           placeholder="e.g., Milligram, Milliliter, Tablet"
         />
         {errors.longName && (
@@ -124,7 +126,7 @@ export default function UnitForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update Unit" : "Create Unit"}
         </Button>
       </div>

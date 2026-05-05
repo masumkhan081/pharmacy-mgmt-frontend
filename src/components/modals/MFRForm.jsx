@@ -21,22 +21,23 @@ export default function MFRForm() {
   //  
   async function handleSave(e) {
     e.preventDefault();
-    
-    // Validate form data
+
     const validation = validateData(mfrSchema, { name });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/manufacturers", { name });
-    console.log("resp: - manufacturers-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/manufacturers", { name });
       setName("");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
   // 
@@ -56,8 +57,8 @@ export default function MFRForm() {
   return (
     <form className="flex flex-col" onSubmit={handleSave}>
       <div className='flex flex-col'>
-        <label className="lbl_form">Existing Manufacturers</label>
-        <select className="txt_inp_form">
+        <label className="form-label">Existing Manufacturers</label>
+        <select className="txt-input">
           <option disabled>Select existing manufacturer</option>
           {manufacturers && manufacturers?.map((mfr, ind) => {
             return <option key={ind}>{mfr.name}</option>
@@ -66,9 +67,9 @@ export default function MFRForm() {
       </div>
 
       <div className='flex flex-col mt-4'>
-        <label className="lbl_form">Manufacturer Name</label>
+        <label className="form-label">Manufacturer Name</label>
         <Input 
-          className="txt_inp_form"
+          className="txt-input"
           type='text' 
           name="name" 
           value={name} 
@@ -90,7 +91,7 @@ export default function MFRForm() {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

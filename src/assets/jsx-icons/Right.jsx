@@ -4,8 +4,8 @@ export default function DB_right({ status }) {
    
   
   const sty = {
-    active: "w-1.0 h-1.0 inline my-auto ml-auto rotate-90",
-    idle: "w-1.0 h-1.0 inline my-auto ml-auto ",
+    active: "w-4 h-4 inline my-auto ml-auto rotate-90",
+    idle: "w-4 h-4 inline my-auto ml-auto ",
   };
   const fill = {
     active: "var(--color-primary)",

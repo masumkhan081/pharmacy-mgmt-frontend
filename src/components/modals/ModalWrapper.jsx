@@ -15,7 +15,7 @@ export default function ModalWrapper({
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
         {/* Header with title and close button */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-neutral-200">
-          <h2 className="text-xl font-semibold text-neutral-800 font-heading text-center flex-1">
+          <h2 className="text-xl font-semibold text-neutral-800 text-center flex-1">
             {title}
           </h2>
           <Button

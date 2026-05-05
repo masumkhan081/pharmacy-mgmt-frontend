@@ -29,7 +29,7 @@ export default function ViewFilterStaff() {
               onClick={() => {
                 navigate("/staff/" + option);
               }}
-              style={`btn_test_data capitalize ${activeStyle(option)}`}
+              style={`btn-test-data capitalize ${activeStyle(option)}`}
               key={ind}
             />
           ))

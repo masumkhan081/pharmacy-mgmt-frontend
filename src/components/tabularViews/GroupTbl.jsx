@@ -23,20 +23,23 @@ export default function GroupTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/groups");
-      dispatch(setCurrentView({ view: ENTITIES.group, data: data.data.groups }));
+      try {
+        const { data } = await getHandler("/groups");
+        dispatch(setCurrentView({ view: ENTITIES.group, data }));
+      } catch (err) {
+        console.error("Failed to fetch groups:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.group);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.group);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             {/* <th className="th">
               <input
                 type="checkbox"
@@ -59,7 +62,7 @@ export default function GroupTbl() {
           {groups &&
             groups.map((item, ind) => {
               return (
-                <tr key={item._id} className="tr_tbody">
+                <tr key={item._id} className="tr-tbody">
                   {/* <td className="td">
                   <input
                     type="checkbox"
@@ -67,10 +70,11 @@ export default function GroupTbl() {
                     onChange={(e) => dispatch(checkSingle())}
                   />
                 </td> */}
-                  <td className="py-1.125">{ind + 1}</td>
-                  <td className="py-1.125">{item.name}</td>
-                  <td className="py-1.0 flex justify-center gap-2">
+                  <td className="py-4">{ind + 1}</td>
+                  <td className="py-4">{item.name}</td>
+                  <td className="py-4 flex justify-center gap-2">
                     <Button
+                      aria-label={`Edit ${item.name}`}
                       onClick={() => {
                         dispatch(
                           toggleModal({
@@ -86,7 +90,7 @@ export default function GroupTbl() {
                     >
                       <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
                     </Button>
-                    <Button>
+                    <Button aria-label={`Delete ${item.name}`}>
                       <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
                     </Button>
                   </td>

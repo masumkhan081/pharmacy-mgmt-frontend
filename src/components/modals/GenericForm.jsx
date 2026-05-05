@@ -30,30 +30,35 @@ export default function GenericForm({ visible, setDropDown }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
-    // Validate form data
+
     const validation = validateData(genericSchema, { name, groupId: selectedGroup });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/generic", { name, groupId: selectedGroup });
-    console.log("resp: - generic-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/generic", { name, groupId: selectedGroup });
       setName("");
       setSelectedGroup("select-one");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
 
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/generics/" + selectedGroup);
-      dispatch(setGenerics(data.data.generics));
+      try {
+        const { data } = await getHandler("/generics?group=" + selectedGroup);
+        dispatch(setGenerics(data));
+      } catch (err) {
+        console.error("Failed to fetch generics:", err.message);
+      }
     };
     if (selectedGroup !== "select-one") {
       fetch();
@@ -62,8 +67,12 @@ export default function GenericForm({ visible, setDropDown }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      let data = await getHandler("/groups/all");
-      dispatch(setGroups({ data: data?.data?.groups }));
+      try {
+        const { data } = await getHandler("/groups");
+        dispatch(setGroups({ data }));
+      } catch (err) {
+        console.error("Failed to fetch groups:", err.message);
+      }
     };
     fetch();
   }, []);
@@ -71,9 +80,9 @@ export default function GenericForm({ visible, setDropDown }) {
   return (
     <form onSubmit={(e) => handleSubmit(e)}>
       <div className="flex flex-col">
-        <label className="lbl_form">Select Group</label>
+        <label className="form-label">Select Group</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedGroup}
           onChange={(e) => {
             setSelectedGroup(e.target.value);
@@ -98,8 +107,8 @@ export default function GenericForm({ visible, setDropDown }) {
       </div>
 
       <div className="flex flex-col mt-4">
-        <label className="lbl_form">Existing Generics</label>
-        <select className="txt_inp_form">
+        <label className="form-label">Existing Generics</label>
+        <select className="txt-input">
           <option disabled>Select existing generic</option>
           {generics &&
             generics?.map((gen, ind) => {
@@ -109,9 +118,9 @@ export default function GenericForm({ visible, setDropDown }) {
       </div>
       
       <div className="flex flex-col mt-4">
-        <label className="lbl_form">New Generic Name</label>
+        <label className="form-label">New Generic Name</label>
         <Input
-          className="txt_inp_form"
+          className="txt-input"
           type="text"
           name="name"
           value={name}
@@ -133,7 +142,7 @@ export default function GenericForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

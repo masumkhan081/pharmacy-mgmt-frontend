@@ -115,3 +115,20 @@ export const useFormValidation = (schema) => {
     getErrors,
   };
 };
+
+/**
+ * Maps an ApiError-shaped error into a flat { field: message } object,
+ * with a `_form` fallback for envelope-level messages.
+ * @param {unknown} err
+ * @returns {Record<string, string>}
+ */
+export const apiErrorsToFields = (err) => {
+  if (!err) return { _form: "Request failed" };
+  if (Array.isArray(err.errors) && err.errors.length) {
+    return err.errors.reduce(
+      (a, e) => ({ ...a, [e.field ?? "_form"]: e.message }),
+      {}
+    );
+  }
+  return { _form: err.message ?? "Request failed" };
+};

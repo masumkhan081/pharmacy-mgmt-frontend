@@ -10,7 +10,7 @@ import {
   setModaldata,
 } from "../../redux/slices/DrugsView";
 import { getHandler } from "../../utils/handlerReqRes";
-import MFRForm from "../drugs/MFRForm";
+import MFRForm from "../modals/MFRForm";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import { ENTITIES } from "../../ui-config/entities";
@@ -32,29 +32,29 @@ export default function MFRTbl({ }) {
   useEffect(() => {
     const fetch = async () => {
       setIsLoading(true);
-      const data = await getHandler("/manufacturers");
-      // alert(JSON.stringify(data));
-      dispatch(
-        setCurrentView({
-          view: ENTITIES.manufacturer,
-          data: data.data.data.data,
-        })
-      );
-      setIsLoading(false);
+      try {
+        const { data } = await getHandler("/manufacturers");
+        dispatch(
+          setCurrentView({ view: ENTITIES.manufacturer, data })
+        );
+      } catch (err) {
+        console.error("Failed to fetch manufacturers:", err.message);
+      } finally {
+        setIsLoading(false);
+      }
     };
     if (!isLoading) {
       fetch();
     }
-    //
     localStorage.setItem("activeTab", ENTITIES.manufacturer);
     localStorage.setItem("lastRoute", location.pathname);
   }, [dispatch]);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[480px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             {/* <th className="th">
               <input
                 type="checkbox"
@@ -77,7 +77,7 @@ export default function MFRTbl({ }) {
           {mfrs &&
             mfrs.map((item, ind) => {
               return (
-                <tr key={item._id} className="tr_tbody">
+                <tr key={item._id} className="tr-tbody">
                   {/* <td className="td">
                   <input
                     type="checkbox"
@@ -85,10 +85,11 @@ export default function MFRTbl({ }) {
                     onChange={(e) => dispatch(checkSingle())}
                   />
                 </td> */}
-                  <td className="py-1.125">{ind + 1}</td>
-                  <td className="py-1.125">{item.name}</td>
-                  <td className="py-1.0 flex justify-center gap-2">
+                  <td className="py-4">{ind + 1}</td>
+                  <td className="py-4">{item.name}</td>
+                  <td className="py-4 flex justify-center gap-2">
                     <Button
+                      aria-label={`Edit ${item.name}`}
                       onClick={() => {
                         dispatch(
                           toggleModal({
@@ -103,7 +104,7 @@ export default function MFRTbl({ }) {
                     >
                       <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
                     </Button>
-                    <Button>
+                    <Button aria-label={`Delete ${item.name}`}>
                       <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
                     </Button>
                   </td>

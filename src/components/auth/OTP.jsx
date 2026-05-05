@@ -36,20 +36,20 @@ export default function OTP() {
   }
   return (
     <>
-      <p className="btn_auth_toggler">Email Verification</p>
+      <p className="btn-auth-toggler">Email Verification</p>
       <form
         onSubmit={handleSubmit}
-        className="flex-grow flex flex-col justify-center gap-2 pt-6 px-2.5"
+        className="flex-grow flex flex-col justify-center gap-2 pt-6 px-10"
       >
         <div className="flex flex-col gap-2">
           <Label txt="OTP" />
 
-          <div className="w-full mb-2.5 flex justify-between flex-wrap gap-0.62   ">
+          <div className="w-full mb-10 flex justify-between flex-wrap gap-10   ">
             {otp_state.map((item, ind) => {
               return (
                 <Input
                   type="text"
-                  className=" py-1.125 px-1.25 rounded-full w-5.0 text-1.5/2 h-3.0 text-center "
+                  className=" py-4 px-5 rounded-full w-20 text-2xl leading-8 h-12 text-center "
                   value={otp_state[ind]}
                   onChange={(e) => {
                     console.log(e.target.value);
@@ -61,7 +61,7 @@ export default function OTP() {
           </div>
         </div>
 
-        <Button type="submit" className="btn_auth_submit  ">
+        <Button type="submit" className="btn-auth-submit  ">
           Verify Account
         </Button>
       </form>

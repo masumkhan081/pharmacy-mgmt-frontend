@@ -19,10 +19,10 @@ export default function Reset() {
   };
   return (
     <>
-      <p className="btn_auth_toggler">Password Reset</p>
+      <p className="btn-auth-toggler">Password Reset</p>
       <form
         onSubmit={handleSubmit}
-        className="flex-grow flex flex-col justify-center gap-4 py-3.0 px-1.5"
+        className="flex-grow flex flex-col justify-center gap-4 py-12 px-6"
       >
         <div className="flex flex-col gap-2">
           <Label txt="Email" />
@@ -30,7 +30,7 @@ export default function Reset() {
           <Input
             type="email"
             required
-            className="txt_inp_form"
+            className="txt-input"
             placeholder="Enter Your Email"
           />
         </div>
@@ -45,10 +45,10 @@ export default function Reset() {
               title="Must contain at least 6 or more characters"
               required
               placeholder="Set a password"
-              className="txt_inp_form flex-grow"
+              className="txt-input flex-grow"
             />
             <Button onClick={(e) => passVisibility(e, "password")}>
-              <img src={eye} className="icn_sm" />
+              <img src={eye} className="icon-sm" />
             </Button>
           </div>
         </div>
@@ -62,15 +62,15 @@ export default function Reset() {
               title="Must contain at least 6 or more characters"
               required
               placeholder="Password again"
-              className="txt_inp_form flex-grow"
+              className="txt-input flex-grow"
             />
             <Button onClick={(e) => passVisibility(e, "confirmpassword")}>
-              <img src={eye} className="icn_sm" />
+              <img src={eye} className="icon-sm" />
             </Button>
           </div>
         </div>
 
-        <Button type="submit" className="btn_auth_submit trans_eio">
+        <Button type="submit" className="btn-auth-submit trans-eio">
           Submit
         </Button>
       </form>

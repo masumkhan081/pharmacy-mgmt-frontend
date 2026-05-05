@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsStaffPage } from "../../ui-config/table";
+import { tblHeaderStaff } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import {
   checkSingle,
@@ -20,20 +20,23 @@ export default function StaffTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/staff");
-      dispatch(setCurrentView({ view: ENTITIES.member, data: data.data.staff }));
+      try {
+        const { data } = await getHandler("/staff");
+        dispatch(setCurrentView({ view: ENTITIES.member, data }));
+      } catch (err) {
+        console.error("Failed to fetch staff:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.member);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.member);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -41,7 +44,7 @@ export default function StaffTbl() {
                 onChange={(e) => dispatch(checkAll())}
               />
             </th>
-            {tblHeaderBrands.map((itm, ind) => {
+            {tblHeaderStaff.map((itm, ind) => {
               return (
                 <th key={ind} className="th">
                   {itm}
@@ -54,7 +57,7 @@ export default function StaffTbl() {
         <tbody>
           {staff && staff?.map((item, ind) => {
             return (
-              <tr key={item._id} className="tr_tbody">
+              <tr key={item._id} className="tr-tbody">
                 <td className="td">
                   <Input
                     type="checkbox"
@@ -63,11 +66,11 @@ export default function StaffTbl() {
                   />
                 </td>
                 {/* below padding may apply to all */}
-                <td className="py-1.125">{ind}</td>
-                <td className="py-1.125">{"item.name"}</td>
-                <td className="py-1.125">{"item.generic"}</td>
-                <td className="py-1.125">{"item.group"}</td>
-                <td className="py-1.125">{"item.mfr"}</td>
+                <td className="py-4">{ind + 1}</td>
+                <td className="py-4">{item.name ?? "—"}</td>
+                <td className="py-4">{item.role ?? "—"}</td>
+                <td className="py-4">{item.email ?? "—"}</td>
+                <td className="py-4">{item.phone ?? "—"}</td>
               </tr>
             );
           })}

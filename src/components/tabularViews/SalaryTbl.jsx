@@ -20,20 +20,23 @@ export default function SalariesTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/salaries");
-      dispatch(setCurrentView({ view: ENTITIES.salary, data: data.data.salaries }));
+      try {
+        const { data } = await getHandler("/salaries");
+        dispatch(setCurrentView({ view: ENTITIES.salary, data }));
+      } catch (err) {
+        console.error("Failed to fetch salaries:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.salary);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.salary);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -54,7 +57,7 @@ export default function SalariesTbl() {
         <tbody>
           {salaries && salaries?.map((item, ind) => {
             return (
-              <tr key={item._id} className="tr_tbody">
+              <tr key={item._id} className="tr-tbody">
                 <td className="td">
                   <Input
                     type="checkbox"
@@ -63,11 +66,11 @@ export default function SalariesTbl() {
                   />
                 </td>
                 {/* below padding may apply to all */}
-                <td className="py-1.125">{ind}</td>
-                <td className="py-1.125">{"item.name"}</td>
-                <td className="py-1.125">{"item.generic"}</td>
-                <td className="py-1.125">{"item.group"}</td>
-                <td className="py-1.125">{"item.mfr"}</td>
+                <td className="py-4">{ind}</td>
+                <td className="py-4">{"item.name"}</td>
+                <td className="py-4">{"item.generic"}</td>
+                <td className="py-4">{"item.group"}</td>
+                <td className="py-4">{"item.mfr"}</td>
               </tr>
             );
           })}

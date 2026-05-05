@@ -1,9 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initUserState = {
+  userId: "",
   userName: "",
   userEmail: "",
-  userId: "",
   userRole: "",
   isAuthenticated: false,
 };
@@ -13,18 +13,17 @@ export const userSlice = createSlice({
   initialState: initUserState,
   reducers: {
     setUser: (state, action) => {
-      state.userName = action.payload.userName;
+      const p = action.payload ?? {};
+      state.userId = p.userId ?? p._id ?? p.id ?? "";
+      state.userName = p.userName ?? p.fullName ?? p.name ?? "";
+      state.userEmail = p.userEmail ?? p.email ?? "";
+      state.userRole = p.userRole ?? p.role ?? "";
       state.isAuthenticated = true;
-      state.userEmail = action.payload.userEmail;
-      state.userRole = action.payload.userRole;
     },
-    reset: (state) => {
-      return { ...initUserState };
-    },
+    reset: () => ({ ...initUserState }),
   },
 });
 
-// Action creators are generated for each case reducer function
 export const { setUser, reset } = userSlice.actions;
 
 export default userSlice.reducer;

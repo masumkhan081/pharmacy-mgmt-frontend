@@ -4,7 +4,7 @@ import Button from './Button'
 
 export default function SearchFilter({ searchContent, setSearchContent }) {
   return (
-    <div className='py-0.125 flex gap-2'>
+    <div className='py-2 flex gap-2'>
       <Input
         type={"text"}
         value={searchContent}

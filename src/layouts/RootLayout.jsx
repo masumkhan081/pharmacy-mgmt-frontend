@@ -43,7 +43,9 @@ export default function RootLayout() {
   return (
     <div className="bg-neutral-100 max-w-[1600px] mx-auto h-screen flex flex-col">
       <NavTop />
-      <Outlet />
+      <div className="flex-1 min-h-0 flex flex-col">
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );

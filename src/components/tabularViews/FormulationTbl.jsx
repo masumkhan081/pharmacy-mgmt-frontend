@@ -22,20 +22,23 @@ export default function FormulationTbl() {
 
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/formulations");
-      dispatch(setCurrentView({ view: ENTITIES.formulation, data: data.data.formulations }));
+      try {
+        const { data } = await getHandler("/formulations");
+        dispatch(setCurrentView({ view: ENTITIES.formulation, data }));
+      } catch (err) {
+        console.error("Failed to fetch formulations:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.formulation);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.formulation);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
 
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             {/* <th className="th">
               <input
                 type="checkbox"
@@ -57,7 +60,7 @@ export default function FormulationTbl() {
         <tbody>
           {formulations && formulations.map((item, ind) => {
             return (
-              <tr key={item._id} className="tr_tbody">
+              <tr key={item._id} className="tr-tbody">
                 {/* <td className="td">
                   <input
                     type="checkbox"
@@ -66,11 +69,12 @@ export default function FormulationTbl() {
                   />
                 </td> */}
                 {/* below padding may apply to all */}
-                <td className="py-1.125">{ind + 1}</td>
-                <td className="py-1.125">{item.fullName}</td>
-                <td className="py-1.125">{item.shortName}</td>
-                <td className="py-1.0 flex justify-center gap-2">
+                <td className="py-4">{ind + 1}</td>
+                <td className="py-4">{item.fullName}</td>
+                <td className="py-4">{item.shortName}</td>
+                <td className="py-4 flex justify-center gap-2">
                   <Button
+                    aria-label={`Edit ${item.fullName}`}
                     onClick={() => {
                       dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
                       dispatch(setModaldata({ id: item._id, name: item.name }))
@@ -78,7 +82,7 @@ export default function FormulationTbl() {
                   >
                     <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
                   </Button>
-                  <Button>
+                  <Button aria-label={`Delete ${item.fullName}`}>
                     <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
                   </Button>
                 </td>

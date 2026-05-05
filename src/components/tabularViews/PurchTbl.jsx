@@ -6,7 +6,7 @@ import {
   checkAll,
   setCurrentView,
 } from "../../redux/slices/purchView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
 import { ENTITIES } from "../../ui-config/entities";
 import Input from "../common-ui/Input";
@@ -20,22 +20,23 @@ export default function PurchTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/purchases");
-      dispatch(
-        setCurrentView({ view: ENTITIES.purchase, data: data.data.purchases })
-      );
+      try {
+        const { data } = await getHandler("/purchases");
+        dispatch(setCurrentView({ view: ENTITIES.purchase, data }));
+      } catch (err) {
+        console.error("Failed to fetch purchases:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.purchase);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.purchase);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -56,7 +57,7 @@ export default function PurchTbl() {
         <tbody>
           {purchases && purchases.map((item, ind) => {
             return (
-              <tr key={item._id} className="tr_tbody">
+              <tr key={item._id} className="tr-tbody">
                 <td className="td">
                   <Input
                     type="checkbox"
@@ -64,17 +65,11 @@ export default function PurchTbl() {
                     onChange={(e) => dispatch(checkSingle())}
                   />
                 </td>
-                {/* below padding may apply to all */}
-                <td className="py-1.125">{ind}</td>
-                <td className="py-1.125">{"item.name"}</td>
-                <td className="py-1.125">{"item.generic.name"}</td>
-                <td className="py-1.125">{"item.available"}</td>
-                <td className="py-1.125">
-                  {"item.strength" + " item.unit.name"}
+                <td className="py-4">
+                  {item.purchaseAt ? new Date(item.purchaseAt).toLocaleString() : "—"}
                 </td>
-                <td className="py-1.125">{"item.formulation.name"}</td>
-                <td className="py-1.125">{"item.manufacturer"}</td>
-                {/* <TD2 txt={item.status} /> */}
+                <td className="py-4">{item.bill ?? "—"}</td>
+                <td className="py-4">—</td>
               </tr>
             );
           })}

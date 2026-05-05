@@ -18,7 +18,7 @@ export default function Input({
   checked,
   ...props 
 }) {
-  const inputClass = className || (style ? `txt_inp_form ${style}` : "txt_inp_form");
+  const inputClass = className || (style ? `txt-input ${style}` : "txt-input");
   
   return (
     <input

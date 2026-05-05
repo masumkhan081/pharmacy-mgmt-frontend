@@ -1,16 +1,11 @@
-@import url("https://fonts.googleapis.com/css2?family=Averia+Serif+Libre:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&family=Inter:wght@400;500;600;700;800&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   background: #F9FAFB;
-  font-family: Inter, sans-serif;
   line-height: 1.5;
-  font-weight: 400;
-  
-  /* Color variables for use in JavaScript/SVG */
+
   --color-white: #FFFFFF;
   --color-primary: #2563EB;
   --color-primary-300: #93C5FD;
@@ -48,67 +43,71 @@ body {
   background: #60A5FA;
 }
 
-.nav_drop_down {
+.nav-dropdown {
   @apply block absolute z-10 sm:w-1/2 w-full sm:mx-auto mx-2 left-auto right-auto top-[52px] h-auto border border-neutral-200 rounded-lg bg-white shadow-lg;
 }
 
-.btn_nav {
+.btn-nav {
   @apply flex items-center gap-2 text-primary-600 hover:text-primary-700 hover:bg-primary-50 px-3 py-2 rounded-lg text-sm font-medium transition-colors duration-200;
 }
 
-.nav_icn {
+.nav-icon {
   @apply w-6 h-6;
 }
 
 .brand {
-  @apply font-heading text-base font-semibold text-primary-700 flex items-center gap-2 hover:text-primary-800 transition-colors;
+  @apply text-base font-semibold text-primary-700 flex items-center gap-2 hover:text-primary-800 transition-colors;
 }
 
-.neutral_title {
-  @apply flex justify-center text-xl text-neutral-800 font-heading w-2/3 mx-auto py-3 font-bold;
+.section-title {
+  @apply flex justify-center text-xl text-neutral-800 w-2/3 mx-auto py-3 font-bold;
 }
 
-.txt_inp_form {
-  @apply w-full border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 font-body outline-none rounded-lg px-4 py-2 text-neutral-900 placeholder:text-neutral-400 transition-all duration-200;
+.txt-input {
+  @apply w-full border border-neutral-300 focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none rounded-lg px-4 py-2 text-neutral-900 placeholder:text-neutral-400 transition-all duration-200;
 }
 
-.lbl_form {
-  @apply font-medium font-body text-sm text-neutral-700 mb-1.5;
+.form-label {
+  @apply font-medium text-sm text-neutral-700 mb-6;
 }
 
-.btn_auth_toggler {
+.btn-auth-toggler {
   @apply bg-gradient-to-r from-primary-600 to-primary-700 text-white text-center px-4 py-2 rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all duration-200;
 }
 
-.btn_auth_submit {
+.btn-auth-submit {
   @apply bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg px-6 py-2 shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
 }
 
-.btn_test_data {
-  @apply border border-neutral-300 hover:border-primary-400 hover:bg-primary-50 text-neutral-700 hover:text-primary-700 rounded-md px-2 py-0.5 text-xs font-medium transition-all duration-200;
+.btn-test-data {
+  @apply border border-neutral-300 hover:border-primary-400 hover:bg-primary-50 text-neutral-700 hover:text-primary-700 rounded-md px-2 py-2 text-xs font-medium transition-all duration-200;
 }
 
-.btn_primary {
+.btn-primary {
   @apply bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2;
 }
 
-.btn_secondary {
+.btn-secondary {
   @apply bg-secondary-600 hover:bg-secondary-700 text-white font-medium rounded-lg px-4 py-2 shadow-sm hover:shadow-md transition-all duration-200 flex items-center gap-2;
 }
 
-.trans_eio {
+.trans-eio {
   @apply transition duration-700 ease-in-out;
 }
 
-.icn_sm {
+.icon-sm {
   @apply w-4 h-4 inline;
 }
 
-.tr_tbody {
+.tr-tbody {
   @apply text-neutral-800 font-normal text-sm text-center border-b border-neutral-200 hover:bg-neutral-50 transition-colors duration-150;
 }
 
-.tr_thead {
+.table-shell {
+  @apply w-full border border-neutral-200 rounded-xl overflow-x-auto shadow-sm bg-white;
+}
+
+.tr-thead {
   @apply text-neutral-700 font-semibold text-xs uppercase bg-neutral-100 border-b-2 border-neutral-300;
 }
 
@@ -131,19 +130,19 @@ body {
 
 /* Badge styles */
 .badge-primary {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700;
+  @apply inline-flex items-center px-10 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-700;
 }
 
 .badge-success {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700;
+  @apply inline-flex items-center px-10 py-1 rounded-full text-xs font-medium bg-success-100 text-success-700;
 }
 
 .badge-warning {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-700;
+  @apply inline-flex items-center px-10 py-1 rounded-full text-xs font-medium bg-warning-100 text-warning-700;
 }
 
 .badge-error {
-  @apply inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-error-100 text-error-700;
+  @apply inline-flex items-center px-10 py-1 rounded-full text-xs font-medium bg-error-100 text-error-700;
 }
 
 /* Left Navigation Styles */

@@ -38,42 +38,47 @@ export default function BrandForm({ visible, setDropDown }) {
   //
   async function handleSave(e) {
     e.preventDefault();
-    
-    // Validate form data
-    const validation = validateData(brandSchema, { 
-      name, 
+
+    const validation = validateData(brandSchema, {
+      name,
       groupId: selectedGroup,
       genericId: selectedGeneric,
-      mfrId: selectedMFR 
+      mfrId: selectedMFR,
     });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/brands", { 
-      name, 
-      groupId: selectedGroup,
-      genericId: selectedGeneric,
-      mfrId: selectedMFR 
-    });
-    console.log("resp: - brands-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/brands", {
+        name,
+        groupId: selectedGroup,
+        genericId: selectedGeneric,
+        mfrId: selectedMFR,
+      });
       setName("");
       setSelectedGroup("select-one");
       setSelectedGeneric("select-one");
       setSelectedMFR("select-one");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
 
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/generics/" + selectedGroup);
-      dispatch(setGenerics(data.data.generics));
+      try {
+        const { data } = await getHandler("/generics?group=" + selectedGroup);
+        dispatch(setGenerics(data));
+      } catch (err) {
+        console.error("Failed to fetch generics:", err.message);
+      }
     };
     if (selectedGroup !== "select-one") {
       fetch();
@@ -82,20 +87,24 @@ export default function BrandForm({ visible, setDropDown }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      let data = await getHandler("/groups");
-      dispatch(setGroups({ data: data?.data?.groups }));
-      data = await getHandler("/manufacturers/all");
-      dispatch(setManufacturers({ data: data?.data?.manufacturers }));
+      try {
+        const groupsRes = await getHandler("/groups");
+        dispatch(setGroups({ data: groupsRes.data }));
+        const mfrsRes = await getHandler("/manufacturers");
+        dispatch(setManufacturers({ data: mfrsRes.data }));
+      } catch (err) {
+        console.error("Failed to fetch lookups:", err.message);
+      }
     };
-    visible ? fetch() : null;
+    if (visible) fetch();
   }, []);
 
   return (
     <form onSubmit={handleSave}>
       <div className="flex flex-col">
-        <label className="lbl_form">Brand Name</label>
+        <label className="form-label">Brand Name</label>
         <Input
-          className="txt_inp_form"
+          className="txt-input"
           type="text"
           name="name"
           value={name}
@@ -110,9 +119,9 @@ export default function BrandForm({ visible, setDropDown }) {
       </div>
       
       <div className="mt-4">
-        <label className="lbl_form">Select Group</label>
+        <label className="form-label">Select Group</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedGroup}
           onChange={(e) => {
             setSelectedGroup(e.target.value);
@@ -137,9 +146,9 @@ export default function BrandForm({ visible, setDropDown }) {
       </div>
 
       <div className="mt-4">
-        <label className="lbl_form">Select Generic</label>
+        <label className="form-label">Select Generic</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedGeneric}
           onChange={(e) => {
             setSelectedGeneric(e.target.value);
@@ -164,9 +173,9 @@ export default function BrandForm({ visible, setDropDown }) {
       </div>
 
       <div className="mt-4">
-        <label className="lbl_form">Select Manufacturer</label>
+        <label className="form-label">Select Manufacturer</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedMFR}
           onChange={(e) => {
             setSelectedMFR(e.target.value);
@@ -198,7 +207,7 @@ export default function BrandForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

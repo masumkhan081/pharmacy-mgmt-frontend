@@ -1,52 +1,8 @@
-import axios from "axios";
+import apiClient from "./apiClient";
 
-// const BASE_URL = import.meta.env.VITE_BASE_URL;
-const BASE_URL = "https://pharmacy-mgmt-backend.onrender.com/api";
-// const BASE_URL = "http://localhost:3000/api";
+export const getHandler = (endpoint) => apiClient.get(endpoint);
+export const postHandler = (endpoint, body) => apiClient.post(endpoint, body);
+export const patchHandler = (endpoint, body) => apiClient.patch(endpoint, body);
+export const deleteHandler = (endpoint) => apiClient.delete(endpoint);
 
-// axios.defaults.baseURL = BASE_URL;
-//  axios.defaults.withCredentials = true
-
-const config = {
-  headers: {
-    "Content-Type": "application/json",
-  },
-  withCredentials: true,
-};
-
-export const postHandler = async (endpoint, body) => {
-  try {
-    const response = await axios.post(`${BASE_URL + endpoint}`, body, config);
-    return response;
-  } catch (error) {
-    return error.response;
-  }
-};
-
-export const getHandler = async (endpoint) => {
-  try {
-    const response = await axios.get(`${BASE_URL + endpoint}`, config);
-    return response;
-  } catch (err) {
-    return err;
-  }
-};
-
-export const patchHandler = async (endpoint, data) => {
-  try {
-    const response = await axios.patch(`${BASE_URL + endpoint}`, data, config);
-
-    return response;
-  } catch (err) {
-    return err;
-  }
-};
-
-export const deleteHandler = async (endpoint) => {
-  try {
-    const response = await axios.get(`${BASE_URL + endpoint}`, config);
-    return response;
-  } catch (err) {
-    return err;
-  }
-};
+export default apiClient;

@@ -12,7 +12,7 @@ export default function Button({
   children,
   ...props 
 }) {
-  const buttonClass = className || style || "btn_test_data";
+  const buttonClass = className || style || "btn-test-data";
   
   return (
     <button 

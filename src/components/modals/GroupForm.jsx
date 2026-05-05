@@ -26,29 +26,34 @@ export default function GroupForm({ visible, setDropDown }) {
   //  
   async function handleSave(e) {
     e.preventDefault();
-    
-    // Validate form data
+
     const validation = validateData(groupSchema, { name });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/groups", { name });
-    console.log("resp: - groups-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/groups", { name });
       setName("");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/groups/all");
-      dispatch(setGroups({ data: data?.data?.groups }));
+      try {
+        const { data } = await getHandler("/groups");
+        dispatch(setGroups({ data }));
+      } catch (err) {
+        console.error("Failed to fetch groups:", err.message);
+      }
     };
     fetch();
   }, []);
@@ -56,8 +61,8 @@ export default function GroupForm({ visible, setDropDown }) {
   return (
     <form className="flex flex-col" onSubmit={handleSave}>
       <div className="flex flex-col">
-        <label className="lbl_form">Existing Groups</label>
-        <select className="txt_inp_form">
+        <label className="form-label">Existing Groups</label>
+        <select className="txt-input">
           <option disabled>Select existing group</option>
           {groups &&
             groups?.map((grp, ind) => {
@@ -67,9 +72,9 @@ export default function GroupForm({ visible, setDropDown }) {
       </div>
       
       <div className="flex flex-col mt-4">
-        <label className="lbl_form">Group Name</label>
+        <label className="form-label">Group Name</label>
         <Input
-          className="txt_inp_form"
+          className="txt-input"
           type="text"
           name="name"
           value={name}
@@ -91,7 +96,7 @@ export default function GroupForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

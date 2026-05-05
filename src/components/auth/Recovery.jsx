@@ -17,11 +17,11 @@ export default function Recovery() {
   };
   return (
     <>
-      <p className="btn_auth_toggler">Account Recovery</p>
+      <p className="btn-auth-toggler">Account Recovery</p>
 
       <form
         onSubmit={handleSubmit}
-        className="flex-grow flex flex-col justify-center gap-4 pt-6 px-1.5"
+        className="flex-grow flex flex-col justify-center gap-4 pt-6 px-6"
       >
         <div className="flex flex-col gap-2">
           <Label txt="Email" />
@@ -31,12 +31,12 @@ export default function Recovery() {
             value={recoveryEmail}
             onChange={(e) => setRecoveryEmail(e.target.value)}
             required={true}
-            style="txt_inp_form"
+            style="txt-input"
             pc="Enter Your Email"
           />
         </div>
 
-        <Button type="submit" txt="Submit" style="btn_auth_submit trans_eio" />
+        <Button type="submit" txt="Submit" style="btn-auth-submit trans-eio" />
       </form>
     </>
   );

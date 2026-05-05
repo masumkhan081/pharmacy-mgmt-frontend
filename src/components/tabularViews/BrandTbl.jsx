@@ -26,20 +26,23 @@ export default function BrandTbl({ }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      const response = await getHandler("/brands");
-      dispatch(setCurrentView({ view: ENTITIES.brand, data: response?.data?.data?.data }));
+      try {
+        const { data } = await getHandler("/brands");
+        dispatch(setCurrentView({ view: ENTITIES.brand, data }));
+      } catch (err) {
+        console.error("Failed to fetch brands:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.brand);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.brand);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[480px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -62,7 +65,7 @@ export default function BrandTbl({ }) {
 
           {brands && brands?.map((item, ind) => {
             return (
-              <tr key={ind} className="tr_tbody">
+              <tr key={item._id ?? ind} className="tr-tbody">
                 <td className="td">
                   <Input
                     type="checkbox"
@@ -71,13 +74,14 @@ export default function BrandTbl({ }) {
                   />
                 </td>
 
-                <td className="py-1.125">{ind + 1}</td>
-                <td className="py-1.125">{item.name}</td>
-                {/* <td className="py-1.125">{item.genericId.name}</td>
-                <td className="py-1.125">{item.genericId.groupId.name}</td>
-                <td className="py-1.125">{item.mfrId.name}</td> */}
-                <td className="py-1.0 flex justify-center gap-2">
+                <td className="py-4">{ind + 1}</td>
+                <td className="py-4">{item.name}</td>
+                {/* <td className="py-4">{item.genericId.name}</td>
+                <td className="py-4">{item.genericId.groupId.name}</td>
+                <td className="py-4">{item.mfrId.name}</td> */}
+                <td className="py-4 flex justify-center gap-2">
                   <Button
+                    aria-label={`Edit ${item.name}`}
                     onClick={() => {
                       dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
                       dispatch(setModaldata({ id: item._id, name: item.name }))
@@ -85,7 +89,7 @@ export default function BrandTbl({ }) {
                   >
                     <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
                   </Button>
-                  <Button>
+                  <Button aria-label={`Delete ${item.name}`}>
                     <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
                   </Button>
                 </td>

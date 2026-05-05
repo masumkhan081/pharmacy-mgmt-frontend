@@ -30,7 +30,7 @@ export default function Drugs() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-1.25 md:px-0.38 pt-1.5">
+    <div className="w-full flex flex-col gap-5 md:px-6 pt-6">
       <PageTitle title={currentView} />
       <div className="flex justify-between md:flex-row flex-col gap-2">
         <ViewFilterDrugs />
@@ -43,7 +43,7 @@ export default function Drugs() {
               toggleModal({ isModalForEdit: false, isModalVisible: true })
             );
           }}
-          style={`btn_primary`}
+          style={`btn-primary`}
         />
 
         <ModalWrapper

@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect } from "react";
 
 export default function Db_dashboard({ status, visibility }) {
-  const cmn = "w-1.5 h-1.5 inline  my-auto";
+  const cmn = "w-6 h-6 inline  my-auto";
 
   const sty = {
     active: "var(--color-white)",

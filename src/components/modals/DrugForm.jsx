@@ -32,49 +32,45 @@ export default function DrugForm({ visible, setDropDown }) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    
-    // Validate form data
-    const validation = validateData(drugSchema, { 
-      name, 
+
+    const validation = validateData(drugSchema, {
+      name,
       genericId: selectedGeneric,
-      mfrId: selectedMFR !== "select-one" ? selectedMFR : undefined
+      mfrId: selectedMFR !== "select-one" ? selectedMFR : undefined,
     });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/drugs", { 
-      name, 
-      genericId: selectedGeneric,
-      mfrId: selectedMFR !== "select-one" ? selectedMFR : undefined
-    });
-    console.log("resp: - drugs-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/drugs", {
+        name,
+        genericId: selectedGeneric,
+        mfrId: selectedMFR !== "select-one" ? selectedMFR : undefined,
+      });
       setName("");
       setSelectedGroup("select-one");
       setSelectedGeneric("select-one");
       setSelectedMFR("select-one");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
 
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     const data = await getHandler("/generics/" + selectedGroup);
-  //     dispatch(setGenerics(data.data.generics));
-  //   }; if (selectedGroup !== "select-one") {
-  //     fetch()
-  //   }
-  // }, [selectedGroup]);
-  //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/generics/" + selectedGroup);
-      dispatch(setGenerics(data.data.generics));
+      try {
+        const { data } = await getHandler("/generics?group=" + selectedGroup);
+        dispatch(setGenerics(data));
+      } catch (err) {
+        console.error("Failed to fetch generics:", err.message);
+      }
     };
     if (selectedGroup !== "select-one") {
       fetch();
@@ -84,9 +80,9 @@ export default function DrugForm({ visible, setDropDown }) {
   return (
     <form className="flex flex-col" onSubmit={handleSubmit}>
       <div className="flex flex-col">
-        <label className="lbl_form">Drug Name</label>
+        <label className="form-label">Drug Name</label>
         <Input
-          className="txt_inp_form"
+          className="txt-input"
           type="text"
           name="name"
           value={name}
@@ -101,9 +97,9 @@ export default function DrugForm({ visible, setDropDown }) {
       </div>
       
       <div className="mt-4">
-        <label className="lbl_form">Select Group</label>
+        <label className="form-label">Select Group</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedGroup}
           onChange={(e) => setSelectedGroup(e.target.value)}
         >
@@ -122,9 +118,9 @@ export default function DrugForm({ visible, setDropDown }) {
       </div>
 
       <div className="mt-4">
-        <label className="lbl_form">Select Generic</label>
+        <label className="form-label">Select Generic</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedGeneric}
           onChange={(e) => {
             setSelectedGeneric(e.target.value);
@@ -149,9 +145,9 @@ export default function DrugForm({ visible, setDropDown }) {
       </div>
 
       <div className="mt-4">
-        <label className="lbl_form">Select Manufacturer</label>
+        <label className="form-label">Select Manufacturer</label>
         <select
-          className="txt_inp_form"
+          className="txt-input"
           value={selectedMFR}
           onChange={(e) => setSelectedMFR(e.target.value)}
         >
@@ -177,7 +173,7 @@ export default function DrugForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

@@ -2,7 +2,7 @@ import { ENTITIES } from "./entities";
 import { ROLES } from "./user.roles";
 
 const navMap = {
-  [ENTITIES.sale]: {
+  salePanel: {
     to: "/sale-panel",
     text: "Sale Panel",
     isAccessControlled: true,
@@ -64,7 +64,7 @@ const navMap = {
     access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT],
   },
   [ENTITIES.sale]: {
-    to: "sales",
+    to: "/sales",
     text: "Sales",
     isAccessControlled: true,
     access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT, ROLES.SALESMAN],

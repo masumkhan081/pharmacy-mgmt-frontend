@@ -8,6 +8,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { HiLogout, HiLogin } from "react-icons/hi";
 import { getHandler } from "../../utils/handlerReqRes";
+import { setAuthToken } from "../../utils/apiClient";
 import { reset } from "../../redux/slices/User";
 //
 export default function NavTop() {
@@ -18,15 +19,12 @@ export default function NavTop() {
 
   function handleLogout() {
     setDropDown(false);
+    setAuthToken(null);
     dispatch(reset());
     localStorage.removeItem("user");
     localStorage.removeItem("expansion");
     localStorage.removeItem("lastRoute");
     navigate("/auth/login");
-
-    // getHandler("/auth/logout").then((data) => {
-    // }).catch((err) => {
-    // });
   }
 
   // function toggleProfileMenu() {}
@@ -56,8 +54,8 @@ export default function NavTop() {
             navigate("/auth/login");
           }}
           txt="Log In"
-          // endIcon={<HiLogin className="nav_icn text-blue-700" />}
-          style={"btn_nav"}
+          // endIcon={<HiLogin className="nav-icon text-blue-700" />}
+          style={"btn-nav"}
         />
       )}
       {isAuthenticated && (
@@ -65,12 +63,12 @@ export default function NavTop() {
           onClick={() => setDropDown(!dropDown)}
           icon={
             dropDown ? (
-              <AiOutlineClose className="nav_icn text-warning" />
+              <AiOutlineClose className="nav-icon text-warning" />
             ) : (
-              <CgProfile className="nav_icn text-info" />
+              <CgProfile className="nav-icon text-info" />
             )
           }
-          style={"btn_nav"}
+          style={"btn-nav"}
         />
       )}
 
@@ -81,13 +79,13 @@ export default function NavTop() {
             onClick={() => {
               navigate("/auth/profile");
             }}
-            icon={<CgProfile className="nav_icn text-primary-600" />}
-            style={"btn_nav"}
+            icon={<CgProfile className="nav-icon text-primary-600" />}
+            style={"btn-nav"}
           />
           <Button
             txt={"Logout"}
             onClick={() => handleLogout()}
-            icon={<HiLogout className="nav_icn text-error-600" />}
+            icon={<HiLogout className="nav-icon text-error-600" />}
             style={
               "flex items-center gap-2 text-error-600 hover:bg-error-50 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200"
             }

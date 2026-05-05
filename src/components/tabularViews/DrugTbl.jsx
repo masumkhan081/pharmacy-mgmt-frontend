@@ -20,20 +20,23 @@ export default function DrugTbl() {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/stock");
-      dispatch(setCurrentView({ view: ENTITIES.stock, data: data?.data?.stock }));
+      try {
+        const { data } = await getHandler("/drugs");
+        dispatch(setCurrentView({ view: ENTITIES.stock, data }));
+      } catch (err) {
+        console.error("Failed to fetch stock:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.stock);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.stock);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-primary-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -55,7 +58,7 @@ export default function DrugTbl() {
           {stock &&
             stock?.map((item, ind) => {
               return (
-                <tr key={ind} className="tr_tbody">
+                <tr key={item._id ?? ind} className="tr-tbody">
                   <td className="td">
                     <Input
                       type="checkbox"
@@ -64,22 +67,21 @@ export default function DrugTbl() {
                     />
                   </td>
 
-                  <td className="py-1.125">{ind}</td>
-                  <td className="py-1.125">{item.brandId}</td>
-                  <td className="py-1.125">{"item.generic.name"}</td>
-                  <td className="py-1.125">{item.available}</td>
-                  <td className="py-1.125">
-                    {item.strength + " " + "item.unit.name"}
+                  <td className="py-4">{ind + 1}</td>
+                  <td className="py-4">{item.brandId ?? "—"}</td>
+                  <td className="py-4">{item.generic?.name ?? "—"}</td>
+                  <td className="py-4">{item.available ?? "—"}</td>
+                  <td className="py-4">
+                    {[item.strength, item.unit?.name].filter(Boolean).join(" ") || "—"}
                   </td>
-                  <td className="py-1.125">{"item.formulation.name"}</td>
-                  <td className="py-1.125">{"item.manufacturer"}</td>
-                  <TD2 txt={item.status} />
+                  <td className="py-4">{item.formulation?.name ?? "—"}</td>
+                  <td className="py-4">{item.manufacturer?.name ?? "—"}</td>
+                  <td className="py-4">{item.status ?? "—"}</td>
                 </tr>
               );
             })}
         </tbody>
       </table>
-      {JSON.stringify(stock)}
     </div>
   );
 }

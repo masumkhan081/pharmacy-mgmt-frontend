@@ -21,39 +21,44 @@ export default function FormulationForm({ visible, setDropDown }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/formulations/all");
-      dispatch(setFormulations({ data: data?.data?.formulations }));
+      try {
+        const { data } = await getHandler("/formulations");
+        dispatch(setFormulations({ data }));
+      } catch (err) {
+        console.error("Failed to fetch formulations:", err.message);
+      }
     };
     fetch();
   }, []);
 
   async function handleSave(e) {
     e.preventDefault();
-    
-    // Validate form data
+
     const validation = validateData(formulationSchema, { name });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
 
-    // Clear errors and submit
     setErrors({});
-    const response = await postHandler("/formulations", { name });
-    console.log("resp: - formulations-- ", JSON.stringify(response));
-    
-    // Reset form on success
-    if (response?.success) {
+    try {
+      await postHandler("/formulations", { name });
       setName("");
+    } catch (err) {
+      setErrors(
+        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
+          _form: err.message,
+        }
+      );
     }
   }
 
   return (
     <form className="flex flex-col" onSubmit={handleSave}>
       <div className="flex flex-col">
-        <label className="lbl_form">Formulation Name</label>
+        <label className="form-label">Formulation Name</label>
         <Input
-          className="txt_inp_form"
+          className="txt-input"
           type="text"
           name="name"
           value={name}
@@ -68,8 +73,8 @@ export default function FormulationForm({ visible, setDropDown }) {
       </div>
       
       <div className="flex flex-col mt-4">
-        <label className="lbl_form">Existing Formulations</label>
-        <select className="txt_inp_form">
+        <label className="form-label">Existing Formulations</label>
+        <select className="txt-input">
           <option disabled>Existing Formulations</option>
           {formulations &&
             formulations?.map((frm, ind) => {
@@ -90,7 +95,7 @@ export default function FormulationForm({ visible, setDropDown }) {
         >
           Cancel
         </Button>
-        <Button type="submit" className="btn_primary">
+        <Button type="submit" className="btn-primary">
           {isModalForEdit ? "Update" : "Save"}
         </Button>
       </div>

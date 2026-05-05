@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { tblHeaderSales } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
 import { checkSingle, checkAll, setCurrentView } from "../../redux/slices/saleView";
-import { getHandler } from "../../util/handler";
+import { getHandler } from "../../utils/handlerReqRes";
 import { ENTITIES } from "../../ui-config/entities";
 import { useLocation } from "react-router-dom";
 import Input from "../common-ui/Input";
@@ -16,20 +16,23 @@ export default function SaleRecTbl({ }) {
   //
   useEffect(() => {
     const fetch = async () => {
-      const data = await getHandler("/sales");
-      dispatch(setCurrentView({ view: ENTITIES.sale, data: data.data.sales }));
+      try {
+        const { data } = await getHandler("/sales");
+        dispatch(setCurrentView({ view: ENTITIES.sale, data }));
+      } catch (err) {
+        console.error("Failed to fetch sales:", err.message);
+      }
     };
     fetch();
-    // 
-    localStorage.setItem('activeTab', ENTITIES.sale);
-    localStorage.setItem('lastRoute', location.pathname);
+    localStorage.setItem("activeTab", ENTITIES.sale);
+    localStorage.setItem("lastRoute", location.pathname);
   }, []);
   //
   return (
-    <div className="w-full border border-neutral-200 rounded-xl overflow-hidden shadow-sm bg-white">
-      <table className="w-full ">
+    <div className="table-shell">
+      <table className="w-full min-w-[640px]">
         <thead>
-          <tr className="tr_thead">
+          <tr className="tr-thead">
             <th className="th">
               <Input
                 type="checkbox"
@@ -50,7 +53,7 @@ export default function SaleRecTbl({ }) {
         <tbody>
           {sales && sales.map((item, ind) => {
             return (
-              <tr key={item._id} className="tr_tbody">
+              <tr key={item._id} className="tr-tbody">
                 <td className="td">
                   <Input
                     type="checkbox"
@@ -58,17 +61,11 @@ export default function SaleRecTbl({ }) {
                     onChange={(e) => dispatch(checkSingle())}
                   />
                 </td>
-                {/* below padding may apply to all */}
-                <td className="py-1.125">{"item.serial"}</td>
-                <td className="py-1.125">{"item.name"}</td>
-                <td className="py-1.125">{"item.generic.name"}</td>
-                <td className="py-1.125">{"item.available"}</td>
-                <td className="py-1.125">
-                  {"item.strength" + " item.unit.name"}
+                <td className="py-4">
+                  {item.saleAt ? new Date(item.saleAt).toLocaleString() : "—"}
                 </td>
-                <td className="py-1.125">{"item.formulation.name"}</td>
-                <td className="py-1.125">{"item.manufacturer"}</td>
-                {/* <TD2 txt={item.status} /> */}
+                <td className="py-4">{item.bill ?? "—"}</td>
+                <td className="py-4">—</td>
               </tr>
             );
           })}

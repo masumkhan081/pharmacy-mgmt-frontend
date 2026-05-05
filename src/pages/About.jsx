@@ -12,11 +12,11 @@ import {
 
 export default function About() {
   return (
-    <div className="md:px-2.0 px-1.0 grid grid-cols-3 gap-4">
+    <div className="md:px-8 px-4 grid grid-cols-3 gap-4">
       <div className=" col-span-1 flex flex-col gap-4 justify-start items-start md:px-4 px-2">
         <Title
           txt="Whats Been Used"
-          style="neutral_title "
+          style="section-title "
           icon={<HiMiniQueueList className="mr-2" />}
         />
         <ul className="w-full bg-secondary-50 border-l-4 border-secondary-500 text-neutral-700 px-6 py-4 rounded-lg shadow-sm">
@@ -31,7 +31,7 @@ export default function About() {
       <div className="col-span-2 flex flex-col gap-4">
         <Title
           txt="Read Me"
-          style="neutral_title"
+          style="section-title"
           icon={<FaRightLong className="mr-2" />}
         />
 
