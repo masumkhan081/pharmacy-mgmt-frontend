@@ -1,81 +1,60 @@
-import React, { useEffect } from "react";
-import { setUnits, toggleModal } from "../../redux/slices/DrugsView";
-import { getHandler, postHandler } from "../../utils/handlerReqRes";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import {
+  toggleModal,
+  bumpRefresh,
+} from "../../redux/slices/DrugsView";
+import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { createUnitSchema } from "../../schemas/unit.schema";
-import { validateData } from "../../utils/validation";
+import { validateData, apiErrorsToFields } from "../../utils/validation";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
-export default function UnitForm({ visible, setDropDown }) {
-  //
+export default function UnitForm() {
   const dispatch = useDispatch();
-  const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
-  const modalData = useSelector((state) => state.drugsView.modalData);
-  const units = useSelector((state) => state.drugsView.units);
-  const [shortName, setShortName] = useState(
-    isModalForEdit == true ? modalData.shortName : ""
-  );
-  const [longName, setLongName] = useState(
-    isModalForEdit == true ? modalData.longName : ""
-  );
+  const isModalForEdit = useSelector((s) => s.drugsView.isModalForEdit);
+  const isModalVisible = useSelector((s) => s.drugsView.isModalVisible);
+  const modalData = useSelector((s) => s.drugsView.modalData);
+  const [shortName, setShortName] = useState("");
+  const [longName, setLongName] = useState("");
   const [errors, setErrors] = useState({});
-  //
+
+  useEffect(() => {
+    if (!isModalVisible) return;
+    if (isModalForEdit && modalData?._id) {
+      setShortName(modalData.shortName ?? "");
+      setLongName(modalData.longName ?? "");
+    } else {
+      setShortName("");
+      setLongName("");
+    }
+    setErrors({});
+  }, [isModalVisible, modalData?._id, isModalForEdit]);
+
   async function handleSave(e) {
     e.preventDefault();
-
-    const formData = { shortName, longName };
-    const validation = validateData(createUnitSchema, formData);
-
+    const validation = validateData(createUnitSchema, { shortName, longName });
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
-
     setErrors({});
-
     try {
-      await postHandler("/units", validation.data);
-      const { data } = await getHandler("/units");
-      dispatch(setUnits({ data }));
-      setShortName("");
-      setLongName("");
+      if (isModalForEdit && modalData?._id) {
+        await patchHandler(`/units/${modalData._id}`, validation.data);
+      } else {
+        await postHandler("/units", validation.data);
+      }
+      dispatch(bumpRefresh());
+      dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {
-      setErrors(
-        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
-          _form: err.message,
-        }
-      );
+      setErrors(apiErrorsToFields(err));
     }
   }
-  //
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/units");
-        dispatch(setUnits({ data }));
-      } catch (err) {
-        console.error("Failed to fetch units:", err.message);
-      }
-    };
-    fetch();
-  }, []);
-  //
 
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-4">
-      <div className="flex flex-col">
-        <label className="form-label">Existing Units</label>
-        <select className="txt-input">
-          <option value="">Select a unit</option>
-          {units &&
-            units?.map((unit, ind) => {
-              return <option key={ind} value={unit._id}>{unit.shortName} - {unit.longName}</option>;
-            })}
-        </select>
-      </div>
-
+      {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
       <div className="flex flex-col">
         <label className="form-label">Short Name *</label>
         <Input
@@ -84,19 +63,15 @@ export default function UnitForm({ visible, setDropDown }) {
           value={shortName}
           onChange={(e) => {
             setShortName(e.target.value);
-            // Clear error when user starts typing
-            if (errors.shortName) {
-              setErrors({ ...errors, shortName: null });
-            }
+            if (errors.shortName) setErrors({ ...errors, shortName: null });
           }}
-          className={`txt-input ${errors.shortName ? 'border-error-500' : ''}`}
+          className={`txt-input ${errors.shortName ? "border-error-500" : ""}`}
           placeholder="e.g., mg, ml, tab"
         />
         {errors.shortName && (
           <span className="text-sm text-error-600 mt-1">{errors.shortName}</span>
         )}
       </div>
-
       <div className="flex flex-col">
         <label className="form-label">Long Name *</label>
         <Input
@@ -105,24 +80,20 @@ export default function UnitForm({ visible, setDropDown }) {
           value={longName}
           onChange={(e) => {
             setLongName(e.target.value);
-            // Clear error when user starts typing
-            if (errors.longName) {
-              setErrors({ ...errors, longName: null });
-            }
+            if (errors.longName) setErrors({ ...errors, longName: null });
           }}
-          className={`txt-input ${errors.longName ? 'border-error-500' : ''}`}
+          className={`txt-input ${errors.longName ? "border-error-500" : ""}`}
           placeholder="e.g., Milligram, Milliliter, Tablet"
         />
         {errors.longName && (
           <span className="text-sm text-error-600 mt-1">{errors.longName}</span>
         )}
       </div>
-
       <div className="flex items-center justify-end gap-3 mt-6">
         <Button
           type="button"
           onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
-          className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+          className="px-4 py-2 text-sm"
         >
           Cancel
         </Button>

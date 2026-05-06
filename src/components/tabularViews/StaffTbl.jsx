@@ -1,81 +1,95 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { tblHeaderStaff } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  checkSingle,
-  checkAll,
-  setCurrentView,
-} from "../../redux/slices/StaffView";
-import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
+import {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} from "../../redux/slices/StaffView";
 import { ENTITIES } from "../../ui-config/entities";
-import Input from "../common-ui/Input";
+import Button from "../common-ui/Button";
+import TableShell from "../common-ui/TableShell";
+import RowActions from "../common-ui/RowActions";
+import { useTableQuery } from "../../hooks/useTableQuery";
 
 export default function StaffTbl() {
-  //
   const location = useLocation();
   const dispatch = useDispatch();
-  const staff = useSelector((state) => state.staffView.staff);
-  const allChecked = useSelector((state) => state.staffView.allChecked);
-  //
+  const refreshKey = useSelector((s) => s.staffView.refreshKey);
+  const query = useTableQuery({
+    endpoint: "/staff",
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.member, data })),
+  });
+  const staff = query.data;
+  const offset =
+    ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/staff");
-        dispatch(setCurrentView({ view: ENTITIES.member, data }));
-      } catch (err) {
-        console.error("Failed to fetch staff:", err.message);
-      }
-    };
-    fetch();
     localStorage.setItem("activeTab", ENTITIES.member);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
-  //
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (refreshKey > 0) query.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
   return (
-    <div className="table-shell">
-      <table className="w-full min-w-[640px]">
-        <thead>
-          <tr className="tr-thead">
-            <th className="th">
-              <Input
-                type="checkbox"
-                checked={allChecked}
-                onChange={(e) => dispatch(checkAll())}
-              />
-            </th>
-            {tblHeaderStaff.map((itm, ind) => {
-              return (
+    <TableShell
+      query={query}
+      searchPlaceholder="Search staff..."
+      toolbar={
+        <Button
+          icon={<AiOutlinePlus className="inline text-white" />}
+          txt=" Member"
+          onClick={() =>
+            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
+          }
+          style="btn-primary"
+        />
+      }
+    >
+      <div className="table-shell">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="tr-thead">
+              <th className="th">#</th>
+              {tblHeaderStaff.map((itm, ind) => (
                 <th key={ind} className="th">
                   {itm}
                 </th>
-              );
-            })}
-          </tr>
-        </thead>
-
-        <tbody>
-          {staff && staff?.map((item, ind) => {
-            return (
-              <tr key={item._id} className="tr-tbody">
-                <td className="td">
-                  <Input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={(e) => dispatch(checkSingle())}
-                  />
-                </td>
-                {/* below padding may apply to all */}
-                <td className="py-4">{ind + 1}</td>
-                <td className="py-4">{item.name ?? "—"}</td>
-                <td className="py-4">{item.role ?? "—"}</td>
+              ))}
+              <th className="th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {staff.map((item, ind) => (
+              <tr key={item._id ?? ind} className="tr-tbody">
+                <td className="py-4">{offset + ind + 1}</td>
+                <td className="py-4">{item.fullName ?? item.name ?? "—"}</td>
+                <td className="py-4">{item.designation ?? item.role ?? "—"}</td>
                 <td className="py-4">{item.email ?? "—"}</td>
                 <td className="py-4">{item.phone ?? "—"}</td>
+                <td className="py-4 flex justify-center gap-2">
+                  <RowActions
+                    label="member"
+                    endpoint={`/staff/${item._id}`}
+                    onEdit={() => {
+                      dispatch(setModaldata(item));
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
+                    }}
+                    onAfterDelete={() => dispatch(bumpRefresh())}
+                  />
+                </td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </TableShell>
   );
 }

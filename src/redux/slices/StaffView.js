@@ -9,10 +9,10 @@ export const staffViewSlice = createSlice({
     expanded: "hidden",
     allChecked: false,
     modalData: {},
-    // 
     salaries: [],
     members: [],
     attendances: [],
+    refreshKey: 0,
   },
   reducers: {
     setCurrentView: (state, action) => {
@@ -20,31 +20,38 @@ export const staffViewSlice = createSlice({
       state.currentView = view;
       state[`${view}`] = data;
     },
-    checkSingle: (state, action) => {
-      console.log(action.payload);
-      state = { ...state, currentView: action.payload };
+    checkSingle: (state) => {
+      state.allChecked = false;
     },
-    checkAll: (state, action) => {
-      console.log(action.payload);
-      state = { ...state, currentView: action.payload };
+    checkAll: (state) => {
+      state.allChecked = !state.allChecked;
     },
     toggleModal: (state, action) => {
       state.isModalVisible = action.payload.isModalVisible;
       if (action.payload.isModalForEdit !== undefined) {
         state.isModalForEdit = action.payload.isModalForEdit;
       }
+      if (!action.payload.isModalVisible) {
+        state.modalData = {};
+        state.isModalForEdit = false;
+      }
     },
-    deletHandler: (state, action) => {
-      console.log(action.payload);
-      // state.booklist = state.booklist.filter((book)=>{
-      //   return book!== action.payload
-      // })
+    setModaldata: (state, action) => {
+      state.modalData = action.payload ?? {};
+    },
+    bumpRefresh: (state) => {
+      state.refreshKey += 1;
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { setCurrentView, checkSingle, checkAll, toggleModal, deletHandler } =
-  staffViewSlice.actions;
+export const {
+  setCurrentView,
+  checkSingle,
+  checkAll,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} = staffViewSlice.actions;
 
 export default staffViewSlice.reducer;

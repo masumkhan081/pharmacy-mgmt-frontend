@@ -6,7 +6,13 @@ const navMap = {
     to: "/sale-panel",
     text: "Sale Panel",
     isAccessControlled: true,
-    access: [ROLES.PHARMACIST, ROLES.SALESMAN, ROLES.ADMIN, ROLES.ACCOUNTANT, ROLES.MANAGER],
+    access: [
+      ROLES.PHARMACIST,
+      ROLES.SALESMAN,
+      ROLES.ADMIN,
+      ROLES.ACCOUNTANT,
+      ROLES.MANAGER,
+    ],
   },
   [ENTITIES.dashboard]: {
     to: "/dashboard",
@@ -57,6 +63,24 @@ const navMap = {
       },
     },
   },
+  [ENTITIES.inventory]: {
+    to: "/inventory/batches",
+    text: "Inventory",
+    isAccessControlled: true,
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN],
+    options: {
+      [ENTITIES.inventoryBatch]: {
+        to: "/inventory/batches",
+        text: "Batches",
+        isAccessControlled: false,
+      },
+      [ENTITIES.inventoryAlert]: {
+        to: "/inventory/alerts",
+        text: "Alerts",
+        isAccessControlled: false,
+      },
+    },
+  },
   [ENTITIES.purchase]: {
     to: "/purchases",
     text: "Purchases",
@@ -67,7 +91,66 @@ const navMap = {
     to: "/sales",
     text: "Sales",
     isAccessControlled: true,
-    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT, ROLES.SALESMAN],
+    access: [
+      ROLES.PHARMACIST,
+      ROLES.MANAGER,
+      ROLES.ADMIN,
+      ROLES.ACCOUNTANT,
+      ROLES.SALESMAN,
+    ],
+  },
+  [ENTITIES.return]: {
+    to: "/returns",
+    text: "Returns",
+    isAccessControlled: true,
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN],
+  },
+  [ENTITIES.finance]: {
+    to: "/finance/invoices",
+    text: "Finance",
+    isAccessControlled: true,
+    access: [ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT],
+    options: {
+      [ENTITIES.invoice]: {
+        to: "/finance/invoices",
+        text: "Invoices",
+        isAccessControlled: false,
+      },
+      [ENTITIES.payment]: {
+        to: "/finance/payments",
+        text: "Payments",
+        isAccessControlled: false,
+      },
+    },
+  },
+  [ENTITIES.customer]: {
+    to: "/customers",
+    text: "Customers",
+    isAccessControlled: true,
+    access: [
+      ROLES.PHARMACIST,
+      ROLES.MANAGER,
+      ROLES.ADMIN,
+      ROLES.SALESMAN,
+    ],
+  },
+  [ENTITIES.doctor]: {
+    to: "/doctors",
+    text: "Doctors",
+    isAccessControlled: true,
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN],
+  },
+  [ENTITIES.prescription]: {
+    to: "/prescriptions",
+    text: "Prescriptions",
+    isAccessControlled: true,
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN],
+  },
+  [ENTITIES.supplier]: {
+    to: "/suppliers",
+    text: "Suppliers",
+    isAccessControlled: true,
+    access: [ROLES.MANAGER, ROLES.ADMIN],
   },
   [ENTITIES.staff]: {
     to: "/staff/members",
@@ -94,6 +177,12 @@ const navMap = {
       },
     },
   },
-}
+  [ENTITIES.notification]: {
+    to: "/notifications",
+    text: "Notifications",
+    isAccessControlled: true,
+    access: [ROLES.PHARMACIST, ROLES.MANAGER, ROLES.ADMIN, ROLES.ACCOUNTANT],
+  },
+};
 
 export default navMap;

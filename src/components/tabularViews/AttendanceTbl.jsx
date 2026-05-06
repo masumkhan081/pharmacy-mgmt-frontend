@@ -1,79 +1,94 @@
-import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsStaffPage } from "../../ui-config/table";
+import { useEffect } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  checkSingle,
-  checkAll,
-  setCurrentView,
-} from "../../redux/slices/StaffView";
-import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
+import {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} from "../../redux/slices/StaffView";
 import { ENTITIES } from "../../ui-config/entities";
+import Button from "../common-ui/Button";
+import TableShell from "../common-ui/TableShell";
+import RowActions from "../common-ui/RowActions";
+import { useTableQuery } from "../../hooks/useTableQuery";
 
-export default function AttendanceTbl({ }) {
-  //
+const headers = ["#", "Date", "Staff", "Shift"];
+
+export default function AttendanceTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
-  const attendances = useSelector((state) => state.staffView.attendances);
-  const allChecked = useSelector((state) => state.staffView.allChecked);
-  //
+  const refreshKey = useSelector((s) => s.staffView.refreshKey);
+  const query = useTableQuery({
+    endpoint: "/attendances",
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.attendance, data })),
+  });
+  const attendances = query.data;
+  const offset =
+    ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/attendances");
-        dispatch(setCurrentView({ view: ENTITIES.attendance, data }));
-      } catch (err) {
-        console.error("Failed to fetch attendances:", err.message);
-      }
-    };
-    fetch();
     localStorage.setItem("activeTab", ENTITIES.attendance);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
-  //
-  return (
-    <div className="table-shell">
-      <table className="w-full min-w-[640px]">
-        <thead>
-          <tr className="tr-thead">
-            <th className="th">
-              {/* <input
-                type="checkbox"
-                checked={allChecked}
-                onChange={(e) => dispatch(checkAll())}
-              /> */}
-            </th>
-            {tblHeaderBrands.map((itm, ind) => {
-              return (
-                <th key={ind} className="th">
-                  {itm}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
+  }, [location.pathname]);
 
-        <tbody>
-          {/* {brands.map((item, ind) => {
-            return (
-              <tr key={item._id} className="tr-tbody">
-                <td className="td">
-                  <input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={(e) => dispatch(checkSingle())}
+  useEffect(() => {
+    if (refreshKey > 0) query.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
+  return (
+    <TableShell
+      query={query}
+      searchPlaceholder="Search attendance..."
+      toolbar={
+        <Button
+          icon={<AiOutlinePlus className="inline text-white" />}
+          txt=" Attendance"
+          onClick={() =>
+            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
+          }
+          style="btn-primary"
+        />
+      }
+    >
+      <div className="table-shell">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="tr-thead">
+              {headers.map((h, i) => (
+                <th key={i} className="th">{h}</th>
+              ))}
+              <th className="th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {attendances.map((item, ind) => (
+              <tr key={item._id ?? ind} className="tr-tbody">
+                <td className="py-4">{offset + ind + 1}</td>
+                <td className="py-4">
+                  {item.date ? new Date(item.date).toLocaleDateString() : "—"}
+                </td>
+                <td className="py-4">{item.staff?.fullName ?? item.staff ?? "—"}</td>
+                <td className="py-4">{item.shift ?? "—"}</td>
+                <td className="py-4 flex justify-center gap-2">
+                  <RowActions
+                    label="attendance"
+                    endpoint={`/attendances/${item._id}`}
+                    onEdit={() => {
+                      dispatch(setModaldata(item));
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
+                    }}
+                    onAfterDelete={() => dispatch(bumpRefresh())}
                   />
-                </td> 
-                <td className="py-4">{ind}</td>
-                <td className="py-4">{item.name}</td>
-                <td className="py-4">{item.generic}</td>
-                <td className="py-4">{item.group}</td>
-                <td className="py-4">{item.mfr}</td>
+                </td>
               </tr>
-            );
-          })} */}
-        </tbody>
-      </table>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </TableShell>
   );
 }

@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import {purchases} from '../../ui-config/table'
 
 export const purchSlice = createSlice({
   name: "purchases",
@@ -7,7 +6,10 @@ export const purchSlice = createSlice({
     currentView: "",
     allChecked: false,
     purchases: [],
-    
+    isModalVisible: false,
+    isModalForEdit: false,
+    modalData: {},
+    refreshKey: 0,
   },
   reducers: {
     setCurrentView: (state, action) => {
@@ -15,25 +17,37 @@ export const purchSlice = createSlice({
       state.currentView = view;
       state[`${view}`] = data;
     },
-    checkSingle: (state, action) => {
-      console.log(action.payload);
-      state = { ...state, currentView: action.payload };
+    toggleModal: (state, action) => {
+      state.isModalVisible = action.payload.isModalVisible;
+      if (action.payload.isModalForEdit !== undefined) {
+        state.isModalForEdit = action.payload.isModalForEdit;
+      }
+      if (!action.payload.isModalVisible) {
+        state.modalData = {};
+        state.isModalForEdit = false;
+      }
     },
-    checkAll: (state, action) => {
-      console.log(action.payload);
-      state = { ...state, currentView: action.payload };
+    setModaldata: (state, action) => {
+      state.modalData = action.payload ?? {};
     },
-    deletHandler: (state, action) => {
-      console.log(action.payload);
-      // state.booklist = state.booklist.filter((book)=>{
-      //   return book!== action.payload
-      // })
+    checkSingle: (state) => {
+      state.allChecked = false;
+    },
+    checkAll: (state) => {
+      state.allChecked = !state.allChecked;
+    },
+    bumpRefresh: (state) => {
+      state.refreshKey += 1;
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { setCurrentView, checkSingle, checkAll, deletHandler } =
-  purchSlice.actions;
-
+export const {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  checkSingle,
+  checkAll,
+  bumpRefresh,
+} = purchSlice.actions;
 export default purchSlice.reducer;

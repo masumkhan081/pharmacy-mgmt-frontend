@@ -1,11 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
-import Button from "../components/common-ui/Button";
+import { Outlet } from "react-router-dom";
 import PageTitle from "../components/common-ui/PageTitle";
 import ViewFilterDrugs from "../components/tabularViews/ViewFilterDrugs";
-import SearchFilter from "../components/common-ui/SearchFilter";
-import { AiOutlinePlus } from "react-icons/ai";
-//
-import { Outlet } from "react-router-dom";
 import DrugForm from "../components/modals/DrugForm";
 import MFRForm from "../components/modals/MFRForm";
 import UnitForm from "../components/modals/UnitForm";
@@ -17,7 +13,6 @@ import ModalWrapper from "../components/modals/ModalWrapper";
 import { toggleModal } from "../redux/slices/DrugsView";
 
 export default function Drugs() {
-  //
   const dispatch = useDispatch();
   const isModalVisible = useSelector((state) => state.drugsView.isModalVisible);
   const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
@@ -30,40 +25,23 @@ export default function Drugs() {
   };
 
   return (
-    <div className="w-full flex flex-col gap-5 md:px-6 pt-6">
+    <div className="w-full flex flex-col gap-2 md:px-6 pt-3">
       <PageTitle title={currentView} />
-      <div className="flex justify-between md:flex-row flex-col gap-2">
-        <ViewFilterDrugs />
-
-        <Button
-          icon={<AiOutlinePlus className="inline text-white" />}
-          txt={` ${currentView}`}
-          onClick={() => {
-            dispatch(
-              toggleModal({ isModalForEdit: false, isModalVisible: true })
-            );
-          }}
-          style={`btn-primary`}
-        />
-
-        <ModalWrapper
-          isVisible={isModalVisible}
-          onClose={() => dispatch(toggleModal({ isModalVisible: false }))}
-          title={getModalTitle()}
-        >
-          {currentView == "brands" && <BrandForm />}
-          {currentView == "stock" && <DrugForm />}
-          {currentView == "formulations" && <FormulationForm />}
-          {currentView == "generics" && <GenericForm />}
-          {currentView == "groups" && <GroupForm />}
-          {currentView == "units" && <UnitForm />}
-          {currentView == "manufacturers" && <MFRForm />}
-        </ModalWrapper>
-      </div>
-      <SearchFilter />
-      <div>
-        <Outlet />
-      </div>
+      <ViewFilterDrugs />
+      <ModalWrapper
+        isVisible={isModalVisible}
+        onClose={() => dispatch(toggleModal({ isModalVisible: false }))}
+        title={getModalTitle()}
+      >
+        {currentView == "brands" && <BrandForm />}
+        {currentView == "stock" && <DrugForm />}
+        {currentView == "formulations" && <FormulationForm />}
+        {currentView == "generics" && <GenericForm />}
+        {currentView == "groups" && <GroupForm />}
+        {currentView == "units" && <UnitForm />}
+        {currentView == "manufacturers" && <MFRForm />}
+      </ModalWrapper>
+      <Outlet />
     </div>
   );
 }

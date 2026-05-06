@@ -1,81 +1,94 @@
-import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsStaffPage } from "../../ui-config/table";
+import { useEffect } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  checkSingle,
-  checkAll,
-  setCurrentView,
-} from "../../redux/slices/StaffView";
-import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
+import {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} from "../../redux/slices/StaffView";
 import { ENTITIES } from "../../ui-config/entities";
-import Input from "../common-ui/Input";
+import Button from "../common-ui/Button";
+import TableShell from "../common-ui/TableShell";
+import RowActions from "../common-ui/RowActions";
+import { useTableQuery } from "../../hooks/useTableQuery";
+
+const headers = ["#", "Staff", "Month", "Year", "Due", "Paid"];
 
 export default function SalariesTbl() {
-  //
   const location = useLocation();
   const dispatch = useDispatch();
-  const salaries = useSelector((state) => state.staffView.salaries);
-  const allChecked = useSelector((state) => state.staffView.allChecked);
-  //
+  const refreshKey = useSelector((s) => s.staffView.refreshKey);
+  const query = useTableQuery({
+    endpoint: "/salaries",
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.salary, data })),
+  });
+  const salaries = query.data;
+  const offset =
+    ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/salaries");
-        dispatch(setCurrentView({ view: ENTITIES.salary, data }));
-      } catch (err) {
-        console.error("Failed to fetch salaries:", err.message);
-      }
-    };
-    fetch();
     localStorage.setItem("activeTab", ENTITIES.salary);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
-  //
-  return (
-    <div className="table-shell">
-      <table className="w-full min-w-[640px]">
-        <thead>
-          <tr className="tr-thead">
-            <th className="th">
-              <Input
-                type="checkbox"
-                checked={allChecked}
-                onChange={(e) => dispatch(checkAll())}
-              />
-            </th>
-            {tblHeaderBrands.map((itm, ind) => {
-              return (
-                <th key={ind} className="th">
-                  {itm}
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
+  }, [location.pathname]);
 
-        <tbody>
-          {salaries && salaries?.map((item, ind) => {
-            return (
-              <tr key={item._id} className="tr-tbody">
-                <td className="td">
-                  <Input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={(e) => dispatch(checkSingle())}
+  useEffect(() => {
+    if (refreshKey > 0) query.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
+  return (
+    <TableShell
+      query={query}
+      searchPlaceholder="Search salaries..."
+      toolbar={
+        <Button
+          icon={<AiOutlinePlus className="inline text-white" />}
+          txt=" Salary"
+          onClick={() =>
+            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
+          }
+          style="btn-primary"
+        />
+      }
+    >
+      <div className="table-shell">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="tr-thead">
+              {headers.map((h, i) => (
+                <th key={i} className="th">{h}</th>
+              ))}
+              <th className="th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {salaries.map((item, ind) => (
+              <tr key={item._id ?? ind} className="tr-tbody">
+                <td className="py-4">{offset + ind + 1}</td>
+                <td className="py-4">{item.staff?.fullName ?? item.staff ?? "—"}</td>
+                <td className="py-4">{item.month ?? "—"}</td>
+                <td className="py-4">{item.year ?? "—"}</td>
+                <td className="py-4">{item.dueAmount ?? "—"}</td>
+                <td className="py-4">{item.paidAmount ?? "—"}</td>
+                <td className="py-4 flex justify-center gap-2">
+                  <RowActions
+                    label="salary"
+                    endpoint={`/salaries/${item._id}`}
+                    onEdit={() => {
+                      dispatch(setModaldata(item));
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
+                    }}
+                    onAfterDelete={() => dispatch(bumpRefresh())}
                   />
                 </td>
-                {/* below padding may apply to all */}
-                <td className="py-4">{ind}</td>
-                <td className="py-4">{"item.name"}</td>
-                <td className="py-4">{"item.generic"}</td>
-                <td className="py-4">{"item.group"}</td>
-                <td className="py-4">{"item.mfr"}</td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </TableShell>
   );
 }

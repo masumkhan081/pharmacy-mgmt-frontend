@@ -16,6 +16,7 @@ export const drugsViewSlice = createSlice({
     formulations: [],
     units: [],
     manufacturers: [],
+    refreshKey: 0,
   },
   reducers: {
     setCurrentView: (state, action) => {
@@ -23,6 +24,9 @@ export const drugsViewSlice = createSlice({
       state.currentView = view;
       state[`${view}`] = data;
       state.expanded = state.expanded === "hidden" ? "block" : "block";
+    },
+    bumpRefresh: (state) => {
+      state.refreshKey += 1;
     },
     checkSingle: (state, action) => {
       console.log(action.payload);
@@ -36,6 +40,10 @@ export const drugsViewSlice = createSlice({
       state.isModalVisible = action.payload.isModalVisible;
       if (action.payload.isModalForEdit !== undefined) {
         state.isModalForEdit = action.payload.isModalForEdit;
+      }
+      if (!action.payload.isModalVisible) {
+        state.modalData = {};
+        state.isModalForEdit = false;
       }
     },
     setModaldata: (state, action) => {
@@ -97,6 +105,7 @@ export const {
   setManufacturers,
   setGroups,
   setGenerics,
+  bumpRefresh,
 } = drugsViewSlice.actions;
 
 export default drugsViewSlice.reducer;

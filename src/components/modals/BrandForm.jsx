@@ -1,106 +1,111 @@
-import React, { useEffect, useState } from "react";
-import {
-  setGroups,
-  setGenerics,
-  setManufacturers,
-  toggleModal,
-} from "../../redux/slices/DrugsView";
-import { getHandler, postHandler } from "../../utils/handlerReqRes";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import {
+  toggleModal,
+  bumpRefresh,
+} from "../../redux/slices/DrugsView";
+import {
+  getHandler,
+  postHandler,
+  patchHandler,
+} from "../../utils/handlerReqRes";
 import { brandSchema } from "../../schemas/drug.schema";
-import { validateData } from "../../utils/validation";
+import { validateData, apiErrorsToFields } from "../../utils/validation";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
-export default function BrandForm({ visible, setDropDown }) {
-  //
+export default function BrandForm() {
   const dispatch = useDispatch();
-  const isModalForEdit = useSelector((state) => state.drugsView.isModalForEdit);
-  const toggleModal = useSelector((state) => state.drugsView.toggleModal);
-  const modalData = useSelector((state) => state.drugsView.modalData);
-  const [selectedGroup, setSelectedGroup] = useState(
-    isModalForEdit == true ? modalData.grpId : "select-one"
-  );
-  const [selectedGeneric, setSelectedGeneric] = useState(
-    isModalForEdit == true ? modalData.genId : "select-one"
-  );
-  const [name, setName] = useState(
-    isModalForEdit == true ? modalData.name : ""
-  );
-  const [selectedMFR, setSelectedMFR] = useState(
-    isModalForEdit == true ? modalData.mfrId : "select-one"
-  );
+  const isModalForEdit = useSelector((s) => s.drugsView.isModalForEdit);
+  const isModalVisible = useSelector((s) => s.drugsView.isModalVisible);
+  const modalData = useSelector((s) => s.drugsView.modalData);
+  const [groups, setGroups] = useState([]);
+  const [generics, setGenerics] = useState([]);
+  const [manufacturers, setManufacturers] = useState([]);
+  const [selectedGroup, setSelectedGroup] = useState("select-one");
+  const [selectedGeneric, setSelectedGeneric] = useState("select-one");
+  const [selectedMFR, setSelectedMFR] = useState("select-one");
+  const [name, setName] = useState("");
   const [errors, setErrors] = useState({});
-  //
-  const groups = useSelector((state) => state.drugsView.groups);
-  const generics = useSelector((state) => state.drugsView.generics);
-  const manufacturers = useSelector((state) => state.drugsView.manufacturers);
-  //
-  async function handleSave(e) {
-    e.preventDefault();
 
-    const validation = validateData(brandSchema, {
-      name,
-      groupId: selectedGroup,
-      genericId: selectedGeneric,
-      mfrId: selectedMFR,
-    });
-    if (!validation.success) {
-      setErrors(validation.errors);
+  useEffect(() => {
+    (async () => {
+      try {
+        const [g, m] = await Promise.all([
+          getHandler("/groups?limit=1000"),
+          getHandler("/manufacturers?limit=1000"),
+        ]);
+        setGroups(Array.isArray(g.data) ? g.data : []);
+        setManufacturers(Array.isArray(m.data) ? m.data : []);
+      } catch (err) {
+        console.error("Failed to fetch lookups:", err.message);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    if (selectedGroup === "select-one") {
+      setGenerics([]);
       return;
     }
+    (async () => {
+      try {
+        const { data } = await getHandler(`/generics?group=${selectedGroup}&limit=1000`);
+        setGenerics(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Failed to fetch generics:", err.message);
+      }
+    })();
+  }, [selectedGroup]);
 
-    setErrors({});
-    try {
-      await postHandler("/brands", {
-        name,
-        groupId: selectedGroup,
-        genericId: selectedGeneric,
-        mfrId: selectedMFR,
-      });
+  useEffect(() => {
+    if (!isModalVisible) return;
+    if (isModalForEdit && modalData?._id) {
+      const idOf = (v) => (typeof v === "object" ? v?._id ?? "select-one" : v ?? "select-one");
+      setName(modalData.name ?? "");
+      setSelectedGroup(idOf(modalData.groupId));
+      setSelectedGeneric(idOf(modalData.genericId));
+      setSelectedMFR(idOf(modalData.mfrId));
+    } else {
       setName("");
       setSelectedGroup("select-one");
       setSelectedGeneric("select-one");
       setSelectedMFR("select-one");
+    }
+    setErrors({});
+  }, [isModalVisible, modalData?._id, isModalForEdit]);
+
+  async function handleSave(e) {
+    e.preventDefault();
+    const payload = {
+      name,
+      groupId: selectedGroup === "select-one" ? undefined : selectedGroup,
+      genericId: selectedGeneric === "select-one" ? undefined : selectedGeneric,
+      mfrId: selectedMFR === "select-one" ? undefined : selectedMFR,
+    };
+    const validation = validateData(brandSchema, payload);
+    if (!validation.success) {
+      setErrors(validation.errors);
+      return;
+    }
+    setErrors({});
+    try {
+      const body = { ...payload };
+      if (isModalForEdit && modalData?._id) {
+        await patchHandler(`/brands/${modalData._id}`, body);
+      } else {
+        await postHandler("/brands", body);
+      }
+      dispatch(bumpRefresh());
+      dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {
-      setErrors(
-        err.errors?.reduce((a, e) => ({ ...a, [e.field]: e.message }), {}) ?? {
-          _form: err.message,
-        }
-      );
+      setErrors(apiErrorsToFields(err));
     }
   }
 
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/generics?group=" + selectedGroup);
-        dispatch(setGenerics(data));
-      } catch (err) {
-        console.error("Failed to fetch generics:", err.message);
-      }
-    };
-    if (selectedGroup !== "select-one") {
-      fetch();
-    }
-  }, [selectedGroup]);
-  //
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const groupsRes = await getHandler("/groups");
-        dispatch(setGroups({ data: groupsRes.data }));
-        const mfrsRes = await getHandler("/manufacturers");
-        dispatch(setManufacturers({ data: mfrsRes.data }));
-      } catch (err) {
-        console.error("Failed to fetch lookups:", err.message);
-      }
-    };
-    if (visible) fetch();
-  }, []);
-
   return (
     <form onSubmit={handleSave}>
+      {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
       <div className="flex flex-col">
         <label className="form-label">Brand Name</label>
         <Input
@@ -113,97 +118,56 @@ export default function BrandForm({ visible, setDropDown }) {
             setErrors({ ...errors, name: null });
           }}
         />
-        {errors.name && (
-          <span className="text-sm text-error-600 mt-1">{errors.name}</span>
-        )}
+        {errors.name && <span className="text-sm text-error-600 mt-1">{errors.name}</span>}
       </div>
-      
+
       <div className="mt-4">
-        <label className="form-label">Select Group</label>
+        <label className="form-label">Group</label>
         <select
           className="txt-input"
           value={selectedGroup}
-          onChange={(e) => {
-            setSelectedGroup(e.target.value);
-            setErrors({ ...errors, groupId: null });
-          }}
+          onChange={(e) => setSelectedGroup(e.target.value)}
         >
-          <option disabled value="select-one">
-            Select One
-          </option>
-          {groups &&
-            groups?.map((grp, ind) => {
-              return (
-                <option key={ind} value={grp._id}>
-                  {grp.name}
-                </option>
-              );
-            })}
+          <option disabled value="select-one">Select One</option>
+          {groups.map((grp) => (
+            <option key={grp._id} value={grp._id}>{grp.name}</option>
+          ))}
         </select>
-        {errors.groupId && (
-          <span className="text-sm text-error-600 mt-1">{errors.groupId}</span>
-        )}
       </div>
 
       <div className="mt-4">
-        <label className="form-label">Select Generic</label>
+        <label className="form-label">Generic</label>
         <select
           className="txt-input"
           value={selectedGeneric}
-          onChange={(e) => {
-            setSelectedGeneric(e.target.value);
-            setErrors({ ...errors, genericId: null });
-          }}
+          onChange={(e) => setSelectedGeneric(e.target.value)}
         >
-          <option disabled value="select-one">
-            Select One
-          </option>
-          {generics &&
-            generics?.map((gen, ind) => {
-              return (
-                <option key={ind} value={gen._id}>
-                  {gen.name}
-                </option>
-              );
-            })}
+          <option disabled value="select-one">Select One</option>
+          {generics.map((gen) => (
+            <option key={gen._id} value={gen._id}>{gen.name}</option>
+          ))}
         </select>
-        {errors.genericId && (
-          <span className="text-sm text-error-600 mt-1">{errors.genericId}</span>
-        )}
       </div>
 
       <div className="mt-4">
-        <label className="form-label">Select Manufacturer</label>
+        <label className="form-label">Manufacturer</label>
         <select
           className="txt-input"
           value={selectedMFR}
-          onChange={(e) => {
-            setSelectedMFR(e.target.value);
-            setErrors({ ...errors, mfrId: null });
-          }}
+          onChange={(e) => setSelectedMFR(e.target.value)}
         >
-          <option disabled value="select-one">
-            Select One
-          </option>
-          {manufacturers &&
-            manufacturers?.map((mfr, ind) => {
-              return (
-                <option key={ind} value={mfr._id}>
-                  {mfr.name}
-                </option>
-              );
-            })}
+          <option disabled value="select-one">Select One</option>
+          {manufacturers.map((mfr) => (
+            <option key={mfr._id} value={mfr._id}>{mfr.name}</option>
+          ))}
         </select>
-        {errors.mfrId && (
-          <span className="text-sm text-error-600 mt-1">{errors.mfrId}</span>
-        )}
       </div>
 
       <div className="flex items-center justify-end gap-3 mt-6">
         <Button
           type="button"
           onClick={() => dispatch(toggleModal({ isModalVisible: false }))}
-          className="px-4 py-2 text-sm font-medium text-neutral-700 hover:text-neutral-900 hover:bg-neutral-100 rounded-lg transition-colors duration-200"
+          className="px-4 py-2 text-sm"
         >
           Cancel
         </Button>

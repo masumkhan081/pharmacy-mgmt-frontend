@@ -1,104 +1,92 @@
-import React, { useEffect } from "react";
-import { tblHeaderBrands, tblOptionsDrugsPage } from "../../ui-config/table";
+import { useEffect } from "react";
+import { AiOutlinePlus } from "react-icons/ai";
+import { tblHeaderBrands } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  checkSingle,
-  checkAll,
-  setCurrentView,
-} from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handlerReqRes";
-import { AiFillDelete, AiFillEdit } from "react-icons/ai";
-import {
-  toggleModal,
-  setModaldata
-} from "../../redux/slices/DrugsView";
 import { useLocation } from "react-router-dom";
+import {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} from "../../redux/slices/DrugsView";
 import { ENTITIES } from "../../ui-config/entities";
 import Button from "../common-ui/Button";
-import Input from "../common-ui/Input";
+import TableShell from "../common-ui/TableShell";
+import RowActions from "../common-ui/RowActions";
+import { useTableQuery } from "../../hooks/useTableQuery";
 
-export default function BrandTbl({ }) {
-  //
+export default function BrandTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
-  const brands = useSelector((state) => state.drugsView.brands);
-  const allChecked = useSelector((state) => state.drugsView.allChecked);
-  //
+  const refreshKey = useSelector((s) => s.drugsView.refreshKey);
+  const query = useTableQuery({
+    endpoint: "/brands",
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.brand, data })),
+  });
+  const brands = query.data;
+  const offset =
+    ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/brands");
-        dispatch(setCurrentView({ view: ENTITIES.brand, data }));
-      } catch (err) {
-        console.error("Failed to fetch brands:", err.message);
-      }
-    };
-    fetch();
     localStorage.setItem("activeTab", ENTITIES.brand);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
-  //
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (refreshKey > 0) query.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
   return (
-    <div className="table-shell">
-      <table className="w-full min-w-[480px]">
-        <thead>
-          <tr className="tr-thead">
-            <th className="th">
-              <Input
-                type="checkbox"
-                checked={allChecked}
-                onChange={(e) => dispatch(checkAll())}
-              />
-            </th>
-            {tblHeaderBrands.map((itm, ind) => {
-              return (
+    <TableShell
+      query={query}
+      searchPlaceholder="Search brands..."
+      toolbar={
+        <Button
+          icon={<AiOutlinePlus className="inline text-white" />}
+          txt=" Brand"
+          onClick={() =>
+            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
+          }
+          style="btn-primary"
+        />
+      }
+    >
+      <div className="table-shell">
+        <table className="w-full min-w-[480px]">
+          <thead>
+            <tr className="tr-thead">
+              <th className="th">#</th>
+              {tblHeaderBrands.map((itm, ind) => (
                 <th key={ind} className="th">
                   {itm}
                 </th>
-              );
-            })}
-            <th className="th">Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          {brands && brands?.map((item, ind) => {
-            return (
+              ))}
+              <th className="th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {brands.map((item, ind) => (
               <tr key={item._id ?? ind} className="tr-tbody">
-                <td className="td">
-                  <Input
-                    type="checkbox"
-                    checked={item.checked}
-                    onChange={(e) => dispatch(checkSingle())}
+                <td className="py-4">{offset + ind + 1}</td>
+                <td className="py-4">{item.name}</td>
+                <td className="py-4 flex justify-center gap-2">
+                  <RowActions
+                    label="brand"
+                    endpoint={`/brands/${item._id}`}
+                    onEdit={() => {
+                      dispatch(setModaldata(item));
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
+                    }}
+                    onAfterDelete={() => dispatch(bumpRefresh())}
                   />
                 </td>
-
-                <td className="py-4">{ind + 1}</td>
-                <td className="py-4">{item.name}</td>
-                {/* <td className="py-4">{item.genericId.name}</td>
-                <td className="py-4">{item.genericId.groupId.name}</td>
-                <td className="py-4">{item.mfrId.name}</td> */}
-                <td className="py-4 flex justify-center gap-2">
-                  <Button
-                    aria-label={`Edit ${item.name}`}
-                    onClick={() => {
-                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true, data: { id: item._id, name: item.name } }))
-                      dispatch(setModaldata({ id: item._id, name: item.name }))
-                    }}
-                  >
-                    <AiFillEdit className="w-5 h-5 text-primary-600 hover:text-primary-700 transition-colors cursor-pointer" />
-                  </Button>
-                  <Button aria-label={`Delete ${item.name}`}>
-                    <AiFillDelete className="w-5 h-5 text-error-600 hover:text-error-700 transition-colors cursor-pointer" />
-                  </Button>
-                </td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
-      {/* {JSON.stringify(brands)} */}
-    </div>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </TableShell>
   );
 }

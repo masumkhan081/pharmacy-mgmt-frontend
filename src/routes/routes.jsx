@@ -9,6 +9,14 @@ import Drugs from "../pages/Drugs.jsx";
 import SaleRecords from "../pages/SaleRecords.jsx";
 import Purchases from "../pages/Purchases.jsx";
 import Staff from "../pages/Staff.jsx";
+import Suppliers from "../pages/Suppliers.jsx";
+import Customers from "../pages/Customers.jsx";
+import Doctors from "../pages/Doctors.jsx";
+import Prescriptions from "../pages/Prescriptions.jsx";
+import Returns from "../pages/Returns.jsx";
+import Notifications from "../pages/Notifications.jsx";
+import Inventory from "../pages/Inventory.jsx";
+import Finance from "../pages/Finance.jsx";
 import Auth from "../pages/Auth.jsx";
 import Login from "../components/auth/Login.jsx";
 import SignUp from "../components/auth/SignUp.jsx";
@@ -25,15 +33,17 @@ import MFRTbl from "../components/tabularViews/MFRTbl.jsx";
 import StaffTbl from "../components/tabularViews/StaffTbl.jsx";
 import AttendanceTbl from "../components/tabularViews/AttendanceTbl.jsx";
 import SalaryTbl from "../components/tabularViews/SalaryTbl.jsx";
+import InventoryBatchTbl from "../components/tabularViews/InventoryBatchTbl.jsx";
+import InventoryAlertTbl from "../components/tabularViews/InventoryAlertTbl.jsx";
+import InvoiceTbl from "../components/tabularViews/InvoiceTbl.jsx";
+import PaymentTbl from "../components/tabularViews/PaymentTbl.jsx";
 import About from "../pages/About.jsx";
 import Profile from "../pages/Profile.jsx";
 import { ENTITIES } from "../ui-config/entities.js";
-import leftNav from "../ui-config/left-nav.js"
+import leftNav from "../ui-config/left-nav.js";
 import Unauthorized from "../pages/Unauthorized.jsx";
 import NotFound from "../pages/NotFound.jsx";
 
-
-// 
 const drugsRoutes = [
   { path: "stock", component: <DrugTbl /> },
   { path: "brands", component: <BrandTbl /> },
@@ -50,11 +60,19 @@ const staffRoutes = [
   { path: "attendances", component: <AttendanceTbl /> },
 ];
 
+const inventoryRoutes = [
+  { path: "batches", component: <InventoryBatchTbl /> },
+  { path: "alerts", component: <InventoryAlertTbl /> },
+];
+
+const financeRoutes = [
+  { path: "invoices", component: <InvoiceTbl /> },
+  { path: "payments", component: <PaymentTbl /> },
+];
+
 const generateProtectedRoutes = (routes, entityType) => {
   return routes.map(({ path, component }) => {
-
     const { access, isAccessControlled } = leftNav[entityType].options[path];
-    // alert("access:" + access, isAccessControlled)
     return {
       path,
       element: (
@@ -71,21 +89,23 @@ export const routes = createBrowserRouter([
     path: "/",
     element: <Layout />,
     children: [
-
       {
         path: "unauthorized",
         element: <Unauthorized />,
       },
-
       {
         path: "",
-        element: <ProtectedRoute><Landing /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <Landing />
+          </ProtectedRoute>
+        ),
         children: [
           {
             path: "dashboard",
             element: (
               <Suspense fallback={<div>Loading...</div>}>
-                <ProtectedRoute  >
+                <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
               </Suspense>
@@ -103,6 +123,25 @@ export const routes = createBrowserRouter([
             path: "staff",
             element: <Staff />,
             children: generateProtectedRoutes(staffRoutes, ENTITIES.staff),
+          },
+          { path: "suppliers", element: <Suppliers /> },
+          { path: "customers", element: <Customers /> },
+          { path: "doctors", element: <Doctors /> },
+          { path: "prescriptions", element: <Prescriptions /> },
+          { path: "returns", element: <Returns /> },
+          { path: "notifications", element: <Notifications /> },
+          {
+            path: "inventory",
+            element: <Inventory />,
+            children: generateProtectedRoutes(
+              inventoryRoutes,
+              ENTITIES.inventory
+            ),
+          },
+          {
+            path: "finance",
+            element: <Finance />,
+            children: generateProtectedRoutes(financeRoutes, ENTITIES.finance),
           },
         ],
       },
@@ -125,6 +164,4 @@ export const routes = createBrowserRouter([
       },
     ],
   },
-  // Catch-all route for "No such route"
-
 ]);

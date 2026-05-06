@@ -1,87 +1,100 @@
 import { useEffect } from "react";
-import { tblHeaderDrugs, tblOptionsDrugsPage } from "../../ui-config/table";
+import { AiOutlinePlus } from "react-icons/ai";
+import { tblHeaderDrugs } from "../../ui-config/table";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  checkSingle,
-  checkAll,
-  setCurrentView,
-} from "../../redux/slices/DrugsView";
-import { getHandler } from "../../utils/handlerReqRes";
 import { useLocation } from "react-router-dom";
+import {
+  setCurrentView,
+  toggleModal,
+  setModaldata,
+  bumpRefresh,
+} from "../../redux/slices/DrugsView";
 import { ENTITIES } from "../../ui-config/entities";
-import Input from "../common-ui/Input";
+import Button from "../common-ui/Button";
+import TableShell from "../common-ui/TableShell";
+import RowActions from "../common-ui/RowActions";
+import { useTableQuery } from "../../hooks/useTableQuery";
 
 export default function DrugTbl() {
-  //
   const location = useLocation();
   const dispatch = useDispatch();
-  const stock = useSelector((state) => state.drugsView.stock);
-  const allChecked = useSelector((state) => state.drugsView.allChecked);
-  //
+  const refreshKey = useSelector((s) => s.drugsView.refreshKey);
+  const query = useTableQuery({
+    endpoint: "/drugs",
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.stock, data })),
+  });
+  const stock = query.data;
+  const offset =
+    ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
+
   useEffect(() => {
-    const fetch = async () => {
-      try {
-        const { data } = await getHandler("/drugs");
-        dispatch(setCurrentView({ view: ENTITIES.stock, data }));
-      } catch (err) {
-        console.error("Failed to fetch stock:", err.message);
-      }
-    };
-    fetch();
     localStorage.setItem("activeTab", ENTITIES.stock);
     localStorage.setItem("lastRoute", location.pathname);
-  }, []);
-  //
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (refreshKey > 0) query.refetch();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
+
   return (
-    <div className="table-shell">
-      <table className="w-full min-w-[640px]">
-        <thead>
-          <tr className="tr-thead">
-            <th className="th">
-              <Input
-                type="checkbox"
-                checked={allChecked}
-                onChange={(e) => dispatch(checkAll())}
-              />
-            </th>
-            {tblHeaderDrugs.map((itm, ind) => {
-              return (
+    <TableShell
+      query={query}
+      searchPlaceholder="Search drugs..."
+      toolbar={
+        <Button
+          icon={<AiOutlinePlus className="inline text-white" />}
+          txt=" Stock"
+          onClick={() =>
+            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
+          }
+          style="btn-primary"
+        />
+      }
+    >
+      <div className="table-shell">
+        <table className="w-full min-w-[640px]">
+          <thead>
+            <tr className="tr-thead">
+              <th className="th">#</th>
+              {tblHeaderDrugs.map((itm, ind) => (
                 <th key={ind} className="th">
                   {itm}
                 </th>
-              );
-            })}
-          </tr>
-        </thead>
-
-        <tbody>
-          {stock &&
-            stock?.map((item, ind) => {
-              return (
-                <tr key={item._id ?? ind} className="tr-tbody">
-                  <td className="td">
-                    <Input
-                      type="checkbox"
-                      checked={item.checked}
-                      onChange={(e) => dispatch(checkSingle())}
-                    />
-                  </td>
-
-                  <td className="py-4">{ind + 1}</td>
-                  <td className="py-4">{item.brandId ?? "—"}</td>
-                  <td className="py-4">{item.generic?.name ?? "—"}</td>
-                  <td className="py-4">{item.available ?? "—"}</td>
-                  <td className="py-4">
-                    {[item.strength, item.unit?.name].filter(Boolean).join(" ") || "—"}
-                  </td>
-                  <td className="py-4">{item.formulation?.name ?? "—"}</td>
-                  <td className="py-4">{item.manufacturer?.name ?? "—"}</td>
-                  <td className="py-4">{item.status ?? "—"}</td>
-                </tr>
-              );
-            })}
-        </tbody>
-      </table>
-    </div>
+              ))}
+              <th className="th">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stock.map((item, ind) => (
+              <tr key={item._id ?? ind} className="tr-tbody">
+                <td className="py-4">{offset + ind + 1}</td>
+                <td className="py-4">{item.brandId ?? "—"}</td>
+                <td className="py-4">{item.generic?.name ?? "—"}</td>
+                <td className="py-4">{item.available ?? "—"}</td>
+                <td className="py-4">
+                  {[item.strength, item.unit?.name].filter(Boolean).join(" ") || "—"}
+                </td>
+                <td className="py-4">{item.formulation?.name ?? "—"}</td>
+                <td className="py-4">{item.manufacturer?.name ?? "—"}</td>
+                <td className="py-4">{item.status ?? "—"}</td>
+                <td className="py-4 flex justify-center gap-2">
+                  <RowActions
+                    label="drug"
+                    endpoint={`/drugs/${item._id}`}
+                    onEdit={() => {
+                      dispatch(setModaldata(item));
+                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
+                    }}
+                    onAfterDelete={() => dispatch(bumpRefresh())}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </TableShell>
   );
 }
