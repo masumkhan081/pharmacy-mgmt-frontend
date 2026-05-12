@@ -27,6 +27,18 @@ export default function SalePanel() {
   const [errors, setErrors] = useState({});
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(null);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        document.getElementById("sale-search-input")?.focus();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -43,6 +55,32 @@ export default function SalePanel() {
     })();
   }, []);
 
+  const onSearchKeyDown = (e) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex(prev => Math.min(prev + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex(prev => Math.max(prev - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      const target = selectedIndex >= 0 ? filtered[selectedIndex] : filtered[0];
+      if (target && (target.available || 0) > 0) {
+        addToCart(target);
+        setSearch("");
+        setSelectedIndex(-1);
+      }
+    } else if (e.key === "Escape") {
+      setSearch("");
+      setSelectedIndex(-1);
+    }
+  };
+
+  useEffect(() => {
+    setSelectedIndex(-1);
+  }, [search]);
+
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     if (!q) return drugs.slice(0, 60);
@@ -53,16 +91,17 @@ export default function SalePanel() {
 
   const addToCart = (d) => {
     setCart((prev) => {
-      const existing = prev.find((l) => l.drug === d._id);
+      const id = d.id || d._id;
+      const existing = prev.find((l) => l.drug === id);
       if (existing) {
         return prev.map((l) =>
-          l.drug === d._id ? { ...l, quantity: Number(l.quantity) + 1 } : l
+          l.drug === id ? { ...l, quantity: Number(l.quantity) + 1 } : l
         );
       }
       return [
         ...prev,
         {
-          drug: d._id,
+          drug: id,
           label: drugLabel(d),
           quantity: 1,
           mrp: Number(d.sellingPrice ?? d.mrp ?? 0),
@@ -97,6 +136,53 @@ export default function SalePanel() {
 
   const total = cartTotal(cart);
 
+  const printReceipt = (saleData) => {
+    const printWindow = window.open("", "_blank");
+    const html = `
+      <html>
+        <head>
+          <title>Invoice - ${saleData.receipt}</title>
+          <style>
+            body { font-family: 'Courier New', Courier, monospace; font-size: 12px; padding: 20px; width: 300px; }
+            .header { text-align: center; margin-bottom: 20px; }
+            .row { display: flex; justify-content: space-between; margin: 4px 0; }
+            .divider { border-top: 1px dashed #000; margin: 10px 0; }
+            .bold { font-weight: bold; }
+          </style>
+        </head>
+        <body onload="window.print(); window.close();">
+          <div class="header">
+            <h2 style="margin:0">PHARMACY NAME</h2>
+            <p style="margin:5px 0">123 Health Ave, Wellness City</p>
+            <p style="margin:0">Tel: 555-0199</p>
+          </div>
+          <div class="divider"></div>
+          <div class="row"><span class="bold">Invoice:</span> <span>${saleData.receipt}</span></div>
+          <div class="row"><span class="bold">Date:</span> <span>${new Date().toLocaleString()}</span></div>
+          <div class="divider"></div>
+          ${saleData.itemsList.map(i => `
+            <div class="row"><span>${i.label}</span></div>
+            <div class="row" style="padding-left: 10px">
+              <span>${i.quantity} x $${i.mrp.toFixed(2)}</span>
+              <span>$${(i.quantity * i.mrp).toFixed(2)}</span>
+            </div>
+          `).join('')}
+          <div class="divider"></div>
+          <div class="row bold" style="font-size: 14px">
+            <span>TOTAL</span>
+            <span>$${saleData.bill.toFixed(2)}</span>
+          </div>
+          <div class="divider"></div>
+          <div class="header" style="margin-top: 20px">
+            <p>Thank you for your business!</p>
+          </div>
+        </body>
+      </html>
+    `;
+    printWindow.document.write(html);
+    printWindow.document.close();
+  };
+
   async function complete() {
     if (cart.length === 0) {
       setErrors({ _form: "Cart is empty" });
@@ -120,11 +206,13 @@ export default function SalePanel() {
     setErrors({});
     try {
       const { data } = await postHandler("/sales", validation.data);
-      setDone({
+      const saleInfo = {
         bill: Number(total.toFixed(2)),
         items: cart.length,
-        receipt: data?._id ?? "",
-      });
+        receipt: data?.id || data?._id || "N/A",
+        itemsList: [...cart]
+      };
+      setDone(saleInfo);
       clear();
     } catch (err) {
       setErrors(apiErrorsToFields(err));
@@ -143,9 +231,12 @@ export default function SalePanel() {
             <Input
               type="text"
               style="border"
-              placeholder="Search drugs by name, brand, strength..."
+              placeholder="Search drugs (Ctrl+K)..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={onSearchKeyDown}
+              autoFocus
+              id="sale-search-input"
             />
             {search && (
               <Button
@@ -163,23 +254,48 @@ export default function SalePanel() {
                 No drugs match.
               </div>
             )}
-            {filtered.map((d) => (
-              <button
-                key={d._id}
-                type="button"
-                onClick={() => addToCart(d)}
-                className="text-left border border-neutral-200 rounded-lg px-3 py-2 hover:border-primary-300 hover:bg-primary-50 transition-colors"
-              >
-                <div className="text-sm font-medium text-neutral-800 truncate">
-                  {drugLabel(d)}
-                </div>
-                <div className="flex justify-between text-xs text-neutral-500 mt-1">
-                  <span>Stock: {d.available ?? "—"}</span>
-                  <span>{d.sellingPrice ?? "—"}</span>
-                </div>
-              </button>
-            ))}
+            {filtered.map((d, idx) => {
+              const isOutOfStock = (d.available || 0) <= 0;
+              const isLowStock = (d.available || 0) > 0 && (d.available || 0) < 20;
+              const isSelected = selectedIndex === idx;
+
+              return (
+                <button
+                  key={d.id || d._id}
+                  type="button"
+                  onClick={() => !isOutOfStock && addToCart(d)}
+                  disabled={isOutOfStock}
+                  className={`text-left border rounded-lg px-3 py-2 transition-all ${
+                    isOutOfStock
+                      ? "bg-neutral-50 border-neutral-200 opacity-60 cursor-not-allowed"
+                      : isSelected 
+                        ? "border-primary-500 bg-primary-50 ring-2 ring-primary-200 shadow-sm scale-[1.02]"
+                        : "border-neutral-200 hover:border-primary-300 hover:bg-primary-50 active:scale-[0.98]"
+                  }`}
+                >
+                  <div className="flex justify-between items-start gap-1">
+                    <div className="text-sm font-medium text-neutral-800 truncate">
+                      {drugLabel(d)}
+                    </div>
+                    {isOutOfStock && (
+                      <span className="bg-error-100 text-error-700 text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">
+                        OOS
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex justify-between text-xs mt-1">
+                    <span className={`${isLowStock ? "text-warning-600 font-semibold" : "text-neutral-500"}`}>
+                      Stock: {d.available ?? 0}
+                    </span>
+                    <span className="text-neutral-600 font-medium">
+                      {d.sellingPrice ? `$${d.sellingPrice}` : "—"}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
           </div>
+
         </section>
 
         <section className="lg:col-span-2 flex flex-col gap-3 bg-white rounded-xl border border-neutral-200 p-3 min-h-[520px]">
@@ -265,8 +381,26 @@ export default function SalePanel() {
           )}
 
           {done && (
-            <div className="text-sm text-success-700 bg-success-50 px-3 py-2 rounded-lg">
-              Sale recorded — {done.items} item{done.items === 1 ? "" : "s"}, total {done.bill.toFixed(2)}.
+            <div className="flex flex-col gap-2 bg-success-50 border border-success-200 px-3 py-2 rounded-lg">
+              <div className="text-sm text-success-800 font-medium">
+                Sale recorded — {done.items} item{done.items === 1 ? "" : "s"}, total {done.bill.toFixed(2)}.
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  type="button" 
+                  txt="Print Receipt" 
+                  onClick={() => printReceipt(done)}
+                  style="btn-primary"
+                  className="!py-1 !px-2 text-xs"
+                />
+                <Button 
+                  type="button" 
+                  txt="Dismiss" 
+                  onClick={() => setDone(null)}
+                  style="btn-test-data"
+                  className="!py-1 !px-2 text-xs"
+                />
+              </div>
             </div>
           )}
 
