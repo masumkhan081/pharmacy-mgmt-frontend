@@ -24,7 +24,7 @@ const initial = () => ({
 const itemsFromModal = (md) =>
   Array.isArray(md?.drugs) && md.drugs.length
     ? md.drugs.map((d) => ({
-        drug: typeof d.drug === "object" ? d.drug?._id ?? "" : d.drug ?? "",
+        drug: typeof d.drug === "object" ? d.drug?.id ?? "" : d.drug ?? "",
         quantity: Number(d.quantity) || 1,
         mrp: Number(d.mrp) || 0,
       }))
@@ -53,7 +53,7 @@ export default function SaleForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
+    if (isModalForEdit && modalData?.id) {
       setSaleAt(
         modalData.saleAt
           ? new Date(modalData.saleAt).toISOString().slice(0, 16)
@@ -65,7 +65,7 @@ export default function SaleForm() {
       setItems(initial().items);
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   const updateItem = (idx, patch) =>
     setItems((prev) => prev.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
@@ -96,8 +96,8 @@ export default function SaleForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/sales/${modalData._id}`, validation.data);
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/sales/${modalData.id}`, validation.data);
       } else {
         await postHandler("/sales", validation.data);
       }
@@ -133,8 +133,8 @@ export default function SaleForm() {
               >
                 <option value="">Select drug</option>
                 {drugs.map((d) => (
-                  <option key={d._id} value={d._id}>
-                    {d.generic?.name ?? d.brandId ?? d._id}
+                  <option key={d.id} value={d.id}>
+                    {d.generic?.name ?? d.brandId ?? d.id}
                   </option>
                 ))}
               </select>

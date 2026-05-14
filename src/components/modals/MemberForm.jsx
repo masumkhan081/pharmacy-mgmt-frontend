@@ -11,20 +11,11 @@ import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
 const initial = {
-  fullName: "",
+  name: "",
   phone: "",
-  altPhone: "",
   email: "",
-  designation: "salesman",
-  gender: "",
-  shift: "Morning",
-  salaryType: "Hourly",
-  hourlySalary: 0,
-  weeklySalary: 0,
-  monthlySalary: 0,
-  hoursPerDay: 8,
-  daysPerWeek: 5,
-  address: "",
+  role: "",
+  salary: 0,
 };
 
 export default function MemberForm() {
@@ -38,23 +29,26 @@ export default function MemberForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
-      setForm({ ...initial, ...modalData });
+    if (isModalForEdit && modalData?.id) {
+      setForm({
+        ...initial,
+        name: modalData.name ?? modalData.fullName ?? "",
+        phone: modalData.phone ?? "",
+        email: modalData.email ?? "",
+        role: modalData.role ?? "",
+        salary: Number(modalData.salary ?? 0),
+      });
     } else {
       setForm(initial);
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
     const validation = validateData(memberSchema, {
       ...form,
-      hourlySalary: Number(form.hourlySalary),
-      weeklySalary: Number(form.weeklySalary),
-      monthlySalary: Number(form.monthlySalary),
-      hoursPerDay: Number(form.hoursPerDay),
-      daysPerWeek: Number(form.daysPerWeek),
+      salary: Number(form.salary),
     });
     if (!validation.success) {
       setErrors(validation.errors);
@@ -62,10 +56,18 @@ export default function MemberForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/staff/${modalData._id}`, validation.data);
+      const payload = { ...validation.data };
+      if (!payload.phone) delete payload.phone;
+      if (!payload.email) delete payload.email;
+      if (!payload.role) delete payload.role;
+      if (payload.salary === undefined || payload.salary === null || Number.isNaN(payload.salary)) {
+        delete payload.salary;
+      }
+      // BE staff routes are mounted at `/api/staff` (singular).
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/staff/${modalData.id}`, payload);
       } else {
-        await postHandler("/staff", validation.data);
+        await postHandler("/staff", payload);
       }
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
@@ -78,8 +80,8 @@ export default function MemberForm() {
     <form onSubmit={handleSave} className="flex flex-col gap-3">
       {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Full name" error={errors.fullName}>
-          <Input value={form.fullName} onChange={(e) => set("fullName", e.target.value)} />
+        <Field label="Name" error={errors.name}>
+          <Input value={form.name} onChange={(e) => set("name", e.target.value)} />
         </Field>
         <Field label="Email" error={errors.email}>
           <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
@@ -87,56 +89,11 @@ export default function MemberForm() {
         <Field label="Phone" error={errors.phone}>
           <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
         </Field>
-        <Field label="Alt phone" error={errors.altPhone}>
-          <Input value={form.altPhone} onChange={(e) => set("altPhone", e.target.value)} />
+        <Field label="Role" error={errors.role}>
+          <Input value={form.role} onChange={(e) => set("role", e.target.value)} placeholder="e.g. pharmacist, manager" />
         </Field>
-        <Field label="Designation" error={errors.designation}>
-          <select className="txt-input" value={form.designation} onChange={(e) => set("designation", e.target.value)}>
-            <option value="salesman">salesman</option>
-            <option value="pharmacist">pharmacist</option>
-            <option value="manager">manager</option>
-            <option value="admin">admin</option>
-          </select>
-        </Field>
-        <Field label="Gender" error={errors.gender}>
-          <select className="txt-input" value={form.gender} onChange={(e) => set("gender", e.target.value)}>
-            <option value="">—</option>
-            <option value="MALE">MALE</option>
-            <option value="FEMALE">FEMALE</option>
-            <option value="OTHER">OTHER</option>
-          </select>
-        </Field>
-        <Field label="Shift" error={errors.shift}>
-          <select className="txt-input" value={form.shift} onChange={(e) => set("shift", e.target.value)}>
-            <option value="Morning">Morning</option>
-            <option value="Afternoon">Afternoon</option>
-            <option value="Night">Night</option>
-          </select>
-        </Field>
-        <Field label="Salary type" error={errors.salaryType}>
-          <select className="txt-input" value={form.salaryType} onChange={(e) => set("salaryType", e.target.value)}>
-            <option value="Hourly">Hourly</option>
-            <option value="Weekly">Weekly</option>
-            <option value="Monthly">Monthly</option>
-          </select>
-        </Field>
-        <Field label="Hourly salary" error={errors.hourlySalary}>
-          <Input type="number" value={form.hourlySalary} onChange={(e) => set("hourlySalary", e.target.value)} />
-        </Field>
-        <Field label="Weekly salary" error={errors.weeklySalary}>
-          <Input type="number" value={form.weeklySalary} onChange={(e) => set("weeklySalary", e.target.value)} />
-        </Field>
-        <Field label="Monthly salary" error={errors.monthlySalary}>
-          <Input type="number" value={form.monthlySalary} onChange={(e) => set("monthlySalary", e.target.value)} />
-        </Field>
-        <Field label="Hours/day" error={errors.hoursPerDay}>
-          <Input type="number" value={form.hoursPerDay} onChange={(e) => set("hoursPerDay", e.target.value)} />
-        </Field>
-        <Field label="Days/week" error={errors.daysPerWeek}>
-          <Input type="number" value={form.daysPerWeek} onChange={(e) => set("daysPerWeek", e.target.value)} />
-        </Field>
-        <Field label="Address" error={errors.address}>
-          <Input value={form.address} onChange={(e) => set("address", e.target.value)} />
+        <Field label="Salary" error={errors.salary}>
+          <Input type="number" step="0.01" value={form.salary} onChange={(e) => set("salary", e.target.value)} />
         </Field>
       </div>
       <div className="flex items-center justify-end gap-3 mt-3">

@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import PageTitle from "../components/common-ui/PageTitle";
 import { getHandler } from "../utils/handlerReqRes";
-import { AiOutlineWarning, AiOutlineShoppingCart, AiOutlineClockCircle, AiOutlineMoneyCollect } from "react-icons/ai";
+import {
+  AiOutlineWarning,
+  AiOutlineShoppingCart,
+  AiOutlineClockCircle,
+  AiOutlineMoneyCollect,
+} from "react-icons/ai";
 
 const entityCards = [
   { key: "drugs", label: "Drugs", endpoint: "/drugs?limit=1" },
@@ -12,48 +17,52 @@ const entityCards = [
   { key: "returns", label: "Returns", endpoint: "/returns?limit=1" },
 ];
 
+const EMPTY_OP_STATS = {
+  todaySalesAmount: 0,
+  lowStockCount: 0,
+  expiringBatchesCount: 0,
+  unpaidInvoicesCount: 0,
+};
+
 export default function Dashboard() {
   const [stats, setStats] = useState({});
-  const [opStats, setOpStats] = useState({
-    todaySalesAmount: 0,
-    lowStockCount: 0,
-    expiringBatchesCount: 0,
-    unpaidInvoicesCount: 0
-  });
-  const [loading, setLoading] = useState(true);
+  const [opStats, setOpStats] = useState(EMPTY_OP_STATS);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
     let cancelled = false;
-    (async () => {
-      try {
-        const [entityResults, opResults] = await Promise.all([
-          Promise.all(
-            entityCards.map(async (c) => {
-              try {
-                const res = await getHandler(c.endpoint);
-                const total = res?.meta?.pagination?.total ?? res?.meta?.total ?? 0;
-                return [c.key, total];
-              } catch {
-                return [c.key, "—"];
-              }
-            })
-          ),
-          getHandler("/dashboard/stats")
-        ]);
+    setLoading(true);
 
-        if (!cancelled) {
-          setStats(Object.fromEntries(entityResults));
-          if (opResults.success) {
-            setOpStats(opResults.data);
-          }
-          setLoading(false);
-        }
-      } catch {
-        if (!cancelled) setLoading(false);
-      }
+    (async () => {
+      const [entityResults, opResults] = await Promise.all([
+        Promise.all(
+          entityCards.map(async (c) => {
+            try {
+              const res = await getHandler(c.endpoint, {
+                signal: controller.signal,
+              });
+              const total =
+                res?.meta?.pagination?.total ?? res?.meta?.total ?? 0;
+              return [c.key, total];
+            } catch {
+              return [c.key, "—"];
+            }
+          })
+        ),
+        getHandler("/dashboard/stats", { signal: controller.signal }).catch(
+          () => null
+        ),
+      ]);
+      if (cancelled) return;
+      setStats(Object.fromEntries(entityResults));
+      setOpStats(opResults?.data ?? EMPTY_OP_STATS);
+      setLoading(false);
     })();
+
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, []);
 

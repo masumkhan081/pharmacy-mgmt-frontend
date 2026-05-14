@@ -12,7 +12,7 @@ import { ENTITIES } from "../../ui-config/entities";
 import Button from "../common-ui/Button";
 import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
-import { useTableQuery } from "../../hooks/useTableQuery";
+import { useTableData } from '../../hooks/useTableData';
 
 const headers = ["#", "Drug", "Min", "Max", "Reorder pt", "Reorder qty", "Auto", "Active"];
 
@@ -20,7 +20,8 @@ export default function InventoryAlertTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
   const refreshKey = useSelector((s) => s.inventoryView.refreshKey);
-  const query = useTableQuery({
+  const query = useTableData({
+    refreshKey,
     endpoint: "/inventory-alerts",
     onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.inventoryAlert })),
   });
@@ -32,11 +33,6 @@ export default function InventoryAlertTbl() {
     localStorage.setItem("activeTab", ENTITIES.inventoryAlert);
     localStorage.setItem("lastRoute", location.pathname);
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (refreshKey > 0) query.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey]);
 
   return (
     <TableShell
@@ -65,7 +61,7 @@ export default function InventoryAlertTbl() {
           </thead>
           <tbody>
             {items.map((item, ind) => (
-              <tr key={item._id ?? ind} className="tr-tbody">
+              <tr key={item.id ?? ind} className="tr-tbody">
                 <td className="py-4">{offset + ind + 1}</td>
                 <td className="py-4">{item.drug?.name ?? "—"}</td>
                 <td className="py-4">{item.minThreshold ?? "—"}</td>
@@ -77,7 +73,7 @@ export default function InventoryAlertTbl() {
                 <td className="py-4 flex justify-center gap-2">
                   <RowActions
                     label="alert"
-                    endpoint={`/inventory-alerts/${item._id}`}
+                    endpoint={`/inventory-alerts/${item.id}`}
                     onEdit={() => {
                       dispatch(setModaldata(item));
                       dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));

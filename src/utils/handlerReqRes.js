@@ -1,8 +1,11 @@
 import apiClient from "./apiClient";
 
-export const getHandler = (endpoint) => apiClient.get(endpoint);
-export const postHandler = (endpoint, body) => apiClient.post(endpoint, body);
-export const patchHandler = (endpoint, body) => apiClient.patch(endpoint, body);
-export const deleteHandler = (endpoint) => apiClient.delete(endpoint);
+export const getHandler = (endpoint, options) => apiClient.get(endpoint, options);
+export const postHandler = (endpoint, body, options) =>
+  apiClient.post(endpoint, body, options);
+export const patchHandler = (endpoint, body, options) =>
+  apiClient.patch(endpoint, body, options);
+export const deleteHandler = (endpoint, options) =>
+  apiClient.delete(endpoint, options);
 
 export default apiClient;

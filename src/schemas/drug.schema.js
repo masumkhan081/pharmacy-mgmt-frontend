@@ -1,31 +1,31 @@
 import { z } from "zod";
 
-// Generic Schema
+// All schemas aligned to BE Prisma contracts (b/src/schemas/*.ts).
+
 export const genericSchema = z.object({
   name: z
     .string()
     .min(1, { message: "Name is required" })
     .max(50, { message: "Name cannot exceed 50 characters" }),
-  groupId: z.string().optional(),
+  description: z.string().max(500).optional().or(z.literal("")),
 });
 
-// Brand Schema
 export const brandSchema = z.object({
   name: z
     .string()
     .min(1, { message: "Name is required" })
     .max(50, { message: "Name cannot exceed 50 characters" }),
+  origin: z.string().max(100).optional().or(z.literal("")),
 });
 
-// Group Schema
 export const groupSchema = z.object({
   name: z
     .string()
     .min(1, { message: "Name is required" })
     .max(50, { message: "Name cannot exceed 50 characters" }),
+  description: z.string().max(500).optional().or(z.literal("")),
 });
 
-// Formulation Schema
 export const formulationSchema = z.object({
   name: z
     .string()
@@ -33,27 +33,24 @@ export const formulationSchema = z.object({
     .max(50, { message: "Name cannot exceed 50 characters" }),
 });
 
-// Manufacturer Schema
 export const mfrSchema = z.object({
   name: z
     .string()
     .min(1, { message: "Name is required" })
     .max(100, { message: "Name cannot exceed 100 characters" }),
-  country: z.string().optional(),
-  contactInfo: z.string().optional(),
+  address: z.string().max(255).optional().or(z.literal("")),
+  email: z.string().email().optional().or(z.literal("")),
+  phone: z.string().max(20).optional().or(z.literal("")),
 });
 
-// Drug Schema
+// BE service maps short keys -> Prisma columns (brand->brandId, etc.) and
+// derives `name` from Brand + Strength + Unit, so the FE form provides the short keys.
 export const drugSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Name is required" })
-    .max(100, { message: "Name cannot exceed 100 characters" }),
-  genericId: z.string().min(1, { message: "Generic is required" }),
-  brandId: z.string().optional(),
-  mfrId: z.string().optional(),
-  formulationId: z.string().optional(),
-  unitId: z.string().optional(),
-  strength: z.string().optional(),
-  description: z.string().optional(),
+  brand: z.string().min(1, { message: "Brand is required" }),
+  formulation: z.string().min(1, { message: "Formulation is required" }),
+  strength: z.number().min(0, { message: "Strength cannot be negative" }),
+  unit: z.string().min(1, { message: "Unit is required" }),
+  mrp: z.number().min(0, { message: "MRP cannot be negative" }),
+  purchasePrice: z.number().min(0).optional(),
+  status: z.enum(["ACTIVE", "INACTIVE"]).optional(),
 });

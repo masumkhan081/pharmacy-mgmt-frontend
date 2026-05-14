@@ -8,8 +8,16 @@ import { saleSchema } from "../schemas/sale.schema";
 import { validateData, apiErrorsToFields } from "../utils/validation";
 
 const drugLabel = (d) => {
-  const parts = [d.generic?.name, d.brandId, d.strength, d.unit?.name].filter(Boolean);
-  return parts.length ? parts.join(" ") : d._id;
+  // BE denormalizes `Drug.name` (Brand + Strength + Unit) on create — prefer that.
+  // Fall back to assembled parts only if `name` is missing on a legacy row.
+  if (d.name) return d.name;
+  const parts = [
+    d.brand?.name,
+    d.generic?.name,
+    d.strength,
+    d.unit?.name,
+  ].filter(Boolean);
+  return parts.length ? parts.join(" ") : d.id;
 };
 
 const cartTotal = (cart) =>
@@ -91,7 +99,7 @@ export default function SalePanel() {
 
   const addToCart = (d) => {
     setCart((prev) => {
-      const id = d.id || d._id;
+      const id = d.id;
       const existing = prev.find((l) => l.drug === id);
       if (existing) {
         return prev.map((l) =>
@@ -196,6 +204,7 @@ export default function SalePanel() {
         mrp: Number(l.mrp),
       })),
       bill: Number(total.toFixed(2)),
+      ...(customer ? { customerId: customer } : {}),
     };
     const validation = validateData(saleSchema, payload);
     if (!validation.success) {
@@ -209,7 +218,7 @@ export default function SalePanel() {
       const saleInfo = {
         bill: Number(total.toFixed(2)),
         items: cart.length,
-        receipt: data?.id || data?._id || "N/A",
+        receipt: data?.id || "N/A",
         itemsList: [...cart]
       };
       setDone(saleInfo);
@@ -261,7 +270,7 @@ export default function SalePanel() {
 
               return (
                 <button
-                  key={d.id || d._id}
+                  key={d.id}
                   type="button"
                   onClick={() => !isOutOfStock && addToCart(d)}
                   disabled={isOutOfStock}
@@ -308,7 +317,7 @@ export default function SalePanel() {
             >
               <option value="">Walk-in</option>
               {customers.map((c) => (
-                <option key={c._id} value={c._id}>
+                <option key={c.id} value={c.id}>
                   {c.fullName} {c.phone ? `(${c.phone})` : ""}
                 </option>
               ))}

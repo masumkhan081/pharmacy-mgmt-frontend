@@ -14,7 +14,7 @@ export const setAuthToken = (token) => {
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
-  withCredentials: true,
+  withCredentials: false,
   headers: { "Content-Type": "application/json" },
 });
 
@@ -26,8 +26,12 @@ axiosInstance.interceptors.request.use((config) => {
 
 const handleUnauthorized = () => {
   setAuthToken(null);
-  if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
-    window.location.assign("/auth/login");
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("user");
+    localStorage.removeItem("lastRoute");
+    if (!window.location.pathname.startsWith("/auth/")) {
+      window.location.assign("/auth/login");
+    }
   }
 };
 
@@ -44,9 +48,12 @@ axiosInstance.interceptors.response.use(
       });
     }
     return {
-      data: envelope?.data,
-      meta: envelope?.meta,
+      statusCode: envelope?.statusCode ?? response.status,
+      success: true,
       message: envelope?.message,
+      data: envelope?.data ?? null,
+      meta: envelope?.meta ?? null,
+      errors: null,
     };
   },
   (error) => {

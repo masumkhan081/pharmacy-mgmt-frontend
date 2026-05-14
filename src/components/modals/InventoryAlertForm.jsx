@@ -14,86 +14,69 @@ import { validateData, apiErrorsToFields } from "../../utils/validation";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
-const initial = (userId = "") => ({
+const initial = () => ({
   drug: "",
-  minThreshold: 10,
-  maxThreshold: 100,
-  reorderPoint: 20,
-  reorderQuantity: 50,
-  preferredSupplier: "",
-  autoReorder: false,
-  isActive: true,
-  createdBy: userId,
+  title: "",
+  message: "",
+  severity: "MEDIUM",
+  isResolved: false,
 });
+
+const drugLabel = (d) => d?.name ?? d?.brand?.name ?? d?.generic?.name ?? d?.id ?? "";
 
 export default function InventoryAlertForm() {
   const dispatch = useDispatch();
-  const userId = useSelector((s) => s.user.userId);
   const isModalForEdit = useSelector((s) => s.inventoryView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.inventoryView.isModalVisible);
   const modalData = useSelector((s) => s.inventoryView.modalData);
   const [drugs, setDrugs] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [form, setForm] = useState(initial(userId));
+  const [form, setForm] = useState(initial);
   const [errors, setErrors] = useState({});
   const set = (k, v) => setForm((p) => ({ ...p, [k]: v }));
 
   useEffect(() => {
     (async () => {
       try {
-        const [d, s] = await Promise.all([
-          getHandler("/drugs?limit=1000"),
-          getHandler("/suppliers?limit=1000"),
-        ]);
+        const d = await getHandler("/drugs?limit=1000");
         setDrugs(Array.isArray(d.data) ? d.data : []);
-        setSuppliers(Array.isArray(s.data) ? s.data : []);
       } catch (err) {
-        console.error("Failed to fetch options:", err.message);
+        console.error("Failed to fetch drugs:", err.message);
       }
     })();
   }, []);
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
-      const idOf = (v) => (typeof v === "object" ? v?._id ?? "" : v ?? "");
+    if (isModalForEdit && modalData?.id) {
+      const idOf = (v) => (typeof v === "object" ? v?.id ?? "" : v ?? "");
       setForm({
-        ...initial(userId),
-        ...modalData,
-        drug: idOf(modalData.drug),
-        preferredSupplier: idOf(modalData.preferredSupplier),
-        createdBy: idOf(modalData.createdBy) || userId,
+        ...initial(),
+        drug: idOf(modalData.drug) || modalData.drugId || "",
+        title: modalData.title ?? "",
+        message: modalData.message ?? "",
+        severity: modalData.severity ?? "MEDIUM",
+        isResolved: Boolean(modalData.isResolved),
       });
     } else {
-      setForm(initial(userId));
+      setForm(initial());
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit, userId]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
-    const payload = {
-      ...form,
-      minThreshold: Number(form.minThreshold),
-      maxThreshold: Number(form.maxThreshold),
-      reorderPoint: Number(form.reorderPoint),
-      reorderQuantity: Number(form.reorderQuantity),
-      createdBy: form.createdBy || userId,
-    };
-    const validation = validateData(inventoryAlertSchema, payload);
+    const validation = validateData(inventoryAlertSchema, form);
     if (!validation.success) {
       setErrors(validation.errors);
       return;
     }
     setErrors({});
     try {
-      const body = { ...validation.data };
-      if (!body.preferredSupplier) delete body.preferredSupplier;
-      if (isModalForEdit && modalData?._id) {
-        body.updatedBy = userId;
-        await patchHandler(`/inventory-alerts/${modalData._id}`, body);
+      const payload = { ...validation.data };
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/inventory-alerts/${modalData.id}`, payload);
       } else {
-        await postHandler("/inventory-alerts", body);
+        await postHandler("/inventory-alerts", payload);
       }
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
@@ -110,43 +93,30 @@ export default function InventoryAlertForm() {
           <select className="txt-input" value={form.drug} onChange={(e) => set("drug", e.target.value)}>
             <option value="">Select drug</option>
             {drugs.map((d) => (
-              <option key={d._id} value={d._id}>{d.generic?.name ?? d._id}</option>
+              <option key={d.id} value={d.id}>{drugLabel(d)}</option>
             ))}
           </select>
         </Field>
-        <Field label="Preferred supplier" error={errors.preferredSupplier}>
-          <select className="txt-input" value={form.preferredSupplier} onChange={(e) => set("preferredSupplier", e.target.value)}>
-            <option value="">—</option>
-            {suppliers.map((s) => (
-              <option key={s._id} value={s._id}>{s.fullName}</option>
-            ))}
+        <Field label="Severity" error={errors.severity}>
+          <select className="txt-input" value={form.severity} onChange={(e) => set("severity", e.target.value)}>
+            <option value="LOW">LOW</option>
+            <option value="MEDIUM">MEDIUM</option>
+            <option value="HIGH">HIGH</option>
           </select>
         </Field>
-        <Field label="Min threshold" error={errors.minThreshold}>
-          <Input type="number" value={form.minThreshold} onChange={(e) => set("minThreshold", e.target.value)} />
+        <Field label="Title" error={errors.title}>
+          <Input value={form.title} onChange={(e) => set("title", e.target.value)} />
         </Field>
-        <Field label="Max threshold" error={errors.maxThreshold}>
-          <Input type="number" value={form.maxThreshold} onChange={(e) => set("maxThreshold", e.target.value)} />
-        </Field>
-        <Field label="Reorder point" error={errors.reorderPoint}>
-          <Input type="number" value={form.reorderPoint} onChange={(e) => set("reorderPoint", e.target.value)} />
-        </Field>
-        <Field label="Reorder qty" error={errors.reorderQuantity}>
-          <Input type="number" value={form.reorderQuantity} onChange={(e) => set("reorderQuantity", e.target.value)} />
-        </Field>
-        <Field label="Auto reorder" error={errors.autoReorder}>
-          <select className="txt-input" value={form.autoReorder ? "yes" : "no"} onChange={(e) => set("autoReorder", e.target.value === "yes")}>
+        <Field label="Resolved" error={errors.isResolved}>
+          <select className="txt-input" value={form.isResolved ? "yes" : "no"} onChange={(e) => set("isResolved", e.target.value === "yes")}>
             <option value="no">No</option>
             <option value="yes">Yes</option>
-          </select>
-        </Field>
-        <Field label="Active" error={errors.isActive}>
-          <select className="txt-input" value={form.isActive ? "yes" : "no"} onChange={(e) => set("isActive", e.target.value === "yes")}>
-            <option value="yes">Yes</option>
-            <option value="no">No</option>
           </select>
         </Field>
       </div>
+      <Field label="Message" error={errors.message}>
+        <Input value={form.message} onChange={(e) => set("message", e.target.value)} />
+      </Field>
       <div className="flex items-center justify-end gap-3 mt-3">
         <Button type="button" onClick={() => dispatch(toggleModal({ isModalVisible: false }))} className="px-4 py-2 text-sm">Cancel</Button>
         <Button type="submit" className="btn-primary">{isModalForEdit ? "Update" : "Save"}</Button>

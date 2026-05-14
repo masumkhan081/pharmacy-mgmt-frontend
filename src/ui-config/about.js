@@ -1,24 +1,18 @@
 const projectObjectives = [
-  "The primary objective is to implement a crud using express on back-end, mongodb atlas as data-tier. But as data of different kinds (drugs, gnerics etc) has interrelation, so implementation is not like a simple crud. Perhaps using PostgreSQL would've been more accurate to take advantage of RDBMS.",
-  "Making a case for using json-web-token was another objective where edit and delete operation would be under protected routes.",
+  "Pharmacy management system: Express + Prisma + PostgreSQL on the backend; React + Tailwind on the frontend. Operational domain covers inventory, sales (POS), purchases, returns (with approve/reject workflow), payments, and audit logging.",
+  "Authenticated, role-gated CRUD across drugs/brands/generics/units/formulations/manufacturers/groups; transactional inventory pipeline (FIFO deduction, batch-level adjustments) is the single authoritative source of stock truth.",
 ];
 const projectFeatures = [
-  "Add,Edit,Delete in Mongodb cloud using mongoose",
-  "Use of Json Web Token, Sign in before action like: delete,edit",
-  "Cheking existance bedore addition, correlation before deletion",
+  "Transactional sale, purchase, return-approval, payment, and stock-adjustment flows backed by Prisma `$transaction`",
+  "FIFO batch deduction with denormalized `Drug.available` kept consistent inside the same transaction",
+  "JWT-based auth with role gates (ADMIN / MANAGER / SALESMAN) on protected routes",
+  "TanStack Query for cache invalidation, paginated tables with debounced search",
 ];
 
 const usedTechAndTools = {
-   frontEnd: ["react", "tailwind"],
-   backEnd: [
-     "mongoose",
-     "nodemailer",
-     "passport",
-     "crypto",
-     "custom modal",
-     "custom hook",
-   ],
-   dataTier: ["mongodb with mongoose"],
- };
+  frontEnd: ["react", "tailwind", "redux toolkit", "axios"],
+  backEnd: ["express", "typescript", "prisma", "zod", "jsonwebtoken", "bcryptjs"],
+  dataTier: ["postgresql via prisma"],
+};
 
-export { projectObjectives, projectFeatures,usedTechAndTools };
+export { projectObjectives, projectFeatures, usedTechAndTools };

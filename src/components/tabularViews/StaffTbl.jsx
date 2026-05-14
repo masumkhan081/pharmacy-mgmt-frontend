@@ -13,13 +13,14 @@ import { ENTITIES } from "../../ui-config/entities";
 import Button from "../common-ui/Button";
 import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
-import { useTableQuery } from "../../hooks/useTableQuery";
+import { useTableData } from '../../hooks/useTableData';
 
 export default function StaffTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
   const refreshKey = useSelector((s) => s.staffView.refreshKey);
-  const query = useTableQuery({
+  const query = useTableData({
+    refreshKey,
     endpoint: "/staff",
     onLoaded: (data) =>
       dispatch(setCurrentView({ view: ENTITIES.member, data })),
@@ -32,11 +33,6 @@ export default function StaffTbl() {
     localStorage.setItem("activeTab", ENTITIES.member);
     localStorage.setItem("lastRoute", location.pathname);
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (refreshKey > 0) query.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey]);
 
   return (
     <TableShell
@@ -68,7 +64,7 @@ export default function StaffTbl() {
           </thead>
           <tbody>
             {staff.map((item, ind) => (
-              <tr key={item._id ?? ind} className="tr-tbody">
+              <tr key={item.id ?? ind} className="tr-tbody">
                 <td className="py-4">{offset + ind + 1}</td>
                 <td className="py-4">{item.fullName ?? item.name ?? "—"}</td>
                 <td className="py-4">{item.designation ?? item.role ?? "—"}</td>
@@ -77,7 +73,7 @@ export default function StaffTbl() {
                 <td className="py-4 flex justify-center gap-2">
                   <RowActions
                     label="member"
-                    endpoint={`/staff/${item._id}`}
+                    endpoint={`/staff/${item.id}`}
                     onEdit={() => {
                       dispatch(setModaldata(item));
                       dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));

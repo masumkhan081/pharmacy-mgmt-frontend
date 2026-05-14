@@ -26,7 +26,7 @@ export default function FormulationForm() {
         : ""
     );
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -37,8 +37,8 @@ export default function FormulationForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/formulations/${modalData._id}`, { name });
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/formulations/${modalData.id}`, { name });
       } else {
         await postHandler("/formulations", { name });
       }

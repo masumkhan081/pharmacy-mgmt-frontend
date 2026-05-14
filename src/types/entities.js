@@ -39,7 +39,7 @@
 
 /**
  * @typedef {Object} User
- * @property {string} _id
+ * @property {string} id
  * @property {string} username
  * @property {UserRole} role
  * @property {string} staff
@@ -49,7 +49,7 @@
 
 /**
  * @typedef {Object} Staff
- * @property {string} _id
+ * @property {string} id
  * @property {string} fullName
  * @property {string} phone
  * @property {string} altPhone
@@ -70,40 +70,40 @@
 
 /**
  * @typedef {Object} Group
- * @property {string} _id
+ * @property {string} id
  * @property {string} name
  */
 
 /**
  * @typedef {Object} Unit
- * @property {string} _id
+ * @property {string} id
  * @property {string} shortName
  * @property {string} longName
  */
 
 /**
  * @typedef {Object} Formulation
- * @property {string} _id
+ * @property {string} id
  * @property {string} shortName
  * @property {string} longName
  */
 
 /**
  * @typedef {Object} Manufacturer
- * @property {string} _id
+ * @property {string} id
  * @property {string} name
  */
 
 /**
  * @typedef {Object} Generic
- * @property {string} _id
+ * @property {string} id
  * @property {string|Group} group
  * @property {string} name
  */
 
 /**
  * @typedef {Object} Brand
- * @property {string} _id
+ * @property {string} id
  * @property {string|Generic} generic
  * @property {string|Manufacturer} manufacturer
  * @property {string} name
@@ -111,7 +111,7 @@
 
 /**
  * @typedef {Object} Drug
- * @property {string} _id
+ * @property {string} id
  * @property {string|Brand} brand
  * @property {string|Formulation} formulation
  * @property {number} strength
@@ -122,7 +122,7 @@
 
 /**
  * @typedef {Object} Supplier
- * @property {string} _id
+ * @property {string} id
  * @property {string} fullName
  * @property {string} phone
  * @property {string} altPhone
@@ -144,7 +144,7 @@
 
 /**
  * @typedef {Object} Purchase
- * @property {string} _id
+ * @property {string} id
  * @property {string} purchaseAt
  * @property {PurchaseLine[]} drugs
  * @property {number} bill
@@ -159,7 +159,7 @@
 
 /**
  * @typedef {Object} Sale
- * @property {string} _id
+ * @property {string} id
  * @property {string} saleAt
  * @property {SaleLine[]} drugs
  * @property {number} bill
@@ -167,7 +167,7 @@
 
 /**
  * @typedef {Object} Salary
- * @property {string} _id
+ * @property {string} id
  * @property {string|Staff} staff
  * @property {number} month
  * @property {number} year
@@ -183,7 +183,7 @@
 
 /**
  * @typedef {Object} Attendance
- * @property {string} _id
+ * @property {string} id
  * @property {string|Staff} staff
  * @property {string} date
  * @property {"day"|"evening"|"night"|""} shift

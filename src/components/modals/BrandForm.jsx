@@ -60,8 +60,8 @@ export default function BrandForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
-      const idOf = (v) => (typeof v === "object" ? v?._id ?? "select-one" : v ?? "select-one");
+    if (isModalForEdit && modalData?.id) {
+      const idOf = (v) => (typeof v === "object" ? v?.id ?? "select-one" : v ?? "select-one");
       setName(modalData.name ?? "");
       setSelectedGroup(idOf(modalData.groupId));
       setSelectedGeneric(idOf(modalData.genericId));
@@ -73,7 +73,7 @@ export default function BrandForm() {
       setSelectedMFR("select-one");
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -91,8 +91,8 @@ export default function BrandForm() {
     setErrors({});
     try {
       const body = { ...payload };
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/brands/${modalData._id}`, body);
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/brands/${modalData.id}`, body);
       } else {
         await postHandler("/brands", body);
       }
@@ -130,7 +130,7 @@ export default function BrandForm() {
         >
           <option disabled value="select-one">Select One</option>
           {groups.map((grp) => (
-            <option key={grp._id} value={grp._id}>{grp.name}</option>
+            <option key={grp.id} value={grp.id}>{grp.name}</option>
           ))}
         </select>
       </div>
@@ -144,7 +144,7 @@ export default function BrandForm() {
         >
           <option disabled value="select-one">Select One</option>
           {generics.map((gen) => (
-            <option key={gen._id} value={gen._id}>{gen.name}</option>
+            <option key={gen.id} value={gen.id}>{gen.name}</option>
           ))}
         </select>
       </div>
@@ -158,7 +158,7 @@ export default function BrandForm() {
         >
           <option disabled value="select-one">Select One</option>
           {manufacturers.map((mfr) => (
-            <option key={mfr._id} value={mfr._id}>{mfr.name}</option>
+            <option key={mfr.id} value={mfr.id}>{mfr.name}</option>
           ))}
         </select>
       </div>

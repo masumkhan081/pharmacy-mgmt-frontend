@@ -10,31 +10,15 @@ import { validateData, apiErrorsToFields } from "../../utils/validation";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
-const TYPES = [
-  "INVENTORY_ALERT",
-  "EXPIRY_ALERT",
-  "REFILL_REMINDER",
-  "PRESCRIPTION_EXPIRY",
-  "PAYMENT_DUE",
-  "SYSTEM_ALERT",
-  "CUSTOMER_BIRTHDAY",
-  "ORDER_STATUS",
-  "NEW_CUSTOMER",
-  "REGULATORY_REMINDER",
-  "STAFF_REMINDER",
-  "CUSTOM",
-];
-
 const initial = () => ({
-  type: "SYSTEM_ALERT",
   title: "",
   message: "",
-  priority: "MEDIUM",
+  userId: "",
+  isRead: false,
 });
 
 export default function NotificationForm() {
   const dispatch = useDispatch();
-  const userId = useSelector((s) => s.user.userId);
   const isModalForEdit = useSelector((s) => s.notificationView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.notificationView.isModalVisible);
   const modalData = useSelector((s) => s.notificationView.modalData);
@@ -44,13 +28,19 @@ export default function NotificationForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
-      setForm({ ...initial(), ...modalData });
+    if (isModalForEdit && modalData?.id) {
+      setForm({
+        ...initial(),
+        title: modalData.title ?? "",
+        message: modalData.message ?? "",
+        userId: modalData.userId ?? "",
+        isRead: Boolean(modalData.isRead),
+      });
     } else {
       setForm(initial());
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -61,23 +51,12 @@ export default function NotificationForm() {
     }
     setErrors({});
     try {
-      const body = {
-        ...validation.data,
-      };
-      if (!isModalForEdit) {
-        body.recipients = [
-          {
-            recipientType: "ADMIN",
-            recipientId: userId,
-            channel: "IN_APP",
-          },
-        ];
-        body.action = { type: "NONE" };
-      }
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/notifications/${modalData._id}`, body);
+      const payload = { ...validation.data };
+      if (!payload.userId) delete payload.userId;
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/notifications/${modalData.id}`, payload);
       } else {
-        await postHandler("/notifications", body);
+        await postHandler("/notifications", payload);
       }
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
@@ -89,23 +68,19 @@ export default function NotificationForm() {
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-3">
       {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
-      <Field label="Type" error={errors.type}>
-        <select className="txt-input" value={form.type} onChange={(e) => set("type", e.target.value)}>
-          {TYPES.map((t) => <option key={t} value={t}>{t}</option>)}
-        </select>
-      </Field>
       <Field label="Title" error={errors.title}>
         <Input value={form.title} onChange={(e) => set("title", e.target.value)} />
       </Field>
       <Field label="Message" error={errors.message}>
         <Input value={form.message} onChange={(e) => set("message", e.target.value)} />
       </Field>
-      <Field label="Priority" error={errors.priority}>
-        <select className="txt-input" value={form.priority} onChange={(e) => set("priority", e.target.value)}>
-          <option value="LOW">LOW</option>
-          <option value="MEDIUM">MEDIUM</option>
-          <option value="HIGH">HIGH</option>
-          <option value="URGENT">URGENT</option>
+      <Field label="User ID (optional)" error={errors.userId}>
+        <Input value={form.userId} onChange={(e) => set("userId", e.target.value)} placeholder="UUID of target user" />
+      </Field>
+      <Field label="Read" error={errors.isRead}>
+        <select className="txt-input" value={form.isRead ? "yes" : "no"} onChange={(e) => set("isRead", e.target.value === "yes")}>
+          <option value="no">No</option>
+          <option value="yes">Yes</option>
         </select>
       </Field>
       <div className="flex items-center justify-end gap-3 mt-3">

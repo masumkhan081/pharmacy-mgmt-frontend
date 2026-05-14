@@ -22,7 +22,7 @@ export default function GroupForm() {
     if (!isModalVisible) return;
     setName(isModalForEdit && modalData?.name ? modalData.name : "");
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -33,8 +33,8 @@ export default function GroupForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/groups/${modalData._id}`, { name });
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/groups/${modalData.id}`, { name });
       } else {
         await postHandler("/groups", { name });
       }

@@ -1,26 +1,25 @@
 import { useEffect } from "react";
-import { AiOutlinePlus } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
   setCurrentView,
-  toggleModal,
-  setModaldata,
   bumpRefresh,
 } from "../../redux/slices/FinanceView";
 import { ENTITIES } from "../../ui-config/entities";
-import Button from "../common-ui/Button";
 import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
-import { useTableQuery } from "../../hooks/useTableQuery";
+import { useTableData } from '../../hooks/useTableData';
 
-const headers = ["#", "Number", "Customer", "Issued", "Due", "Total", "Paid", "Status"];
+// Invoices are server-derived from completed sales — no Add button, no Edit.
+// Delete is permitted on the BE only when paidAmount === 0.
+const headers = ["#", "Invoice #", "Sale", "Total", "Paid", "Status"];
 
 export default function InvoiceTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
   const refreshKey = useSelector((s) => s.financeView.refreshKey);
-  const query = useTableQuery({
+  const query = useTableData({
+    refreshKey,
     endpoint: "/invoices",
     onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.invoice })),
   });
@@ -33,55 +32,35 @@ export default function InvoiceTbl() {
     localStorage.setItem("lastRoute", location.pathname);
   }, [location.pathname]);
 
-  useEffect(() => {
-    if (refreshKey > 0) query.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey]);
-
   return (
-    <TableShell
-      query={query}
-      searchPlaceholder="Search invoices..."
-      toolbar={
-        <Button
-          icon={<AiOutlinePlus className="inline text-white" />}
-          txt=" Invoice"
-          onClick={() =>
-            dispatch(toggleModal({ isModalForEdit: false, isModalVisible: true }))
-          }
-          style="btn-primary"
-        />
-      }
-    >
+    <TableShell query={query} searchPlaceholder="Search invoices...">
       <div className="table-shell">
         <table className="w-full min-w-[640px]">
           <thead>
             <tr className="tr-thead">
               {headers.map((h, i) => (
-                <th key={i} className="th">{h}</th>
+                <th key={i} className="th">
+                  {h}
+                </th>
               ))}
               <th className="th">Action</th>
             </tr>
           </thead>
           <tbody>
             {items.map((item, ind) => (
-              <tr key={item._id ?? ind} className="tr-tbody">
+              <tr key={item.id ?? ind} className="tr-tbody">
                 <td className="py-4">{offset + ind + 1}</td>
-                <td className="py-4">{item.invoiceNumber ?? "—"}</td>
-                <td className="py-4">{item.customer?.fullName ?? "—"}</td>
-                <td className="py-4">{item.issueDate ? new Date(item.issueDate).toLocaleDateString() : "—"}</td>
-                <td className="py-4">{item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—"}</td>
-                <td className="py-4">{item.grandTotal ?? "—"}</td>
-                <td className="py-4">{item.amountPaid ?? 0}</td>
+                <td className="py-4">{item.invoiceNo ?? "—"}</td>
+                <td className="py-4">
+                  {item.sale?.saleNumber ?? item.saleId ?? "—"}
+                </td>
+                <td className="py-4">{item.totalAmount ?? "—"}</td>
+                <td className="py-4">{item.paidAmount ?? 0}</td>
                 <td className="py-4">{item.status ?? "—"}</td>
                 <td className="py-4 flex justify-center gap-2">
                   <RowActions
                     label="invoice"
-                    endpoint={`/invoices/${item._id}`}
-                    onEdit={() => {
-                      dispatch(setModaldata(item));
-                      dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));
-                    }}
+                    endpoint={`/invoices/${item.id}`}
                     onAfterDelete={() => dispatch(bumpRefresh())}
                   />
                 </td>

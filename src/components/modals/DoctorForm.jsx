@@ -11,12 +11,11 @@ import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
 const initial = {
-  fullName: "",
-  specialty: "",
-  licenseNumber: "",
+  name: "",
   phone: "",
   email: "",
-  notes: "",
+  specialty: "",
+  address: "",
 };
 
 export default function DoctorForm() {
@@ -30,13 +29,21 @@ export default function DoctorForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
-      setForm({ ...initial, ...modalData });
+    if (isModalForEdit && modalData?.id) {
+      setForm({
+        ...initial,
+        // BE returns `name`; some older rows may still have `fullName` — fall back for safety.
+        name: modalData.name ?? modalData.fullName ?? "",
+        phone: modalData.phone ?? "",
+        email: modalData.email ?? "",
+        specialty: modalData.specialty ?? "",
+        address: modalData.address ?? "",
+      });
     } else {
       setForm(initial);
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -48,9 +55,12 @@ export default function DoctorForm() {
     setErrors({});
     try {
       const payload = { ...validation.data };
+      if (!payload.phone) delete payload.phone;
       if (!payload.email) delete payload.email;
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/doctors/${modalData._id}`, payload);
+      if (!payload.specialty) delete payload.specialty;
+      if (!payload.address) delete payload.address;
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/doctors/${modalData.id}`, payload);
       } else {
         await postHandler("/doctors", payload);
       }
@@ -65,14 +75,11 @@ export default function DoctorForm() {
     <form onSubmit={handleSave} className="flex flex-col gap-3">
       {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
       <div className="grid grid-cols-2 gap-3">
-        <Field label="Full name" error={errors.fullName}>
-          <Input value={form.fullName} onChange={(e) => set("fullName", e.target.value)} />
+        <Field label="Name" error={errors.name}>
+          <Input value={form.name} onChange={(e) => set("name", e.target.value)} />
         </Field>
         <Field label="Specialty" error={errors.specialty}>
           <Input value={form.specialty} onChange={(e) => set("specialty", e.target.value)} />
-        </Field>
-        <Field label="License #" error={errors.licenseNumber}>
-          <Input value={form.licenseNumber} onChange={(e) => set("licenseNumber", e.target.value)} />
         </Field>
         <Field label="Phone" error={errors.phone}>
           <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
@@ -80,8 +87,8 @@ export default function DoctorForm() {
         <Field label="Email" error={errors.email}>
           <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
         </Field>
-        <Field label="Notes" error={errors.notes}>
-          <Input value={form.notes} onChange={(e) => set("notes", e.target.value)} />
+        <Field label="Address" error={errors.address}>
+          <Input value={form.address} onChange={(e) => set("address", e.target.value)} />
         </Field>
       </div>
       <div className="flex items-center justify-end gap-3 mt-3">

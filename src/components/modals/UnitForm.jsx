@@ -21,7 +21,7 @@ export default function UnitForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
+    if (isModalForEdit && modalData?.id) {
       setShortName(modalData.shortName ?? "");
       setLongName(modalData.longName ?? "");
     } else {
@@ -29,7 +29,7 @@ export default function UnitForm() {
       setLongName("");
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -40,8 +40,8 @@ export default function UnitForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/units/${modalData._id}`, validation.data);
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/units/${modalData.id}`, validation.data);
       } else {
         await postHandler("/units", validation.data);
       }

@@ -14,12 +14,17 @@ import { validateData, apiErrorsToFields } from "../../utils/validation";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
+const MONTHS = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
+
 const initial = () => ({
   staff: "",
-  month: new Date().getMonth() + 1,
+  amount: 0,
+  month: MONTHS[new Date().getMonth()],
   year: new Date().getFullYear(),
-  dueAmount: 0,
-  paidAmount: 0,
+  paidAt: "",
 });
 
 export default function SalaryForm() {
@@ -45,29 +50,32 @@ export default function SalaryForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
+    if (isModalForEdit && modalData?.id) {
       setForm({
         ...initial(),
-        ...modalData,
         staff:
           typeof modalData.staff === "object"
-            ? modalData.staff?._id ?? ""
-            : modalData.staff ?? "",
+            ? modalData.staff?.id ?? ""
+            : modalData.staffId ?? modalData.staff ?? "",
+        amount: Number(modalData.amount ?? 0),
+        month: modalData.month ?? initial().month,
+        year: Number(modalData.year ?? initial().year),
+        paidAt: modalData.paidAt
+          ? String(modalData.paidAt).slice(0, 10)
+          : "",
       });
     } else {
       setForm(initial());
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
     const validation = validateData(salarySchema, {
       ...form,
-      month: Number(form.month),
+      amount: Number(form.amount),
       year: Number(form.year),
-      dueAmount: Number(form.dueAmount),
-      paidAmount: Number(form.paidAmount),
     });
     if (!validation.success) {
       setErrors(validation.errors);
@@ -75,10 +83,12 @@ export default function SalaryForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/salaries/${modalData._id}`, validation.data);
+      const payload = { ...validation.data };
+      if (!payload.paidAt) delete payload.paidAt;
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/salaries/${modalData.id}`, payload);
       } else {
-        await postHandler("/salaries", validation.data);
+        await postHandler("/salaries", payload);
       }
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
@@ -90,42 +100,44 @@ export default function SalaryForm() {
   return (
     <form onSubmit={handleSave} className="flex flex-col gap-3">
       {errors._form && <div className="text-sm text-error-600">{errors._form}</div>}
-      <div className="flex flex-col">
-        <label className="form-label">Staff</label>
+      <Field label="Staff" error={errors.staff}>
         <select className="txt-input" value={form.staff} onChange={(e) => set("staff", e.target.value)}>
           <option value="">Select staff</option>
           {staff.map((s) => (
-            <option key={s._id} value={s._id}>{s.fullName ?? s.name ?? s._id}</option>
+            <option key={s.id} value={s.id}>{s.name ?? s.id}</option>
           ))}
         </select>
-        {errors.staff && <span className="text-sm text-error-600 mt-1">{errors.staff}</span>}
-      </div>
+      </Field>
       <div className="grid grid-cols-2 gap-3">
-        <div className="flex flex-col">
-          <label className="form-label">Month</label>
-          <Input type="number" value={form.month} onChange={(e) => set("month", e.target.value)} />
-          {errors.month && <span className="text-sm text-error-600 mt-1">{errors.month}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label className="form-label">Year</label>
+        <Field label="Amount" error={errors.amount}>
+          <Input type="number" step="0.01" value={form.amount} onChange={(e) => set("amount", e.target.value)} />
+        </Field>
+        <Field label="Month" error={errors.month}>
+          <select className="txt-input" value={form.month} onChange={(e) => set("month", e.target.value)}>
+            {MONTHS.map((m) => <option key={m} value={m}>{m}</option>)}
+          </select>
+        </Field>
+        <Field label="Year" error={errors.year}>
           <Input type="number" value={form.year} onChange={(e) => set("year", e.target.value)} />
-          {errors.year && <span className="text-sm text-error-600 mt-1">{errors.year}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label className="form-label">Due amount</label>
-          <Input type="number" value={form.dueAmount} onChange={(e) => set("dueAmount", e.target.value)} />
-          {errors.dueAmount && <span className="text-sm text-error-600 mt-1">{errors.dueAmount}</span>}
-        </div>
-        <div className="flex flex-col">
-          <label className="form-label">Paid amount</label>
-          <Input type="number" value={form.paidAmount} onChange={(e) => set("paidAmount", e.target.value)} />
-          {errors.paidAmount && <span className="text-sm text-error-600 mt-1">{errors.paidAmount}</span>}
-        </div>
+        </Field>
+        <Field label="Paid at" error={errors.paidAt}>
+          <Input type="date" value={form.paidAt} onChange={(e) => set("paidAt", e.target.value)} />
+        </Field>
       </div>
       <div className="flex items-center justify-end gap-3 mt-3">
         <Button type="button" onClick={() => dispatch(toggleModal({ isModalVisible: false }))} className="px-4 py-2 text-sm">Cancel</Button>
         <Button type="submit" className="btn-primary">{isModalForEdit ? "Update" : "Save"}</Button>
       </div>
     </form>
+  );
+}
+
+function Field({ label, error, children }) {
+  return (
+    <div className="flex flex-col">
+      <label className="form-label">{label}</label>
+      {children}
+      {error && <span className="text-sm text-error-600 mt-1">{error}</span>}
+    </div>
   );
 }

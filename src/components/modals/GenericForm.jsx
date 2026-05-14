@@ -37,11 +37,11 @@ export default function GenericForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
+    if (isModalForEdit && modalData?.id) {
       setName(modalData.name ?? "");
       setSelectedGroup(
         typeof modalData.groupId === "object"
-          ? modalData.groupId?._id ?? "select-one"
+          ? modalData.groupId?.id ?? "select-one"
           : modalData.groupId ?? "select-one"
       );
     } else {
@@ -49,7 +49,7 @@ export default function GenericForm() {
       setSelectedGroup("select-one");
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -61,8 +61,8 @@ export default function GenericForm() {
     }
     setErrors({});
     try {
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/generics/${modalData._id}`, validation.data);
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/generics/${modalData.id}`, validation.data);
       } else {
         await postHandler("/generics", validation.data);
       }
@@ -88,7 +88,7 @@ export default function GenericForm() {
         >
           <option disabled value="select-one">Select One</option>
           {groups.map((grp) => (
-            <option key={grp._id} value={grp._id}>{grp.name}</option>
+            <option key={grp.id} value={grp.id}>{grp.name}</option>
           ))}
         </select>
         {errors.groupId && <span className="text-sm text-error-600 mt-1">{errors.groupId}</span>}

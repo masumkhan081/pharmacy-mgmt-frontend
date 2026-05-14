@@ -34,9 +34,19 @@ export default function Login() {
       const token = data?.token ?? data?.accessToken;
       const user = data?.user ?? data;
       if (token) setAuthToken(token);
-      dispatch(setUser(user));
+      // Persist normalized user so RootLayout's hydrate-on-mount path picks
+      // it up after a reload. Without this, the JWT survives but the redux
+      // user slice resets to isAuthenticated=false and ProtectedRoute bounces.
+      const persistedUser = {
+        userId: user?.userId ?? user?.id ?? "",
+        userName: user?.userName ?? user?.fullName ?? user?.name ?? "",
+        userEmail: user?.userEmail ?? user?.email ?? "",
+        userRole: user?.userRole ?? user?.role ?? "",
+      };
+      localStorage.setItem("user", JSON.stringify(persistedUser));
+      dispatch(setUser(persistedUser));
 
-      const role = user?.userRole ?? user?.role;
+      const role = persistedUser.userRole;
       if (DASHBOARD_ROLES.includes(role)) {
         navigate("/dashboard");
       } else if (role === ROLES.SALESMAN) {

@@ -12,7 +12,7 @@ import { ENTITIES } from "../../ui-config/entities";
 import Button from "../common-ui/Button";
 import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
-import { useTableQuery } from "../../hooks/useTableQuery";
+import { useTableData } from '../../hooks/useTableData';
 
 const headers = ["#", "Date", "Staff", "Shift"];
 
@@ -20,7 +20,8 @@ export default function AttendanceTbl() {
   const location = useLocation();
   const dispatch = useDispatch();
   const refreshKey = useSelector((s) => s.staffView.refreshKey);
-  const query = useTableQuery({
+  const query = useTableData({
+    refreshKey,
     endpoint: "/attendances",
     onLoaded: (data) =>
       dispatch(setCurrentView({ view: ENTITIES.attendance, data })),
@@ -33,11 +34,6 @@ export default function AttendanceTbl() {
     localStorage.setItem("activeTab", ENTITIES.attendance);
     localStorage.setItem("lastRoute", location.pathname);
   }, [location.pathname]);
-
-  useEffect(() => {
-    if (refreshKey > 0) query.refetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refreshKey]);
 
   return (
     <TableShell
@@ -66,7 +62,7 @@ export default function AttendanceTbl() {
           </thead>
           <tbody>
             {attendances.map((item, ind) => (
-              <tr key={item._id ?? ind} className="tr-tbody">
+              <tr key={item.id ?? ind} className="tr-tbody">
                 <td className="py-4">{offset + ind + 1}</td>
                 <td className="py-4">
                   {item.date ? new Date(item.date).toLocaleDateString() : "—"}
@@ -76,7 +72,7 @@ export default function AttendanceTbl() {
                 <td className="py-4 flex justify-center gap-2">
                   <RowActions
                     label="attendance"
-                    endpoint={`/attendances/${item._id}`}
+                    endpoint={`/attendances/${item.id}`}
                     onEdit={() => {
                       dispatch(setModaldata(item));
                       dispatch(toggleModal({ isModalForEdit: true, isModalVisible: true }));

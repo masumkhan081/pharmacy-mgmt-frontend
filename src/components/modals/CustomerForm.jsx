@@ -13,11 +13,8 @@ import Input from "../common-ui/Input";
 const initial = {
   fullName: "",
   phone: "",
-  altPhone: "",
   email: "",
-  dateOfBirth: "",
-  gender: "",
-  notes: "",
+  address: "",
 };
 
 export default function CustomerForm() {
@@ -31,19 +28,19 @@ export default function CustomerForm() {
 
   useEffect(() => {
     if (!isModalVisible) return;
-    if (isModalForEdit && modalData?._id) {
+    if (isModalForEdit && modalData?.id) {
       setForm({
         ...initial,
-        ...modalData,
-        dateOfBirth: modalData.dateOfBirth
-          ? String(modalData.dateOfBirth).slice(0, 10)
-          : "",
+        fullName: modalData.fullName ?? "",
+        phone: modalData.phone ?? "",
+        email: modalData.email ?? "",
+        address: modalData.address ?? "",
       });
     } else {
       setForm(initial);
     }
     setErrors({});
-  }, [isModalVisible, modalData?._id, isModalForEdit]);
+  }, [isModalVisible, modalData?.id, isModalForEdit]);
 
   async function handleSave(e) {
     e.preventDefault();
@@ -55,13 +52,11 @@ export default function CustomerForm() {
     setErrors({});
     try {
       const payload = { ...validation.data };
-      if (!payload.gender) delete payload.gender;
-      if (!payload.dateOfBirth) delete payload.dateOfBirth;
-      else payload.dateOfBirth = new Date(payload.dateOfBirth);
-      if (!payload.altPhone) delete payload.altPhone;
+      if (!payload.phone) delete payload.phone;
       if (!payload.email) delete payload.email;
-      if (isModalForEdit && modalData?._id) {
-        await patchHandler(`/customers/${modalData._id}`, payload);
+      if (!payload.address) delete payload.address;
+      if (isModalForEdit && modalData?.id) {
+        await patchHandler(`/customers/${modalData.id}`, payload);
       } else {
         await postHandler("/customers", payload);
       }
@@ -82,25 +77,11 @@ export default function CustomerForm() {
         <Field label="Phone" error={errors.phone}>
           <Input value={form.phone} onChange={(e) => set("phone", e.target.value)} />
         </Field>
-        <Field label="Alt phone" error={errors.altPhone}>
-          <Input value={form.altPhone} onChange={(e) => set("altPhone", e.target.value)} />
-        </Field>
         <Field label="Email" error={errors.email}>
           <Input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} />
         </Field>
-        <Field label="Date of birth" error={errors.dateOfBirth}>
-          <Input type="date" value={form.dateOfBirth} onChange={(e) => set("dateOfBirth", e.target.value)} />
-        </Field>
-        <Field label="Gender" error={errors.gender}>
-          <select className="txt-input" value={form.gender} onChange={(e) => set("gender", e.target.value)}>
-            <option value="">—</option>
-            <option value="MALE">MALE</option>
-            <option value="FEMALE">FEMALE</option>
-            <option value="OTHER">OTHER</option>
-          </select>
-        </Field>
-        <Field label="Notes" error={errors.notes}>
-          <Input value={form.notes} onChange={(e) => set("notes", e.target.value)} />
+        <Field label="Address" error={errors.address}>
+          <Input value={form.address} onChange={(e) => set("address", e.target.value)} />
         </Field>
       </div>
       <div className="flex items-center justify-end gap-3 mt-3">
