@@ -6,6 +6,7 @@ import Input from "../components/common-ui/Input";
 import { getHandler, postHandler } from "../utils/handlerReqRes";
 import { saleSchema } from "../schemas/sale.schema";
 import { validateData, apiErrorsToFields } from "../utils/validation";
+import { useToast } from "../components/common-ui/Toast";
 
 const drugLabel = (d) => {
   // BE denormalizes `Drug.name` (Brand + Strength + Unit) on create — prefer that.
@@ -27,6 +28,7 @@ const cartTotal = (cart) =>
   );
 
 export default function SalePanel() {
+  const toast = useToast();
   const [drugs, setDrugs] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
@@ -58,7 +60,7 @@ export default function SalePanel() {
         setDrugs(Array.isArray(d.data) ? d.data : []);
         setCustomers(Array.isArray(c.data) ? c.data : []);
       } catch (err) {
-        console.error("Failed to load options:", err.message);
+        toast.error(`Failed to load options: ${err.message}`);
       }
     })();
   }, []);
@@ -222,9 +224,11 @@ export default function SalePanel() {
         itemsList: [...cart]
       };
       setDone(saleInfo);
+      toast.success(`Sale recorded — ${cart.length} item${cart.length === 1 ? "" : "s"}, total ${saleInfo.bill.toFixed(2)}`);
       clear();
     } catch (err) {
       setErrors(apiErrorsToFields(err));
+      toast.error(err.message ?? "Sale failed");
     } finally {
       setBusy(false);
     }

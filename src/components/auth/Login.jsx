@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import Label from "../common-ui/Label";
 import Input from "../common-ui/Input";
@@ -126,12 +126,8 @@ export default function Login() {
               </Button>
             </div>
 
-            <Link
-              to="/auth/account-recovery"
-              className="text-primary-600 hover:text-primary-700 font-medium transition-colors"
-            >
-              Forgot Password ?
-            </Link>
+            {/* Account recovery / password reset / OTP pages are not yet
+                implemented on the backend — link hidden until those flows ship. */}
           </div>
           <Input
             value={password}

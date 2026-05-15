@@ -1,5 +1,6 @@
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
   setCurrentView,
@@ -21,7 +22,8 @@ export default function InvoiceTbl() {
   const query = useTableData({
     refreshKey,
     endpoint: "/invoices",
-    onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.invoice })),
+    onLoaded: (data) =>
+      dispatch(setCurrentView({ view: ENTITIES.invoice, data })),
   });
   const items = query.data;
   const offset =

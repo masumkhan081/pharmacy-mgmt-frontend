@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
   setCurrentView,
@@ -23,7 +24,9 @@ export default function InventoryAlertTbl() {
   const query = useTableData({
     refreshKey,
     endpoint: "/inventory-alerts",
-    onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.inventoryAlert })),
+    onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.inventoryAlert,
+    onLoaded: (data) => dispatch(setCurrentView({ view: ENTITIES.inventoryAlert, data })),
+  })),
   });
   const items = query.data;
   const offset =

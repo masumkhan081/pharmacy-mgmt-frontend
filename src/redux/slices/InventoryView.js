@@ -8,12 +8,21 @@ export const inventoryViewSlice = createSlice({
     isModalForEdit: false,
     modalData: {},
     allChecked: false,
+    batches: [],
+    alerts: [],
     refreshKey: 0,
   },
   reducers: {
     setCurrentView: (state, action) => {
-      const { view } = action.payload;
+      const { view, data } = action.payload;
       state.currentView = view;
+      if (data !== undefined) state[view] = data;
+    },
+    setBatches: (state, action) => {
+      state.batches = action.payload?.data ?? action.payload ?? [];
+    },
+    setAlerts: (state, action) => {
+      state.alerts = action.payload?.data ?? action.payload ?? [];
     },
     toggleModal: (state, action) => {
       state.isModalVisible = action.payload.isModalVisible;
@@ -42,10 +51,13 @@ export const inventoryViewSlice = createSlice({
 
 export const {
   setCurrentView,
+  setBatches,
+  setAlerts,
   toggleModal,
   setModaldata,
   checkSingle,
   checkAll,
   bumpRefresh,
 } = inventoryViewSlice.actions;
+
 export default inventoryViewSlice.reducer;

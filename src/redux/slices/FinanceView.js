@@ -8,12 +8,21 @@ export const financeViewSlice = createSlice({
     isModalForEdit: false,
     modalData: {},
     allChecked: false,
+    invoices: [],
+    payments: [],
     refreshKey: 0,
   },
   reducers: {
     setCurrentView: (state, action) => {
-      const { view } = action.payload;
+      const { view, data } = action.payload;
       state.currentView = view;
+      if (data !== undefined) state[view] = data;
+    },
+    setInvoices: (state, action) => {
+      state.invoices = action.payload?.data ?? action.payload ?? [];
+    },
+    setPayments: (state, action) => {
+      state.payments = action.payload?.data ?? action.payload ?? [];
     },
     toggleModal: (state, action) => {
       state.isModalVisible = action.payload.isModalVisible;
@@ -42,10 +51,13 @@ export const financeViewSlice = createSlice({
 
 export const {
   setCurrentView,
+  setInvoices,
+  setPayments,
   toggleModal,
   setModaldata,
   checkSingle,
   checkAll,
   bumpRefresh,
 } = financeViewSlice.actions;
+
 export default financeViewSlice.reducer;

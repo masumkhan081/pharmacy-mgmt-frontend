@@ -7,6 +7,7 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { notificationSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -19,6 +20,7 @@ const initial = () => ({
 
 export default function NotificationForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.notificationView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.notificationView.isModalVisible);
   const modalData = useSelector((s) => s.notificationView.modalData);
@@ -58,6 +60,7 @@ export default function NotificationForm() {
       } else {
         await postHandler("/notifications", payload);
       }
+      toast.success(`Notification ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

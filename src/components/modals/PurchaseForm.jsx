@@ -8,6 +8,7 @@ import {
 } from "../../utils/handlerReqRes";
 import { purchaseSchema } from "../../schemas/purchase.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 import { AiFillDelete, AiOutlinePlus } from "react-icons/ai";
@@ -43,6 +44,7 @@ const itemsFromModal = (md) =>
 
 export default function PurchaseForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.purchView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.purchView.isModalVisible);
   const modalData = useSelector((s) => s.purchView.modalData);
@@ -63,7 +65,7 @@ export default function PurchaseForm() {
         setDrugs(Array.isArray(d.data) ? d.data : []);
         setSuppliers(Array.isArray(s.data) ? s.data : []);
       } catch (err) {
-        console.error("Failed to fetch options:", err.message);
+        toast.error(`Failed to fetch options: ${err.message}`);
       }
     })();
   }, []);
@@ -133,6 +135,7 @@ export default function PurchaseForm() {
       } else {
         await postHandler("/purchases", validation.data);
       }
+      toast.success(`Purchase ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

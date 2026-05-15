@@ -7,6 +7,7 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { supplierSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -20,6 +21,7 @@ const initial = {
 
 export default function SupplierForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.supplierView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.supplierView.isModalVisible);
   const modalData = useSelector((s) => s.supplierView.modalData);
@@ -63,6 +65,7 @@ export default function SupplierForm() {
       } else {
         await postHandler("/suppliers", payload);
       }
+      toast.success(`Supplier ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

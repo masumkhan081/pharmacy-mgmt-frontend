@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
   setCurrentView,
@@ -23,7 +24,9 @@ export default function InventoryBatchTbl() {
   const query = useTableData({
     refreshKey,
     endpoint: "/inventory-batches",
-    onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.inventoryBatch })),
+    onLoaded: () => dispatch(setCurrentView({ view: ENTITIES.inventoryBatch,
+    onLoaded: (data) => dispatch(setCurrentView({ view: ENTITIES.inventoryBatch, data })),
+  })),
   });
   const items = query.data;
   const offset =

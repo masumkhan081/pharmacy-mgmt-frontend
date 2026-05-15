@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AiFillDelete, AiFillEdit } from "react-icons/ai";
 import Button from "./Button";
 import ConfirmDialog from "./ConfirmDialog";
+import { useToast } from "./Toast";
 import { deleteHandler } from "../../utils/handlerReqRes";
 
 export default function RowActions({
@@ -13,15 +14,17 @@ export default function RowActions({
 }) {
   const [confirming, setConfirming] = useState(false);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   const handleDelete = async () => {
     if (busy) return;
     setBusy(true);
     try {
       await deleteHandler(endpoint);
+      toast.success(`${label.charAt(0).toUpperCase()}${label.slice(1)} deleted`);
       onAfterDelete?.();
     } catch (err) {
-      console.error(`Failed to delete ${label}:`, err.message);
+      toast.error(err.message ?? `Failed to delete ${label}`);
     } finally {
       setBusy(false);
       setConfirming(false);

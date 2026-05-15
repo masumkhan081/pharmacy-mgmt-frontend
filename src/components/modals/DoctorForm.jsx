@@ -7,6 +7,7 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { doctorSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -20,6 +21,7 @@ const initial = {
 
 export default function DoctorForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.doctorView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.doctorView.isModalVisible);
   const modalData = useSelector((s) => s.doctorView.modalData);
@@ -64,6 +66,7 @@ export default function DoctorForm() {
       } else {
         await postHandler("/doctors", payload);
       }
+      toast.success(`Doctor ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

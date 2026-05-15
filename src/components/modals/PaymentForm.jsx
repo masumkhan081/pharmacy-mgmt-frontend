@@ -4,6 +4,7 @@ import { toggleModal, bumpRefresh } from "../../redux/slices/FinanceView";
 import { getHandler, postHandler } from "../../utils/handlerReqRes";
 import { paymentSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -21,6 +22,7 @@ const initial = () => ({
 
 export default function PaymentForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalVisible = useSelector((s) => s.financeView.isModalVisible);
   const [invoices, setInvoices] = useState([]);
   const [form, setForm] = useState(initial);
@@ -33,7 +35,7 @@ export default function PaymentForm() {
         const { data } = await getHandler("/invoices?limit=1000");
         setInvoices(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch invoices:", err.message);
+        toast.error(`Failed to fetch invoices: ${err.message}`);
       }
     })();
   }, []);
@@ -60,6 +62,7 @@ export default function PaymentForm() {
     setErrors({});
     try {
       await postHandler("/payments", validation.data);
+      toast.success("Payment recorded");
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

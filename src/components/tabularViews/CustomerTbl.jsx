@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
+  setCurrentView,
   toggleModal,
   setModaldata,
   bumpRefresh,
@@ -13,7 +15,7 @@ import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
 import { useTableData } from '../../hooks/useTableData';
 
-const headers = ["#", "Name", "Phone", "Email", "Loyalty"];
+const headers = ["#", "Name", "Phone", "Email", "Address"];
 
 export default function CustomerTbl() {
   const location = useLocation();
@@ -21,7 +23,9 @@ export default function CustomerTbl() {
   const refreshKey = useSelector((s) => s.customerView.refreshKey);
   const query = useTableData({
     refreshKey,
-    endpoint: "/customers" });
+    endpoint: "/customers",
+    onLoaded: (data) => dispatch(setCurrentView({ view: ENTITIES.customer, data })),
+  });
   const items = query.data;
   const offset =
     ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);
@@ -63,7 +67,7 @@ export default function CustomerTbl() {
                 <td className="py-4">{item.fullName ?? "—"}</td>
                 <td className="py-4">{item.phone ?? "—"}</td>
                 <td className="py-4">{item.email ?? "—"}</td>
-                <td className="py-4">{item.loyaltyPoints ?? 0}</td>
+                <td className="py-4">{item.address ?? "—"}</td>
                 <td className="py-4 flex justify-center gap-2">
                   <RowActions
                     label="customer"

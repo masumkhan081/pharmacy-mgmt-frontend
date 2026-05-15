@@ -4,6 +4,7 @@ import { toggleModal, bumpRefresh } from "../../redux/slices/ReturnView";
 import { getHandler, postHandler } from "../../utils/handlerReqRes";
 import { returnSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 import { AiFillDelete, AiOutlinePlus } from "react-icons/ai";
@@ -29,6 +30,7 @@ const initial = () => ({
 
 export default function ReturnForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const userId = useSelector((s) => s.user?.userId);
   const isModalVisible = useSelector((s) => s.returnView.isModalVisible);
   const [drugs, setDrugs] = useState([]);
@@ -51,7 +53,7 @@ export default function ReturnForm() {
         setBatches(Array.isArray(b.data) ? b.data : []);
         setStaff(Array.isArray(st.data) ? st.data : []);
       } catch (err) {
-        console.error("Failed to fetch options:", err.message);
+        toast.error(`Failed to fetch options: ${err.message}`);
       }
     })();
   }, []);
@@ -97,6 +99,7 @@ export default function ReturnForm() {
     setErrors({});
     try {
       await postHandler("/returns", validation.data);
+      toast.success("Return submitted");
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

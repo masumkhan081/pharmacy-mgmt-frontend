@@ -1,19 +1,31 @@
-import { useEffect, useState } from "react";
-import { AiOutlinePlus, AiOutlineCheck, AiOutlineClose } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import {
+  useEffect,
+  useState,
+} from "react";
+import { AiOutlinePlus,
+  AiOutlineCheck,
+  AiOutlineClose } from "react-icons/ai";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { toggleModal, bumpRefresh } from "../../redux/slices/ReturnView";
+import {
+  setCurrentView,
+  toggleModal,
+  bumpRefresh,
+} from "../../redux/slices/ReturnView";
 import { ENTITIES } from "../../ui-config/entities";
 import Button from "../common-ui/Button";
 import TableShell from "../common-ui/TableShell";
 import RowActions from "../common-ui/RowActions";
 import { useTableData } from "../../hooks/useTableData";
 import { postHandler } from "../../utils/handlerReqRes";
+import { useToast } from "../common-ui/Toast";
 
 const headers = ["#", "Number", "Type", "Total", "Status"];
 
 function ReturnWorkflowActions({ row, userId, onChanged }) {
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   if (row.status !== "PENDING") return null;
 
@@ -24,9 +36,12 @@ function ReturnWorkflowActions({ row, userId, onChanged }) {
       const body =
         verb === "approve" ? { approvedBy: userId } : { rejectedBy: userId };
       await postHandler(`/returns/${row.id}/${verb}`, body);
+      toast.success(
+        verb === "approve" ? "Return approved" : "Return rejected"
+      );
       onChanged?.();
     } catch (err) {
-      console.error(`Failed to ${verb} return:`, err.message);
+      toast.error(err.message ?? `Failed to ${verb} return`);
     } finally {
       setBusy(false);
     }
@@ -60,6 +75,7 @@ export default function ReturnTbl() {
   const query = useTableData({
     refreshKey,
     endpoint: "/returns",
+    onLoaded: (data) => dispatch(setCurrentView({ view: ENTITIES.return, data })),
   });
   const items = query.data;
   const offset =

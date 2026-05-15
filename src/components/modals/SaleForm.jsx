@@ -11,6 +11,7 @@ import {
 } from "../../utils/handlerReqRes";
 import { saleSchema } from "../../schemas/sale.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 import { AiFillDelete, AiOutlinePlus } from "react-icons/ai";
@@ -32,6 +33,7 @@ const itemsFromModal = (md) =>
 
 export default function SaleForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.saleView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.saleView.isModalVisible);
   const modalData = useSelector((s) => s.saleView.modalData);
@@ -46,7 +48,7 @@ export default function SaleForm() {
         const { data } = await getHandler("/drugs?limit=1000");
         setDrugs(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch drugs:", err.message);
+        toast.error(`Failed to fetch drugs: ${err.message}`);
       }
     })();
   }, []);
@@ -101,6 +103,7 @@ export default function SaleForm() {
       } else {
         await postHandler("/sales", validation.data);
       }
+      toast.success(`Sale ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

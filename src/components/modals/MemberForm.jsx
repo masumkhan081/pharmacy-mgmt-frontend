@@ -7,6 +7,7 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { memberSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -20,6 +21,7 @@ const initial = {
 
 export default function MemberForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.staffView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.staffView.isModalVisible);
   const modalData = useSelector((s) => s.staffView.modalData);
@@ -69,6 +71,7 @@ export default function MemberForm() {
       } else {
         await postHandler("/staff", payload);
       }
+      toast.success(`Staff member ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

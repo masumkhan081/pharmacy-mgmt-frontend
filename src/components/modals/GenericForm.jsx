@@ -11,11 +11,13 @@ import {
 } from "../../utils/handlerReqRes";
 import { genericSchema } from "../../schemas/drug.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
 export default function GenericForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.drugsView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.drugsView.isModalVisible);
   const modalData = useSelector((s) => s.drugsView.modalData);
@@ -30,7 +32,7 @@ export default function GenericForm() {
         const { data } = await getHandler("/groups?limit=1000");
         setGroups(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch groups:", err.message);
+        toast.error(`Failed to fetch groups: ${err.message}`);
       }
     })();
   }, []);
@@ -66,6 +68,7 @@ export default function GenericForm() {
       } else {
         await postHandler("/generics", validation.data);
       }
+      toast.success(`Generic ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

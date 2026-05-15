@@ -1,8 +1,10 @@
 import { useEffect } from "react";
 import { AiOutlinePlus } from "react-icons/ai";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,
+  useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
 import {
+  setCurrentView,
   toggleModal,
   setModaldata,
   bumpRefresh,
@@ -21,7 +23,9 @@ export default function SupplierTbl() {
   const refreshKey = useSelector((s) => s.supplierView.refreshKey);
   const query = useTableData({
     refreshKey,
-    endpoint: "/suppliers" });
+    endpoint: "/suppliers",
+    onLoaded: (data) => dispatch(setCurrentView({ view: ENTITIES.supplier, data })),
+  });
   const items = query.data;
   const offset =
     ((query.meta?.page || query.page) - 1) * (query.meta?.limit || query.pageSize);

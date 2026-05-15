@@ -7,6 +7,7 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { customerSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -19,6 +20,7 @@ const initial = {
 
 export default function CustomerForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.customerView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.customerView.isModalVisible);
   const modalData = useSelector((s) => s.customerView.modalData);
@@ -60,6 +62,7 @@ export default function CustomerForm() {
       } else {
         await postHandler("/customers", payload);
       }
+      toast.success(`Customer ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

@@ -11,6 +11,7 @@ import {
 } from "../../utils/handlerReqRes";
 import { salarySchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -29,6 +30,7 @@ const initial = () => ({
 
 export default function SalaryForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.staffView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.staffView.isModalVisible);
   const modalData = useSelector((s) => s.staffView.modalData);
@@ -43,7 +45,7 @@ export default function SalaryForm() {
         const { data } = await getHandler("/staff?limit=1000");
         setStaff(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch staff:", err.message);
+        toast.error(`Failed to fetch staff: ${err.message}`);
       }
     })();
   }, []);
@@ -90,6 +92,7 @@ export default function SalaryForm() {
       } else {
         await postHandler("/salaries", payload);
       }
+      toast.success(`Salary ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

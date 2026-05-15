@@ -11,11 +11,13 @@ import {
 } from "../../utils/handlerReqRes";
 import { brandSchema } from "../../schemas/drug.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
 export default function BrandForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.drugsView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.drugsView.isModalVisible);
   const modalData = useSelector((s) => s.drugsView.modalData);
@@ -38,7 +40,7 @@ export default function BrandForm() {
         setGroups(Array.isArray(g.data) ? g.data : []);
         setManufacturers(Array.isArray(m.data) ? m.data : []);
       } catch (err) {
-        console.error("Failed to fetch lookups:", err.message);
+        toast.error(`Failed to fetch lookups: ${err.message}`);
       }
     })();
   }, []);
@@ -53,7 +55,7 @@ export default function BrandForm() {
         const { data } = await getHandler(`/generics?group=${selectedGroup}&limit=1000`);
         setGenerics(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error("Failed to fetch generics:", err.message);
+        toast.error(`Failed to fetch generics: ${err.message}`);
       }
     })();
   }, [selectedGroup]);
@@ -96,6 +98,7 @@ export default function BrandForm() {
       } else {
         await postHandler("/brands", body);
       }
+      toast.success(`Brand ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

@@ -11,6 +11,7 @@ import {
 } from "../../utils/handlerReqRes";
 import { inventoryAlertSchema } from "../../schemas/common.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
@@ -26,6 +27,7 @@ const drugLabel = (d) => d?.name ?? d?.brand?.name ?? d?.generic?.name ?? d?.id 
 
 export default function InventoryAlertForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.inventoryView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.inventoryView.isModalVisible);
   const modalData = useSelector((s) => s.inventoryView.modalData);
@@ -40,7 +42,7 @@ export default function InventoryAlertForm() {
         const d = await getHandler("/drugs?limit=1000");
         setDrugs(Array.isArray(d.data) ? d.data : []);
       } catch (err) {
-        console.error("Failed to fetch drugs:", err.message);
+        toast.error(`Failed to fetch drugs: ${err.message}`);
       }
     })();
   }, []);
@@ -78,6 +80,7 @@ export default function InventoryAlertForm() {
       } else {
         await postHandler("/inventory-alerts", payload);
       }
+      toast.success(`Alert ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {

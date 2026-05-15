@@ -7,11 +7,13 @@ import {
 import { postHandler, patchHandler } from "../../utils/handlerReqRes";
 import { mfrSchema } from "../../schemas/drug.schema";
 import { validateData, apiErrorsToFields } from "../../utils/validation";
+import { useToast } from "../common-ui/Toast";
 import Button from "../common-ui/Button";
 import Input from "../common-ui/Input";
 
 export default function MFRForm() {
   const dispatch = useDispatch();
+  const toast = useToast();
   const isModalForEdit = useSelector((s) => s.drugsView.isModalForEdit);
   const isModalVisible = useSelector((s) => s.drugsView.isModalVisible);
   const modalData = useSelector((s) => s.drugsView.modalData);
@@ -38,6 +40,7 @@ export default function MFRForm() {
       } else {
         await postHandler("/manufacturers", { name });
       }
+      toast.success(`Manufacturer ${isModalForEdit ? "updated" : "created"}`);
       dispatch(bumpRefresh());
       dispatch(toggleModal({ isModalVisible: false }));
     } catch (err) {
