@@ -2,7 +2,8 @@ import axios from "axios";
 import ApiError from "./ApiError";
 
 const rawBase = (
-  import.meta.env.VITE_BASE_URL || "http://localhost:3000/api"
+  import.meta.env.VITE_BASE_URL ||
+  (import.meta.env.PROD ? "/api" : "http://localhost:3000/api")
 )
   .trim()
   .replace(/\/+$/, "");
