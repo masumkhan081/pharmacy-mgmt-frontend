@@ -1,8 +1,13 @@
 import axios from "axios";
 import ApiError from "./ApiError";
 
-const BASE_URL =
-  import.meta.env.VITE_BASE_URL || "http://localhost:3000/api";
+const rawBase = (
+  import.meta.env.VITE_BASE_URL || "http://localhost:3000/api"
+)
+  .trim()
+  .replace(/\/+$/, "");
+
+const BASE_URL = rawBase.endsWith("/api") ? rawBase : `${rawBase}/api`;
 
 const TOKEN_KEY = "authToken";
 
